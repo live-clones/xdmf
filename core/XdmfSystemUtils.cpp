@@ -27,6 +27,7 @@
 #include "XdmfSystemUtils.hpp"
 #include "XdmfCoreConfig.hpp"
 #include <iostream>
+#include "string.h"
 
 XdmfSystemUtils::XdmfSystemUtils()
 {
@@ -63,3 +64,10 @@ XdmfSystemUtils::getRealPath(const std::string & path)
   return std::string(rp);
 }
 #endif
+
+char * XdmfSystemUtilsGetRealPath(char * path)
+{
+  std::string returnstring = XdmfSystemUtils::getRealPath(std::string(path));
+  char * returnPointer = strdup(returnstring.c_str());
+  return returnPointer;
+}

@@ -79,8 +79,15 @@ int main(int argc, char *argv[])
 
         //#initwritergenerate end
 /*
+        //#initwriterpagedgenerate begin
 
+        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, 1024, 1.0, size-numServersCores, size-1);
+
+        //#initwriterpagedgenerate end
+*/
+/*
         //#initcontrollergenerate begin
+
         shared_ptr<XdmfHDF5ControllerDSM> exampleController = XdmfHDF5ControllerDSM::New(
                 newPath,
                 newSetPath,
@@ -95,6 +102,26 @@ int main(int argc, char *argv[])
                 size-1);
 
         //#initcontrollergenerate end
+*/
+/*
+        //#initcontrollerpagedgenerate begin
+
+        shared_ptr<XdmfHDF5ControllerDSM> exampleController = XdmfHDF5ControllerDSM::New(
+                newPath,
+                newSetPath,
+                XdmfArrayType::Int32(),
+                writeStartVector,
+                writeStrideVector,
+                writeCountVector,
+                writeDataSizeVector,
+                comm,
+                dsmSize/numServersCores,
+                1024,
+                1.0,
+                size-numServersCores,
+                size-1);
+
+        //#initcontrollerpagedgenerate end
 */
 
         // Split out sub-comm for the worker cores
@@ -177,147 +204,6 @@ int main(int argc, char *argv[])
 
                 shared_ptr<XdmfHDF5WriterDSM> exampleWriter2 = XdmfHDF5WriterDSM::New(newPath, exampleWriter->getServerBuffer());
 
-                //#initwriterwithbuffer end
-
-                writeController->setServerMode(true);
-                bool exampleControllerServerMode = writeController->getServerMode();
-
-                //#declaremanager begin
-
-                XdmfDSMManager * exampleManager;
-
-                //#declaremanager end
-
-                //#getServerManagerwriter begin
-
-                exampleManager = exampleWriter->getServerManager();
-
-                //#getServerManagerwriter end
-
-                //#setManagerwriter begin
-
-                exampleWriter->setManager(exampleManager);
-
-                //#setManagerwriter end
-
-/*
-                //#getServerManagercontroller begin
-
-                exampleManager = exampleController->getServerManager();
-
-                //#getServerManagercontroller end
-
-                //#setManagercontroller begin
-
-                exampleController->setManager(exampleManager);
-
-                //#setManagercontroller end
-*/
-
-                //#GetUpdatePiece begin
-
-                int intraId = exampleManager->GetUpdatePiece();
-
-                //#GetUpdatePiece end
-
-                //#GetUpdateNumPieces begin
-
-                int intraSize = exampleManager->GetUpdateNumPieces();
-
-                //#getUpdateNumPieces end
-
-                //#GetMpiComm begin
-
-                MPI_Comm exampleManagerComm = exampleManager->GetMpiComm();
-
-                //#GetMpiComm end
-
-                //#SetMpiComm begin
-
-                exampleManager->SetMpiComm(exampleManagerComm);
-
-                //#SetMpiComm end
-
-                //#GetLocalBufferSizeMBytes begin
-
-                int exampleBufferSize = exampleManager->GetLocalBufferSizeMBytes();
-
-                //#GetLocalBufferSizeMBytes end
-
-                //#SetLocalBufferSizeMBytes begin
-
-                exampleManager->SetLocalBufferSizeMBytes(exampleBufferSize);
-
-                //#SetLocalBufferSizeMBytes end
-
-                //#GetIsServer begin
-
-                bool exampleIsServer = exampleManager->GetIsServer();
-
-                //#GetIsServer end
-
-                //#SetIsServer begin
-
-                exampleManager->SetIsServer(exampleIsServer);
-
-                //#SetIsServer end
-
-                //#GetDsmType begin
-
-                int exampleType = exampleManager->GetDsmType();
-
-                //#GetDsmType end
-
-                //#SetDsmType begin
-
-                exampleManager->SetDsmType(XDMF_DSM_TYPE_UNIFORM);
-
-                //#SetDsmType end
-
-                //#GetBlockLength begin
-
-                long exampleBlockLength = exampleManager->GetBlockLength();
-
-                //#GetBlockLength end
-
-                //#SetBlockLength begin
-
-                exampleManager->SetBlockLength(exampleBlockLength);
-
-                //#SetBlockLength end
-
-                //#GetInterCommType begin
-
-                int exampleCommType = exampleManager->GetInterCommType();
-
-                //#GetInterCommType end
-
-                //#SetInterCommType begin
-
-                exampleManager->SetInterCommType(XDMF_DSM_COMM_MPI);
-
-                //#SetInterCommType end
-
-                //#GetIsConnected begin
-
-                bool exampleManagerConnectionStatus = exampleManager->GetIsConnected();
-
-                //#GetIsConnected end
-
-        /*
-                //#Create begin
-
-                exampleManager->Create(size - numServerCores, size - 1);
-
-                //#Create end
-
-                //#Destroy begin
-
-                exampleManager->Destroy();
-
-                //#Destroy end
-        */
-
                 //#declarebuffer begin
 
                 XdmfDSMBuffer * exampleBuffer;
@@ -329,6 +215,43 @@ int main(int argc, char *argv[])
                 exampleBuffer = exampleWriter->getServerBuffer();
 
                 //#getServerBufferwriter end
+
+                //#initwriterwithbuffer end
+
+                writeController->setServerMode(true);
+                bool exampleControllerServerMode = writeController->getServerMode();
+
+                //#GetLocalBufferSizeMBytes begin
+
+                int exampleBufferSize = exampleBuffer->GetLocalBufferSizeMBytes();
+
+                //#GetLocalBufferSizeMBytes end
+
+                //#SetLocalBufferSizeMBytes begin
+
+                exampleBuffer->SetLocalBufferSizeMBytes(exampleBufferSize);
+
+                //#SetLocalBufferSizeMBytes end
+
+                //#GetInterCommType begin
+
+                int exampleCommType = exampleBuffer->GetInterCommType();
+
+                //#GetInterCommType end
+
+                //#SetInterCommType begin
+
+                exampleBuffer->SetInterCommType(XDMF_DSM_COMM_MPI);
+
+                //#SetInterCommType end
+
+        /*
+                //#Create begin
+
+                exampleBuffer->Create(comm, size - numServerCores, size - 1);
+
+                //#Create end
+        */
 
                 //#setBufferwriter begin
 
@@ -349,18 +272,6 @@ int main(int argc, char *argv[])
 
                 //#setBuffercontroller end
 */
-
-                //#GetDsmBuffer begin
-
-                exampleBuffer = exampleManager->GetDsmBuffer();
-
-                //#GetDsmBuffer end
-
-                //#SetDsmBuffer begin
-
-                exampleManager->SetDsmBuffer(exampleBuffer);
-
-                //#SetDsmBuffer end
 
                 //#GetIsConnectedbuffer begin
 
@@ -442,6 +353,12 @@ int main(int argc, char *argv[])
 
                 //#GetLength end
 
+                //#UpdateLength begin
+
+                exampleBuffer->UpdateLength(exampleBufferLength);
+
+                //#UpdateLength end
+
                 //#GetTotalLength begin
 
                 long exampleTotalBufferLength = exampleBuffer->GetTotalLength();
@@ -487,7 +404,7 @@ int main(int argc, char *argv[])
                         else
                         {
                                 std::cout << "IntraComm" << std::endl;
-                        }                       
+                        }
                         int length;
                         int address;
                         int opcode;
@@ -596,11 +513,68 @@ int main(int argc, char *argv[])
 
                 //#PutGet end
 
+                //#PutGetPaged begin
+
+                int pagedData = 5;
+                // Request pages to write to
+                std::vector<unsigned int> storedPages;
+                unsigned int numPages = 0;
+                unsigned int startaddress = 0;
+                unsigned int endaddress = 0;
+                exampleBuffer->RequestPages("pagedDSM",
+                                            sizeof(int),
+                                            std::vector<unsigned int> storedPages,
+                                            numPages,
+                                            startaddress,
+                                            endaddress);
+
+                // Write to pages requested
+                exampleBuffer->Put(&(storedPages[0]), numPages, 0, sizeof(int), *pagedData);
+
+                // Read from pages requested
+                exampleBuffer->Get(&(storedPages[0]), numPages, 0, sizeof(int), *pagedData);
+
+                //#PutGetPaged end
+
+                //#PageInfo begin
+
+                std::vector<unsigned int> setPages;
+                setPages.push_back(1);
+                unsigned int numSetPages = 1;
+                unsigned int setStart = 0;
+                unsigned int setEnd = exampleBuffer->GetBlockSize();
+
+                exampleBuffer->RequestFileDescription("pagedFile",
+                                                      setPages,
+                                                      numSetPages,
+                                                      setStart,
+                                                      setEnd);
+
+                exampleBuffer->RegisterFile("pagedFile",
+                                            setPages,
+                                            numSetPages,
+                                            setStart,
+                                            setEnd);
+
+                //#PageInfo end
+
+                //#PageToId begin
+
+                int coreForPage = exampleBuffer->PageToId(storedPages[0]);
+
+                //#PageToId end
+
+                //#PageToAddress begin
+
+                int addressForPage = exampleBuffer->PageToAddress(storedPages[0]);
+
+                //#PageToAddress end
+
                 //#GetComm begin
 
                 XdmfDSMCommMPI * exampleDSMComm = exampleBuffer->GetComm();
 
-                //#GetComm end 
+                //#GetComm end
 
                 //#SetComm begin
 
@@ -656,6 +630,63 @@ int main(int argc, char *argv[])
 
                 //#DupComm end
 
+                //#DSMSendRecv start
+
+                int dsmTransferValue = 0;
+
+                if (id == 0)
+                {
+                  dsmTransferValue = 1;
+                  exampleDSMComm->Send(&dsmTransferValue,
+                                       sizeof(int),
+                                       1,
+                                       XDMF_DSM_INTRA_COMM,
+                                       XDMF_DSM_DEFAULT_TAG);
+                }
+                else if (id == 1)
+                {
+                  int * probedComm;
+                  exampleDSMComm->Probe(probedComm);
+                  exampleDSMComm->Receive(&dsmTransferValue,
+                                          sizeof(int),
+                                          0,
+                                          XDMF_DSM_INTRA_COMM,
+                                          *probedComm);
+                }
+
+                //#DSMSendRecv end
+
+                //#DSMBarrier begin
+
+                exampleDSMComm->Barrier(XDMF_DSM_INTRA_COMM);
+
+                //#DSMBarrier end
+
+                //#DSMBroadcast begin
+
+                int dsmBcastValue = 10;
+
+                exampleDSMComm->Broadcast(&dsmBcastValue,
+                                          sizeof(int),
+                                          0,
+                                          XDMF_DSM_INTRA_COMM);
+
+                //#DSMBroadcast end
+
+                //#DSMAllGather begin
+
+                int dsmGatherSend = exampleDSMComm->GetInterId();
+
+                int * dsmGatherRecv = new int[exampleDSMComm->GetIntraSize()]();
+
+                exampleDSMComm->AllGather(&dsmGatherSend,
+                                          sizeof(int),
+                                          dsmGatherRecv,
+                                          sizeof(int),
+                                          XDMF_DSM_INTRA_COMM);
+
+                //#DSMAllGather end
+
         /*
                 bool connectingGroup;
                 char * portString;
@@ -678,7 +709,7 @@ int main(int argc, char *argv[])
                         // When done with connection;
                         exampleDSMComm->ClosePort();
                 }
-        
+
                 if (connectingGroup)
                 {
                         // Recieve string from Master group
@@ -693,10 +724,10 @@ int main(int argc, char *argv[])
                 {
                         // Recieve string from Master group
                         exampleDSMComm->SetDsmPortName(portString);
-                        exampleManager->Connect();
+                        exampleBuffer->Connect();
 
                         // When done with connection
-                        exampleManager->Disconnect();
+                        exampleBuffer->Disconnect();
                 }
 
         */
@@ -749,7 +780,7 @@ int main(int argc, char *argv[])
                         }
                 }
                 testArray->accept(exampleWriter);
-        
+
                 std::vector<unsigned int> readStartVector;
                 readStartVector.push_back(4*(size - id - 1 - numServersCores));
                 std::vector<unsigned int> readStrideVector;
@@ -783,7 +814,7 @@ int main(int argc, char *argv[])
 
                 std::cout << "testing read" << std::endl;
                 readArray->read();
-        
+
 
                 for (unsigned int i = 0; i<size; ++i)
                 {
@@ -913,9 +944,6 @@ int main(int argc, char *argv[])
         MPI_Barrier(comm);
 
         //#finalizeMPI begin
-
-        //the dsmManager must be deleted or else there will be a segfault
-        exampleWriter->deleteManager();
 
         MPI_Finalize();
 

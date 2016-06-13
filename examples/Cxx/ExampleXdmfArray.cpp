@@ -1,6 +1,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfFunction.hpp"
+#include "XdmfHDF5Writer.hpp"
 #include <vector>
 #include <map>
 
@@ -303,6 +304,27 @@ int main(int, char **)
         shared_ptr<const XdmfHeavyDataController> exampleControllerConst = exampleArray->getHeavyDataController();
 
         //#getHeavyDataControllerconst end
+
+        //#setHeavyDataControllerVector begin
+
+        shared_ptr<XdmfArray> sourceArray = XdmfArray::New();
+
+        sourceArray->pushBack((int)5);
+
+        shared_ptr<XdmfHDF5Writer> heavywriter = XdmfHDF5Writer::New("heavyfile.h5");
+
+        sourceArray->accept(heavywriter);
+
+        std::vector<shared_ptr<XdmfHeavyDataController> > transferVector;
+
+        for (unsigned int i = 0; i < sourceArray->getNumberHeavyDataControllers(); ++i)
+        {
+          transferVector.push_back(sourceArray->getHeavyDataController(i));
+        }
+
+        exampleArray->setHeavyDataController(transferVector);
+
+        //#setHeavyDataControllerVector end
 
         //#getValueindex begin
 

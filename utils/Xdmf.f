@@ -10,6 +10,16 @@
         integer xdmfaddcoordinate
         integer xdmfaddset
         integer xdmfgetmaxopenedfiles
+        integer xdmfaddfunctionasattribute
+        integer xdmfsetfunctionasgeometry
+        integer xdmfsetfunctionastopology
+        integer xdmfaddfunctionascoordinate
+        integer xdmfaddfunctionasset
+        integer xdmfaddsubsetasattribute
+        integer xdmfsetsubsetasgeometry
+        integer xdmfsetsubsetastopology
+        integer xdmfaddsubsetascoordinate
+        integer xdmfaddsubsetasset
 
 ! Array Type
         integer XDMF_ARRAY_TYPE_INT8
@@ -41,6 +51,8 @@
 ! Geometry Type
         integer XDMF_GEOMETRY_TYPE_XYZ
         integer XDMF_GEOMETRY_TYPE_XY
+        integer XDMF_GEOMETRY_TYPE_POLAR
+        integer XDMF_GEOMETRY_TYPE_SPHERICAL
 
 ! Grid Collection Type
         integer XDMF_GRID_COLLECTION_TYPE_SPATIAL
@@ -89,6 +101,11 @@
         integer XDMF_GRID_TYPE_REGULAR
         integer XDMF_GRID_TYPE_UNSTRUCTURED
 
+! Binary Endian
+        integer XDMF_BINARY_ENDIAN_NATIVE
+        integer XDMF_BINARY_ENDIAN_LITTLE
+        integer XDMF_BINARY_ENDIAN_BIG
+
 !------------------------------------------------------
 
         parameter (XDMF_ARRAY_TYPE_INT8    = 0)
@@ -115,8 +132,10 @@
         parameter (XDMF_ATTRIBUTE_TYPE_GLOBALID = 205)
         parameter (XDMF_ATTRIBUTE_TYPE_NOTYPE   = 206)
 
-        parameter (XDMF_GEOMETRY_TYPE_XYZ  = 301)
-        parameter (XDMF_GEOMETRY_TYPE_XY   = 302)
+        parameter (XDMF_GEOMETRY_TYPE_XYZ       = 301)
+        parameter (XDMF_GEOMETRY_TYPE_XY        = 302)
+        parameter (XDMF_GEOMETRY_TYPE_POLAR     = 303)
+        parameter (XDMF_GEOMETRY_TYPE_SPHERICAL = 304)
 
         parameter (XDMF_GRID_COLLECTION_TYPE_SPATIAL  = 400)
         parameter (XDMF_GRID_COLLECTION_TYPE_TEMPORAL = 401)
@@ -160,3 +179,7 @@
         parameter (XDMF_GRID_TYPE_RECTILINEAR   = 702)
         parameter (XDMF_GRID_TYPE_REGULAR       = 703)
         parameter (XDMF_GRID_TYPE_UNSTRUCTURED  = 704)
+
+        parameter (XDMF_BINARY_ENDIAN_NATIVE = 801)
+        parameter (XDMF_BINARY_ENDIAN_LITTLE = 802)
+        parameter (XDMF_BINARY_ENDIAN_BIG    = 803)

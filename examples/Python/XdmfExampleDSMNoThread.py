@@ -59,6 +59,14 @@ if __name__ == "__main__":
         #//initwritergenerate end
 
         '''
+        #//initwriterpagedgenerate begin
+
+        exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, dsmSize/numServersCores, 1024, 1.0, size-numServersCores, size-1)
+
+        #//initwriterpagedgenerate end
+        '''
+
+        '''
         #//initcontrollergenerate begin
 
         exampleController = XdmfHDF5ControllerDSM.New(
@@ -77,7 +85,27 @@ if __name__ == "__main__":
         #//initcontrollergenerate end
         '''
 
-        
+        '''
+        #//initcontrollerpagedgenerate begin
+
+
+        exampleController = XdmfHDF5ControllerDSM.New(
+                newPath,
+                newSetPath,
+                XdmfArrayType.Int32(),
+                writeStartVector,
+                writeStrideVector,
+                writeCountVector,
+                writeDataSizeVector,
+                comm,
+                dsmSize/numServersCores,
+                1024,
+                1.0,
+                size-numServersCores,
+                size-1)
+
+        #//initcontrollerpagedgenerate end
+        '''
 
         # Split out sub-comm for the worker cores
         # Server cores will not progress to this point until after the servers are done running
@@ -163,141 +191,43 @@ if __name__ == "__main__":
                 writeController.setServerMode(True)
                 exampleControllerServerMode = writeController.getServerMode()
 
-                #//getServerManagerwriter begin
-
-                exampleManager = exampleWriter.getServerManager()
-
-                #//getServerManagerwriter end
-
-                #//setServerManagerwriter begin
-
-                exampleWriter.setManager(exampleManager)
-
-                #//setServerManagerwriter end
-                
-                '''
-                #//getServerManagercontroller begin
-
-                exampleManager = exampleController.getServerManager()
-
-                #//getServerManagercontroller end
-
-                #//setServerManagercontroller begin
-
-                exampleController.setManager(exampleManager)
-
-                #//setServerManagercontroller end
-                '''
-
-                #//GetUpdatePiece begin
-
-                intraId = exampleManager.GetUpdatePiece()
-
-                #//GetUpdatePiece end
-
-                #//GetUpdateNumPieces begin
-
-                intraSize = exampleManager.GetUpdateNumPieces()
-
-                #//GetUpdateNumPieces end
-
-                #//GetMpiComm begin
-
-                exampleManagerComm = exampleManager.GetMpiComm()
-
-                #//GetMpiComm end
-
-                #//SetMpiComm begin
-
-                exampleManager.SetMpiComm(exampleManagerComm)
-
-                #//SetMpiComm end
-
-                #//GetlocalBufferSizeMBytes begin
-
-                exampleBufferSize = exampleManager.GetLocalBufferSizeMBytes()
-
-                #//GetLocalBufferSizeMBytes end
-
-                #//SetLocalBufferSizeMBytes begin
-
-                exampleManager.SetLocalBufferSizeMBytes(exampleBufferSize)
-
-                #//SetLocalBufferSizeMBytes end
-
-                #//GetIsServer begin
-
-                exampleIsServer = exampleManager.GetIsServer()
-
-                #//GetIsServer end
-
-                #//SetIsServer begin
-
-                exampleManager.SetIsServer(exampleIsServer)
-
-                #//SetIsServer end
-
-                #//GetDsmType begin
-
-                exampleType = exampleManager.GetDsmType()
-
-                #//GetDsmType end
-
-                #//SetDsmType begin
-
-                exampleManager.SetDsmType(XDMF_DSM_TYPE_UNIFORM)
-
-                #//SetDsmType end
-
-                #//GetBlockLength begin
-
-                exampleBlockLength = exampleManager.GetBlockLength()
-
-                #//GetBlockLength end
-
-                #//SetBlockLength begin
-
-                exampleManager.SetBlockLength(exampleBlockLength)
-
-                #//SetBlockLength end
-
-                #//GetInterCommType begin
-
-                exampleCommType = exampleManager.GetInterCommType()
-
-                #//GetInterCommType end
-
-                #//SetinterCommType begin
-
-                exampleManager.SetInterCommType(XDMF_DSM_COMM_MPI)
-
-                #//SetInterCommType end
-
-                #//GetIsConnected begin
-
-                exampleManagerConnectionStatus = exampleManager.GetIsConnected()
-
-                #//GetIsConnected end
-
-                '''
-                #//Create begin
-
-                exampleManager.Create(size - numServerCores, size - 1)
-
-                #//Create end
-
-                #//Destroy begin
-
-                exampleManager.Destroy()
-
-                #//Destroy end
-                '''
-
                 #//getServerBufferwriter begin
 
                 exampleBuffer = exampleWriter.getServerBuffer()
 
                 #//getServerBufferwriter end
+
+                #//GetlocalBufferSizeMBytes begin
+
+                exampleBufferSize = exampleBuffer.GetLocalBufferSizeMBytes()
+
+                #//GetLocalBufferSizeMBytes end
+
+                #//SetLocalBufferSizeMBytes begin
+
+                exampleBuffer.SetLocalBufferSizeMBytes(exampleBufferSize)
+
+                #//SetLocalBufferSizeMBytes end
+
+                #//GetInterCommType begin
+
+                exampleCommType = exampleBuffer.GetInterCommType()
+
+                #//GetInterCommType end
+
+                #//SetinterCommType begin
+
+                exampleBuffer.SetInterCommType(XDMF_DSM_COMM_MPI)
+
+                #//SetInterCommType end
+
+                '''
+                #//Create begin
+
+                exampleBuffer.Create(size - numServerCores, size - 1)
+
+                #//Create end
+                '''
 
                 #//setBufferwriter begin
 
@@ -318,18 +248,6 @@ if __name__ == "__main__":
 
                 #//setBuffercontroller end
                 '''
-
-                #//GetDsmBuffer begin
-
-                exampleBuffer = exampleManager.GetDsmBuffer()
-
-                #//GetDsmBuffer end
-
-                #//SetDsmBuffer begin
-
-                exampleManager.SetDsmBuffer(exampleBuffer)
-
-                #//SetDsmBuffer end
 
                 #//GetIsConnectedbuffer begin
 
@@ -402,6 +320,12 @@ if __name__ == "__main__":
                 exampleBufferLength = exampleBuffer.GetLength()
 
                 #//GetLength end
+
+                #//UpdateLength begin
+
+                exampleBuffer.UpdateLength(exampleBufferLength)
+
+                #//UpdateLength end
 
                 #//GetTotalLength begin
 
@@ -564,6 +488,11 @@ if __name__ == "__main__":
 
                 #//DupComm end
 
+                #//DSMBarrier begin
+
+                exampleDSMComm.Barrier(XDMF_DSM_INTRA_COMM)
+
+                #//DSMBarrier end
 
 
                 print type(exampleDSMComm.GetDsmPortName())

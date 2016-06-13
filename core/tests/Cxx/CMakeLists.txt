@@ -48,7 +48,9 @@ CLEAN_TEST_CXX(TestXdmfArrayWriteRead
 CLEAN_TEST_CXX(TestXdmfError)
 CLEAN_TEST_CXX(TestXdmfHDF5Controller)
 CLEAN_TEST_CXX(TestXdmfHDF5Writer
-  hdf5WriterTest.h5)
+  hdf5WriterTest.h5
+  hdf5CompressionTestDeflate.h5
+  hdf5CompressionTestComparison.h5)
 CLEAN_TEST_CXX(TestXdmfHDF5WriterTree
   hdf5WriterTestTree.h5)
 CLEAN_TEST_CXX(TestXdmfInformation)

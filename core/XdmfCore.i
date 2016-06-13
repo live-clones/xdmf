@@ -25,12 +25,363 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfSparseMatrix.hpp>
     #include <XdmfSubset.hpp>
     #include <XdmfSystemUtils.hpp>
+    #include <XdmfTIFFController.hpp>
     #include <XdmfVersion.hpp>
     #include <XdmfVisitor.hpp>
     #include <XdmfWriter.hpp>
 
     #include <ProjectVersion.hpp>
 %}
+
+// Ignoring C Wrappers
+
+// XdmfItem
+
+%ignore XdmfItemAccept(XDMFITEM * item, XDMFVISITOR * visitor, int * status);
+%ignore XdmfItemFree(void * item);
+%ignore XdmfItemGetInformation(XDMFITEM * item, unsigned int index);
+%ignore XdmfItemGetInformationByKey(XDMFITEM * item, char * key);
+%ignore XdmfItemGetNumberInformations(XDMFITEM * item);
+%ignore XdmfItemInsertInformation(XDMFITEM * item, XDMFINFORMATION * information, int passControl);
+%ignore XdmfItemRemoveInformation(XDMFITEM * item, unsigned int index);
+%ignore XdmfItemRemoveInformationByKey(XDMFITEM * item, char * key);
+%ignore XdmfItemGetItemTag(XDMFITEM * item);
+
+// XdmfArray
+
+%ignore XdmfArrayNew();
+%ignore XdmfArrayClear(XDMFARRAY * array);
+%ignore XdmfArrayErase(XDMFARRAY * array, unsigned int index);
+%ignore XdmfArrayGetArrayType(XDMFARRAY * array, int * status);
+%ignore XdmfArrayGetCapacity(XDMFARRAY * array);
+%ignore XdmfArrayGetDimensions(XDMFARRAY * array);
+%ignore XdmfArrayGetDimensionsString(XDMFARRAY * array);
+%ignore XdmfArrayGetHeavyDataController(XDMFARRAY * array, unsigned int index);
+%ignore XdmfArrayGetReadMode(XDMFARRAY * array, int * status);
+%ignore XdmfArrayGetName(XDMFARRAY * array);
+%ignore XdmfArrayGetNumberDimensions(XDMFARRAY * array);
+%ignore XdmfArrayGetNumberHeavyDataControllers(XDMFARRAY * array);
+%ignore XdmfArrayGetSize(XDMFARRAY * array);
+%ignore XdmfArrayGetReference(XDMFARRAY * array);
+%ignore XdmfArrayGetValue(XDMFARRAY * array, unsigned int index, int arrayType, int * status);
+%ignore XdmfArrayGetValues(XDMFARRAY * array, unsigned int startIndex, int arrayType, unsigned int numValues, unsigned int arrayStride, unsigned int valueStride, int * status);
+%ignore XdmfArrayGetValuesInternal(XDMFARRAY * array);
+%ignore XdmfArrayGetValuesString(XDMFARRAY * array);
+%ignore XdmfArrayInitialize(XDMFARRAY * array, int * dims, int numDims, int arrayType, int * status);
+%ignore XdmfArrayInsertDataFromPointer(XDMFARRAY * array, void * values, int arrayType, unsigned int startIndex, unsigned int numVals, unsigned int arrayStride, unsigned int valueStride, int * status);
+%ignore XdmfArrayInsertDataFromXdmfArray(XDMFARRAY * array, XDMFARRAY * valArray, int * arrayStarts, int * valueStarts, int * arrayCounts, int * valueCounts, int * arrayStrides, int * valueStrides, int * status);
+%ignore XdmfArrayInsertHeavyDataController(XDMFARRAY * array, XDMFHEAVYDATACONTROLLER * controller, int passControl);
+%ignore XdmfArrayInsertValue(XDMFARRAY * array, unsigned int index, void * value, int arrayType, int * status);
+%ignore XdmfArrayIsInitialized(XDMFARRAY * array);
+%ignore XdmfArrayPushBack(XDMFARRAY * array, void * value, int arrayType, int * status);
+%ignore XdmfArrayRead(XDMFARRAY * array, int * status);
+%ignore XdmfArrayReadController(XDMFARRAY * array, int * status);
+%ignore XdmfArrayReadReference(XDMFARRAY * array, int * status);
+%ignore XdmfArrayRelease(XDMFARRAY * array);
+%ignore XdmfArrayRemoveHeavyDataController(XDMFARRAY * array, unsigned int index);
+%ignore XdmfArrayReserve(XDMFARRAY * array, int size);
+%ignore XdmfArrayResize(XDMFARRAY * array, int * dims, int numDims, int arrayType, int * status);
+%ignore XdmfArraySetReadMode(XDMFARRAY * array, int readMode, int * status);
+%ignore XdmfArraySetReference(XDMFARRAY * array, XDMFARRAYREFERENCE * reference, int passControl);
+%ignore XdmfArraySetName(XDMFARRAY * array, char * name, int * status);
+%ignore XdmfArraySetValuesInternal(XDMFARRAY * array, void * pointer, unsigned int numValues, int arrayType, int transferOwnership, int * status);
+%ignore XdmfArraySwapWithXdmfArray(XDMFARRAY * array, XDMFARRAY * swapArray);
+%ignore XdmfArraySwapWithArray(XDMFARRAY * array, void ** pointer, int numValues, int arrayType, int * status);
+// XdmfArray inherited from XdmfItem
+%ignore XdmfArrayAccept(XDMFARRAY * item, XDMFVISITOR * visitor, int * status);
+%ignore XdmfArrayFree(void * item);
+%ignore XdmfArrayGetInformation(XDMFARRAY * item, unsigned int index);
+%ignore XdmfArrayGetInformationByKey(XDMFARRAY * item, char * key);
+%ignore XdmfArrayGetNumberInformations(XDMFARRAY * item);
+%ignore XdmfArrayInsertInformation(XDMFARRAY * item, XDMFINFORMATION * information, int passControl);
+%ignore XdmfArrayRemoveInformation(XDMFARRAY * item, unsigned int index);
+%ignore XdmfArrayRemoveInformationByKey(XDMFARRAY * item, char * key);
+%ignore XdmfArrayGetItemTag(XDMFARRAY * item);
+
+// XdmfArrayReference
+
+%ignore XdmfArrayReferenceGetConstructedType(XDMFARRAYREFERENCE * arrayReference);
+%ignore XdmfArrayReferenceRead(XDMFARRAYREFERENCE * arrayReference, int * status);
+%ignore XdmfArrayReferenceSetConstructedProperties(XDMFARRAYREFERENCE * arrayReference, void * referenceobject);
+%ignore XdmfArrayReferenceSetConstructedType(XDMFARRAYREFERENCE * arrayReference, char * newType);
+// XdmfArrayReference inherited from XdmfItem
+%ignore XdmfArrayReferenceAccept(XDMFARRAYREFERENCE * item, XDMFVISITOR * visitor, int * status);
+%ignore XdmfArrayReferenceFree(void * item);
+%ignore XdmfArrayReferenceGetInformation(XDMFARRAYREFERENCE * item, unsigned int index);
+%ignore XdmfArrayReferenceGetInformationByKey(XDMFARRAYREFERENCE * item, char * key);
+%ignore XdmfArrayReferenceGetNumberInformations(XDMFARRAYREFERENCE * item);
+%ignore XdmfArrayReferenceInsertInformation(XDMFARRAYREFERENCE * item, XDMFINFORMATION * information, int passControl);
+%ignore XdmfArrayReferenceRemoveInformation(XDMFARRAYREFERENCE * item, unsigned int index);
+%ignore XdmfArrayReferenceRemoveInformationByKey(XDMFARRAYREFERENCE * item, char * key);
+%ignore XdmfArrayReferenceGetItemTag(XDMFARRAYREFERENCE * item);
+
+// XdmfArrayType
+
+%ignore XdmfArrayTypeInt8();
+%ignore XdmfArrayTypeInt16();
+%ignore XdmfArrayTypeInt32();
+%ignore XdmfArrayTypeInt64();
+%ignore XdmfArrayTypeFloat32();
+%ignore XdmfArrayTypeFloat64();
+%ignore XdmfArrayTypeUInt8();
+%ignore XdmfArrayTypeUInt16();
+%ignore XdmfArrayTypeUInt32();
+%ignore XdmfArrayTypeComparePrecision(int type1, int type2, oint * status);
+%ignore XdmfArrayTypeGetElementSize(int type, int * status);
+%ignore XdmfArrayTypeGetIsSigned(int type, int * status);
+%ignore XdmfArrayTypeGetName(int type, int * status);
+
+// XdmfCoreReader
+
+%ignore XdmfCoreReaderRead(XDMFCOREREADER * reader, char * filePath, int * status);
+
+// XdmfError
+
+%ignore XdmfErrorSetCErrorsAreFatal(int status);
+%ignore XdmfErrorSetLevelLimit(int level, int * status);
+%ignore XdmfErrorSetSuppressionLevel(int level, int * status);
+%ignore XdmfErrorGetCErrorsAreFatal();
+%ignore XdmfErrorGetLevelLimit();
+%ignore XdmfErrorGetSuppressionLevel();
+
+// XdmfFunction
+
+%ignore XdmfFunctionNew();
+%ignore XdmfFunctionNewInit(char * newExpression,  char ** keys, XDMFARRAY ** values, int numVariables);
+%ignore XdmfFunctionAddFunction(char * name, XDMFARRAY *(*functionref)(XDMFARRAY **, unsigned int), int * status);
+%ignore XdmfFunctionAddOperation(char newoperator, XDMFARRAY *(*operationref)(XDMFARRAY *, XDMFARRAY *), int priority, int * status);
+%ignore XdmfFunctionAverage(XDMFARRAY ** values, int numValues);
+%ignore XdmfFunctionChunk(XDMFARRAY * val1, XDMFARRAY * val2, int * status);
+%ignore XdmfFunctionEvaluateExpression(char * expression, char ** keys, XDMFARRAY ** values, int numVariables, int * status);
+%ignore XdmfFunctionEvaluateOperation(XDMFARRAY * val1, XDMFARRAY * val2, char operation, int * status);
+%ignore XdmfFunctionEvaluateFunction(XDMFARRAY ** valueVector, int numValues, char * functionName, int * status);
+%ignore XdmfFunctionGetExpression(XDMFFUNCTION * function);
+%ignore XdmfFunctionGetNumberVariables(XDMFFUNCTION * function);
+%ignore XdmfFunctionGetOperationPriority(char operation);
+%ignore XdmfFunctionGetSupportedOperations();
+%ignore XdmfFunctionGetSupportedFunctions();
+%ignore XdmfFunctionGetNumberSupportedFunctions();
+%ignore XdmfFunctionGetValidDigitChars();
+%ignore XdmfFunctionGetValidVariableChars();
+%ignore XdmfFunctionGetVariable(XDMFFUNCTION * function, char * key);
+%ignore XdmfFunctionGetVariableList(XDMFFUNCTION * function);
+%ignore XdmfFunctionInterlace(XDMFARRAY * val1, XDMFARRAY * val2, int * status);
+%ignore XdmfFunctionInsertVariable(XDMFFUNCTION * function, char * key, XDMFARRAY * value, int passControl);
+%ignore XdmfFunctionRemoveVariable(XDMFFUNCTION * function, char * key);
+%ignore XdmfFunctionSetExpression(XDMFFUNCTION * function, char * newExpression, int * status);
+%ignore XdmfFunctionSum(XDMFARRAY ** values, int numValues);
+// XdmfFunction inherited from XdmfItem
+%ignore XdmfFunctionAccept(XDMFFUNCTION * item, XDMFVISITOR * visitor, int * status);
+%ignore XdmfFunctionFree(void * item);
+%ignore XdmfFunctionGetInformation(XDMFFUNCTION * item, unsigned int index);
+%ignore XdmfFunctionGetInformationByKey(XDMFFUNCTION * item, char * key);
+%ignore XdmfFunctionGetNumberInformations(XDMFFUNCTION * item);
+%ignore XdmfFunctionInsertInformation(XDMFFUNCTION * item, XDMFINFORMATION * information, int passControl);
+%ignore XdmfFunctionRemoveInformation(XDMFFUNCTION * item, unsigned int index);
+%ignore XdmfFunctionRemoveInformationByKey(XDMFFUNCTION * item, char * key);
+%ignore XdmfFunctionGetItemTag(XDMFFUNCTION * item);
+// XdmfFunction inherited from XdmfArrayReference
+%ignore XdmfFunctionGetConstructedType(XDMFFUNCTION * arrayReference);
+%ignore XdmfFunctionRead(XDMFFUNCTION * arrayReference, int * status);
+%ignore XdmfFunctionSetConstructedProperties(XDMFFUNCTION * arrayReference, void * referenceobject);
+%ignore XdmfFunctionSetConstructedType(XDMFFUNCTION * arrayReference, char * newType);
+
+// XdmfHDF5Controller
+
+%ignore XdmfHDF5ControllerNew(char * hdf5FilePath, char * dataSetPath, int type, unsigned int * start, unsigned int * stride, unsigned int * dimensions, unsigned int * dataspaceDimensions, unsigned int numDims, int * status);
+%ignore XdmfHDF5ControllerGetDataSetPath(XDMFHDF5CONTROLLER * controller);
+// XdmfHDF5Controller inherited from XdmfHeavyDataController
+%ignore XdmfHDF5ControllerFree(XDMFHDF5CONTROLLER * item);
+%ignore XdmfHDF5ControllerGetDataspaceDimensions(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerGetDimensions(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerGetFilePath(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerGetName(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerGetNumberDimensions(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerGetSize(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerGetStart(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerGetStride(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerSetArrayOffset(XDMFHDF5CONTROLLER * controller, unsigned int newOffset);
+%ignore XdmfHDF5ControllerGetArrayOffset(XDMFHDF5CONTROLLER * controller);
+%ignore XdmfHDF5ControllerGetType(XDMFHDF5CONTROLLER * controller, int * status);
+%ignore XdmfHDF5ControllerRead(XDMFHDF5CONTROLLER * controller, void * array, int * status);
+
+// XdmfHDF5Writer
+
+%ignore XdmfHDF5WriterNew(char * fileName, int clobberFile);
+%ignore XdmfHDF5WriterCloseFile(XDMFHDF5WRITER * writer, int * status);
+%ignore XdmfHDF5WriterGetChunkSize(XDMFHDF5WRITER * writer, int * status);
+%ignore XdmfHDF5WriterOpenFile(XDMFHDF5WRITER * writer, int * status);
+%ignore XdmfHDF5WriterSetChunkSize(XDMFHDF5WRITER * writer, unsigned int chunkSize, int * status);
+// XdmfHDF5Writer inherited from XdmfHeavyDataWriter
+%ignore XdmfHDF5WriterFree(XDMFHDF5WRITER * item);
+%ignore XdmfHDF5WriterGetAllowSetSplitting(XDMFHDF5WRITER * writer);
+%ignore XdmfHDF5WriterGetFileIndex(XDMFHDF5WRITER * writer);
+%ignore XdmfHDF5WriterGetFileOverhead(XDMFHDF5WRITER * writer);
+%ignore XdmfHDF5WriterGetFilePath(XDMFHDF5WRITER * writer);
+%ignore XdmfHDF5WriterGetFileSizeLimit(XDMFHDF5WRITER * writer);
+%ignore XdmfHDF5WriterGetMode(XDMFHDF5WRITER * writer);
+%ignore XdmfHDF5WriterGetReleaseData(XDMFHDF5WRITER * writer);
+%ignore XdmfHDF5WriterSetAllowSetSplitting(XDMFHDF5WRITER * writer, int newAllow);
+%ignore XdmfHDF5WriterSetFileIndex(XDMFHDF5WRITER * writer, int newIndex);
+%ignore XdmfHDF5WriterSetFileSizeLimit(XDMFHDF5WRITER * writer, int newSize);
+%ignore XdmfHDF5WriterSetMode(XDMFHDF5WRITER * writer, int mode, int * status);
+%ignore XdmfHDF5WriterSetReleaseData(XDMFHDF5WRITER * writer, int releaseData);
+
+// XdmfHeavyDataController
+
+%ignore XdmfHeavyDataControllerFree(XDMFHEAVYDATACONTROLLER * item);
+%ignore XdmfHeavyDataControllerGetDataspaceDimensions(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerGetDimensions(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerGetFilePath(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerGetName(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerGetNumberDimensions(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerGetSize(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerGetStart(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerGetStride(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerSetArrayOffset(XDMFHEAVYDATACONTROLLER * controller, unsigned int newOffset);
+%ignore XdmfHeavyDataControllerGetArrayOffset(XDMFHEAVYDATACONTROLLER * controller);
+%ignore XdmfHeavyDataControllerGetType(XDMFHEAVYDATACONTROLLER * controller, int * status);
+%ignore XdmfHeavyDataControllerRead(XDMFHEAVYDATACONTROLLER * controller, void * array, int * status);
+
+// XdmfHeavyDataWriter
+
+%ignore XdmfHeavyDataWriterFree(XDMFHEAVYDATAWRITER * item);
+%ignore XdmfHeavyDataWriterGetAllowSetSplitting(XDMFHEAVYDATAWRITER * writer);
+%ignore XdmfHeavyDataWriterGetFileIndex(XDMFHEAVYDATAWRITER * writer);
+%ignore XdmfHeavyDataWriterGetFileOverhead(XDMFHEAVYDATAWRITER * writer);
+%ignore XdmfHeavyDataWriterGetFilePath(XDMFHEAVYDATAWRITER * writer);
+%ignore XdmfHeavyDataWriterGetFileSizeLimit(XDMFHEAVYDATAWRITER * writer);
+%ignore XdmfHeavyDataWriterGetMode(XDMFHEAVYDATAWRITER * writer);
+%ignore XdmfHeavyDataWriterGetReleaseData(XDMFHEAVYDATAWRITER * writer);
+%ignore XdmfHeavyDataWriterSetAllowSetSplitting(XDMFHEAVYDATAWRITER * writer, int newAllow);
+%ignore XdmfHeavyDataWriterSetFileIndex(XDMFHEAVYDATAWRITER * writer, int newIndex);
+%ignore XdmfHeavyDataWriterSetFileSizeLimit(XDMFHEAVYDATAWRITER * writer, int newSize);
+%ignore XdmfHeavyDataWriterSetMode(XDMFHEAVYDATAWRITER * writer, int mode, int * status);
+%ignore XdmfHeavyDataWriterSetReleaseData(XDMFHEAVYDATAWRITER * writer, int releaseData);
+
+// XdmfInformation
+
+%ignore XdmfInformationNew(char * key, char * value);
+%ignore XdmfInformationGetArray(XDMFINFORMATION * information, unsigned int index);
+%ignore XdmfInformationGetArrayByName(XDMFINFORMATION * information, char * name);
+%ignore XdmfInformationGetKey(XDMFINFORMATION * information);
+%ignore XdmfInformationGetNumberArrays(XDMFINFORMATION * information);
+%ignore XdmfInformationGetValue(XDMFINFORMATION * information);
+%ignore XdmfInformationInsertArray(XDMFINFORMATION * information, XDMFARRAY * array, int transferOwnership);
+%ignore XdmfInformationRemoveArray(XDMFINFORMATION * information, unsigned int index);
+%ignore XdmfInformationRemoveArrayByName(XDMFINFORMATION * information, char * name);
+%ignore XdmfInformationSetKey(XDMFINFORMATION * information, char * key, int * status);
+%ignore XdmfInformationSetValue(XDMFINFORMATION * information, char * value, int * status);
+// XdmfInformation inherited from XdmfItem
+%ignore XdmfInformationAccept(XDMFINFORMATION * item, XDMFVISITOR * visitor, int * status);
+%ignore XdmfInformationFree(void * item);
+%ignore XdmfInformationGetInformation(XDMFINFORMATION * item, unsigned int index);
+%ignore XdmfInformationGetInformationByKey(XDMFINFORMATION * item, char * key);
+%ignore XdmfInformationGetNumberInformations(XDMFINFORMATION * item);
+%ignore XdmfInformationInsertInformation(XDMFINFORMATION * item, XDMFINFORMATION * information, int passControl);
+%ignore XdmfInformationRemoveInformation(XDMFINFORMATION * item, unsigned int index);
+%ignore XdmfInformationRemoveInformationByKey(XDMFINFORMATION * item, char * key);
+%ignore XdmfInformationGetItemTag(XDMFINFORMATION * item);
+
+// XdmfSparseMatrix
+
+%ignore XdmfSparseMatrixNew(unsigned int numberRows, unsigned int numberColumns);
+%ignore XdmfSparseMatrixGetColumnIndex(XDMFSPARSEMATRIX * matrix, int * status);
+%ignore XdmfSparseMatrixGetName(XDMFSPARSEMATRIX * matrix);
+%ignore XdmfSparseMatrixGetNumberColumns(XDMFSPARSEMATRIX * matrix);
+%ignore XdmfSparseMatrixGetNumberRows(XDMFSPARSEMATRIX * matrix);
+%ignore XdmfSparseMatrixGetRowPointer(XDMFSPARSEMATRIX * matrix, int * status);
+%ignore XdmfSparseMatrixGetValues(XDMFSPARSEMATRIX * matrix, int * status);
+%ignore XdmfSparseMatrixGetValuesString(XDMFSPARSEMATRIX * matrix, int * status);
+%ignore XdmfSparseMatrixSetColumnIndex(XDMFSPARSEMATRIX * matrix,
+                                       XDMFARRAY * columnIndex,
+                                       int passControl,
+                                       int * status);
+%ignore XdmfSparseMatrixSetName(XDMFSPARSEMATRIX * matrix, char * name, int * status);
+%ignore XdmfSparseMatrixSetRowPointer(XDMFSPARSEMATRIX * matrix,
+                                      XDMFARRAY * rowPointer,
+                                      int passControl,
+                                      int * status);
+%ignore XdmfSparseMatrixSetValues(XDMFSPARSEMATRIX * matrix,
+                                  XDMFARRAY * values,
+                                  int passControl,
+                                  int * status);
+// XdmfSparseMatrix inherited from XdmfItem
+%ignore XdmfSparseMatrixAccept(XDMFSPARSEMATRIX * item, XDMFVISITOR * visitor, int * status);
+%ignore XdmfSparseMatrixFree(void * item);
+%ignore XdmfSparseMatrixGetInformation(XDMFSPARSEMATRIX * item, unsigned int index);
+%ignore XdmfSparseMatrixGetInformationByKey(XDMFSPARSEMATRIX * item, char * key);
+%ignore XdmfSparseMatrixGetNumberInformations(XDMFSPARSEMATRIX * item);
+%ignore XdmfSparseMatrixInsertInformation(XDMFSPARSEMATRIX * item, XDMFINFORMATION * information, int passControl);
+%ignore XdmfSparseMatrixRemoveInformation(XDMFSPARSEMATRIX * item, unsigned int index);
+%ignore XdmfSparseMatrixRemoveInformationByKey(XDMFSPARSEMATRIX * item, char * key);
+%ignore XdmfSparseMatrixGetItemTag(XDMFSPARSEMATRIX * item);
+
+// XdmfSubset
+
+%ignore XdmfSubsetNew(void * referenceArray,
+                      unsigned int * start,
+                      unsigned int * stride,
+                      unsigned int * dimensions,
+                      unsigned int numDims,
+                      int passControl,
+                      int * status);
+%ignore XdmfSubsetGetDimensions(XDMFSUBSET * subset);
+%ignore XdmfSubsetGetNumberDimensions(XDMFSUBSET * subset);
+%ignore XdmfSubsetGetReferenceArray(XDMFSUBSET * subset);
+%ignore XdmfSubsetGetSize(XDMFSUBSET * subset);
+%ignore XdmfSubsetGetStart(XDMFSUBSET * subset);
+%ignore XdmfSubsetGetStride(XDMFSUBSET * subset);
+%ignore XdmfSubsetSetDimensions(XDMFSUBSET * subset,
+                                unsigned int * newDimensions,
+                                unsigned int numDims,
+                                int * status);
+%ignore XdmfSubsetSetReferenceArray(XDMFSUBSET * subset,
+                                    XDMFARRAY * referenceArray,
+                                    int passControl);
+%ignore XdmfSubsetSetStart(XDMFSUBSET * subset,
+                           unsigned int * newStarts,
+                           unsigned int numDims,
+                           int * status);
+%ignore XdmfSubsetSetStride(XDMFSUBSET * subset,
+                            unsigned int * newStrides,
+                            unsigned int numDims,
+                            int * status);
+// XdmfSubset inherited from XdmfItem
+%ignore XdmfSubsetAccept(XDMFSUBSET * item, XDMFVISITOR * visitor, int * status);
+%ignore XdmfSubsetFree(void * item);
+%ignore XdmfSubsetGetInformation(XDMFSUBSET * item, unsigned int index);
+%ignore XdmfSubsetGetInformationByKey(XDMFSUBSET * item, char * key);
+%ignore XdmfSubsetGetNumberInformations(XDMFSUBSET * item);
+%ignore XdmfSubsetInsertInformation(XDMFSUBSET * item, XDMFINFORMATION * information, int passControl);
+%ignore XdmfSubsetRemoveInformation(XDMFSUBSET * item, unsigned int index);
+%ignore XdmfSubsetRemoveInformationByKey(XDMFSUBSET * item, char * key);
+%ignore XdmfSubsetGetItemTag(XDMFSUBSET * item);
+// XdmfSubset inherited from XdmfArrayReference
+%ignore XdmfSubsetGetConstructedType(XDMFSUBSET * arrayReference);
+%ignore XdmfSubsetRead(XDMFSUBSET * arrayReference, int * status);
+%ignore XdmfSubsetSetConstructedProperties(XDMFSUBSET * arrayReference, void * referenceobject);
+%ignore XdmfSubsetSetConstructedType(XDMFSUBSET * arrayReference, char * newType);
+
+// XdmfWriter
+
+%ignore XdmfWriterNew(char * fileName);
+%ignore XdmfWriterNewSpecifyHeavyDataWriter(char * fileName, XDMFHEAVYDATAWRITER * heavyDataWriter);
+%ignore XdmfWriterFree(XDMFWRITER * item);
+%ignore XdmfWriterGetFilePath(XDMFWRITER * writer, int * status);
+%ignore XdmfWriterGetHeavyDataWriter(XDMFWRITER * writer, int * status);
+%ignore XdmfWriterGetLightDataLimit(XDMFWRITER * writer, int * status);
+%ignore XdmfWriterGetMode(XDMFWRITER * writer, int * status);
+%ignore XdmfWriterGetWriteXPaths(XDMFWRITER * writer, int * status);
+%ignore XdmfWriterGetXPathParse(XDMFWRITER * writer, int * status);
+%ignore XdmfWriterSetHeavyDataWriter(XDMFWRITER * writer,
+                                     XDMFHEAVYDATAWRITER * heavyDataWriter,
+                                     int transferOwnership,
+                                     int * status);
+%ignore XdmfWriterSetLightDataLimit(XDMFWRITER * writer, unsigned int numValues, int * status);
+%ignore XdmfWriterSetMode(XDMFWRITER * writer, int mode, int * status);
+%ignore XdmfWriterSetWriteXPaths(XDMFWRITER * writer, int writeXPaths, int * status);
+%ignore XdmfWriterSetXPathParse(XDMFWRITER * writer, int xPathParse, int * status);
 
 #ifdef SWIGJAVA
 
@@ -126,6 +477,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 #endif /* SWIGJAVA */
 
 #ifdef SWIGPYTHON
+
+%ignore XdmfArray::insert(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
+%ignore XdmfArray::pushBack(const T & value);
 
 /*This converts XdmfErrors to Python RuntimeErrors*/
 %exception
@@ -245,88 +599,312 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
                     return(___frombuffer(buf, 'uint32'))
                 return None
             else :
-                h5FileName = h5ctl.getFilePath()
-                h5DataSetName = h5ctl.getDataSetPath()
-                if (h5FileName == None) | (h5DataSetName == None) :
-                    return None
-                try :
-                    from h5py import File as ___File
-                    from numpy import array as ___array
-                    f = ___File(h5FileName, 'r')
-                    if h5DataSetName in f.keys() :
-                        return(___array(f[h5DataSetName]))
-                except :
-                    pass
-                return None
+                if  h5ctl.getName() == "HDF":
+                  controller = XdmfHeavyDataController.XdmfHDF5ControllerCast(h5ctl)
+                  h5FileName = controller.getFilePath()
+                  h5DataSetName = controller.getDataSetPath()
+                  if (h5FileName == None) | (h5DataSetName == None) :
+                      return None
+                  try :
+                      from h5py import File as ___File
+                      from numpy import array as ___array
+                      f = ___File(h5FileName, 'r')
+                      if h5DataSetName in f.keys() :
+                          return(___array(f[h5DataSetName]))
+                  except :
+                      pass
+                  return None
+                else:
+                  return None
+
     };
 
-    void insertAsInt8(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void getValues(unsigned int startIndex, PyObject * list, unsigned int numValues = 1, unsigned int arrayStride = 1, unsigned int valuesStride = 1)
+    {
+      Py_ssize_t size = PyList_Size(list);
+      PyObject * placeholderVal;
+      if (valuesStride * numValues > size)
+      {
+        if ($self->XdmfArray::getArrayType() == XdmfArrayType::Int8())
+        {
+          placeholderVal = PyLong_FromLong((char)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Int16())
+        {
+          placeholderVal = PyLong_FromLong((short)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Int32())
+        {
+          placeholderVal = PyLong_FromLong((int)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Int64())
+        {
+          placeholderVal = PyLong_FromLong((long)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Float32())
+        {
+          placeholderVal = PyFloat_FromDouble((float)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Float64())
+        {
+          placeholderVal = PyFloat_FromDouble((double)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt8())
+        {
+          placeholderVal = PyLong_FromUnsignedLong((unsigned char)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt16())
+        {
+          placeholderVal = PyLong_FromUnsignedLong((unsigned short)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt32())
+        {
+          placeholderVal = PyLong_FromUnsignedLong((unsigned int)0);
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::String())
+        {
+          placeholderVal = PyString_FromString("");
+        }
+      }
+      for (unsigned int i = 0; i < numValues; ++i)
+      {
+        unsigned int index = startIndex + (i * arrayStride);
+        unsigned int insertIndex = i * valuesStride;
+        PyObject * insertedVal;
+        if ($self->XdmfArray::getArrayType() == XdmfArrayType::Int8())
+        {
+          insertedVal = PyLong_FromLong($self->XdmfArray::getValue<char>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Int16())
+        {
+          insertedVal = PyLong_FromLong($self->XdmfArray::getValue<short>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Int32())
+        {
+          insertedVal = PyLong_FromLong($self->XdmfArray::getValue<int>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Int64())
+        {
+          insertedVal = PyLong_FromLong($self->XdmfArray::getValue<long>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Float32())
+        {
+          insertedVal = PyFloat_FromDouble($self->XdmfArray::getValue<float>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::Float64())
+        {
+          insertedVal = PyFloat_FromDouble($self->XdmfArray::getValue<double>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt8())
+        {
+          insertedVal = PyLong_FromUnsignedLong($self->XdmfArray::getValue<unsigned char>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt16())
+        {
+          insertedVal = PyLong_FromUnsignedLong($self->XdmfArray::getValue<unsigned short>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt32())
+        {
+          insertedVal = PyLong_FromUnsignedLong($self->XdmfArray::getValue<unsigned int>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::String())
+        {
+          insertedVal = PyString_FromString($self->XdmfArray::getValue<std::string>(index).c_str());
+        }
+        if (insertIndex < size)
+        {
+          PyList_SetItem(list, insertIndex, insertedVal);
+        }
+        else
+        {
+          for (unsigned int padding = size; padding < insertIndex; ++padding)
+          {
+            PyList_Append(list, placeholderVal);
+            ++size;
+          }
+          PyList_Append(list, insertedVal);
+          ++size;
+        }
+      }
+    }
+
+    void insertAsInt8(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, (char)(PyLong_AsLong(PyList_GetItem(list, i))));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (char) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, (char)PyLong_AsLong(PyList_GetItem(list, listStartIndex + (i * listStride))));
+            }
         }
     }
 
-    void insertAsInt16(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsInt16(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, (short)(PyLong_AsLong(PyList_GetItem(list, i))));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (short) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, (short)PyLong_AsLong(PyList_GetItem(list, listStartIndex + (i * listStride))));
+            }
         }
     }
 
-    void insertAsInt32(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsInt32(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, (int)(PyLong_AsLong(PyList_GetItem(list, i))));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (int) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, (int)PyLong_AsLong(PyList_GetItem(list, listStartIndex + (i * listStride))));
+            }
         }
     }
 
-    void insertAsInt64(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsInt64(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, PyLong_AsLong(PyList_GetItem(list, i)));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (long) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, PyLong_AsLong(PyList_GetItem(list, listStartIndex + (i * listStride))));
+            }
         }
     }
 
-    void insertAsFloat32(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsFloat32(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, (float)PyFloat_AsDouble(PyList_GetItem(list, i)));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (float) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, (float)PyFloat_AsDouble(PyList_GetItem(list, listStartIndex + (i * listStride))));
+            }
         }
     }
 
-    void insertAsFloat64(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsFloat64(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, PyFloat_AsDouble(PyList_GetItem(list, i)));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (double) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, PyFloat_AsDouble(PyList_GetItem(list, listStartIndex + (i * listStride))));
+            }
         }
     }
 
-    void insertAsUInt8(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsUInt8(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, (unsigned char)(PyLong_AsUnsignedLong(PyList_GetItem(list, i))));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (unsigned char) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, (unsigned char)(PyLong_AsUnsignedLong(PyList_GetItem(list, listStartIndex + (i * listStride)))));
+            }
         }
     }
 
-    void insertAsUInt16(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsUInt16(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, (unsigned short)(PyLong_AsUnsignedLong(PyList_GetItem(list, i))));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (unsigned short) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, (unsigned short)(PyLong_AsUnsignedLong(PyList_GetItem(list, listStartIndex + (i * listStride)))));
+            }
         }
     }
 
-    void insertAsUInt32(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsUInt32(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert(i+startIndex, (unsigned int)(PyLong_AsUnsignedLong(PyList_GetItem(list, i))));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (unsigned int) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, (unsigned int)(PyLong_AsUnsignedLong(PyList_GetItem(list, listStartIndex + (i * listStride)))));
+            }
         }
     }
 
-    void insertAsString(int startIndex, PyObject * list) {
-        Py_ssize_t size = PyList_Size(list);
+    void insertAsString(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
         for(Py_ssize_t i = 0; i < size; ++i) {
-            $self->insert<std::string>(i+startIndex, PyString_AsString(PyList_GetItem(list, i)));
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert<std::string>(i+startIndex, "");
+            }
+            else {
+              $self->insert<std::string>((i * arrayStride) + startIndex, PyString_AsString(PyList_GetItem(list, listStartIndex + (i * listStride))));
+            }
         }
     }
 
@@ -338,6 +916,191 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
       shared_ptr<XdmfArray> * returnArrayPointer = reinterpret_cast<shared_ptr<XdmfArray> *>(resultPointer);
       shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
       return returnArray;
+    }
+
+    void
+    pushBackAsInt8(const char & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsInt16(const short & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsInt32(const int & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsInt64(const long & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsUInt8(const unsigned char & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsUInt16(const unsigned short & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsUInt32(const unsigned int & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsFloat32(const float & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsFloat64(const double & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsString(const std::string & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    insertValueAsInt8(const unsigned int startIndex, const char * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, valuesPointer, numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsInt8(const unsigned int startIndex, const char value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsInt16(const unsigned int startIndex, const short * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, valuesPointer, numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsInt16(const unsigned int startIndex, const short value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsInt32(const unsigned int startIndex, const int * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, valuesPointer, numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsInt32(const unsigned int startIndex, const int value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsInt64(const unsigned int startIndex, const long * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, valuesPointer, numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsInt64(const unsigned int startIndex, const long value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsUInt8(const unsigned int startIndex, const unsigned char * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, valuesPointer, numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsUInt8(const unsigned int startIndex, const unsigned char value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsUInt16(const unsigned int startIndex, const unsigned short * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, valuesPointer, numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsUInt16(const unsigned int startIndex, const unsigned short value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsUInt32(const unsigned int startIndex, const unsigned int * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, (unsigned int *)(valuesPointer), numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsUInt32(const unsigned int startIndex, const unsigned int value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsFloat32(const unsigned int startIndex, const float * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, (float *)(&valuesPointer), numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsFloat32(const unsigned int startIndex, const float value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsFloat64(const unsigned int startIndex, const double * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, (double *)(valuesPointer), numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsFloat64(const unsigned int startIndex, const double value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsString(const unsigned int startIndex, const char ** const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      std::string * tempPointer = new std::string[numValues]();
+      for (unsigned int i = 0; i < numValues; ++i)
+      {
+        tempPointer[i] = std::string(valuesPointer[i]);
+      }
+      $self->XdmfArray::insert(startIndex, (std::string *)(tempPointer), numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsString(const unsigned int startIndex, const char * value)
+    {
+      $self->XdmfArray::insert(startIndex, std::string(value));
     }
 };
 
@@ -500,6 +1263,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfItemProperty)
 %shared_ptr(XdmfSparseMatrix)
 %shared_ptr(XdmfSubset)
+%shared_ptr(XdmfTIFFController)
 %shared_ptr(XdmfVisitor)
 %shared_ptr(XdmfWriter)
 
@@ -528,6 +1292,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfInformation.hpp
 %include XdmfHDF5Controller.hpp
 %include XdmfHDF5Writer.hpp
+%include XdmfTIFFController.hpp
 %include XdmfWriter.hpp
 
 %include CMake/VersionSuite/ProjectVersion.hpp
@@ -610,5 +1375,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(Float64Vector) std::vector<double>;
 %template(StringVector) std::vector<std::string>;
 %template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;
+%template(HeavyControllerVector) std::vector<boost::shared_ptr<XdmfHeavyDataController> >;
 %template(ArrayMap) std::map<std::string, boost::shared_ptr<XdmfArray> >;
 %template(StringMap) std::map<std::string, std::string>;
+%template(DSMStructreVector) std::vector<std::pair<std::string, unsigned int> >;
+%template(DSMApplicationPair) std::pair<std::string, unsigned int>;

@@ -2,7 +2,7 @@ from Xdmf import *
 from mpi4py.MPI import *
 
 if __name__ == "__main__":
-        #//initMPI begin
+        #//initDSMWriterConnectRequired begin
 
         dsmSize = 64
         comm = COMM_WORLD
@@ -22,6 +22,40 @@ if __name__ == "__main__":
         testBuffer.SetIsServer(False)
         testBuffer.SetComm(testComm)
         testBuffer.SetIsConnected(True)
+
+        exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm);
+
+        exampleWriter.getServerBuffer().GetComm().ReadDsmPortName();
+
+        exampleWriter.getServerBuffer().Connect();
+
+        #//initDSMWriterConnectRequired end
+
+        #//notify begin
+
+        notify = 0
+
+        if size > 1: 
+          if id == 0:
+            notify = exampleWriter.waitOn(newPath, "notify")
+          elif id == size - 1:
+            # The user will want to ensure that the wait command is called first
+            exampleWriter.waitRelease(newPath, "notify", 3)
+
+        #//notify end
+
+        #//buffernotify begin
+
+        notify = 0
+
+        if size > 1:
+          if id == 0:
+            notify = exampleWriter.getServerBuffer().WaitOn(newPath, "notify")
+          elif id == size - 1:
+            # The user will want to ensure that the wait command is called first
+            exampleWriter.getServerBuffer().WaitRelease(newPath, "notify", 3)
+
+        #//buffernotify end
 
         readStartVector = UInt32Vector()
         readStrideVector = UInt32Vector()
@@ -46,13 +80,7 @@ if __name__ == "__main__":
                 readStrideVector,
                 readCountVector,
                 readDataSizeVector,
-                testBuffer);
-
-        readController.getServerBuffer().GetComm().ReadDsmPortName();
-
-        readController.getServerManager().Connect();
-
-        exampleWriter = XdmfHDF5WriterDSM.New(newPath, testBuffer);
+                exampleWriter.getServerBuffer());
 
         writeStartVector = UInt32Vector();
         writeStrideVector = UInt32Vector();

@@ -126,5 +126,26 @@ int main(int, char **)
   assert(XdmfTestCompareFiles::compareFiles("TestXdmfRegularGrid1.xmf",
                                             "TestXdmfRegularGrid2.xmf"));
 
+  // Testing 1d meshes
+
+  shared_ptr<XdmfArray> origin1d = XdmfArray::New();
+  origin1d->pushBack(0);
+
+  shared_ptr<XdmfArray> dim1d = XdmfArray::New();
+  dim1d->pushBack(4);
+
+  shared_ptr<XdmfArray> brick1d = XdmfArray::New();
+  brick1d->pushBack(1);
+
+  shared_ptr<XdmfRegularGrid> grid3 = XdmfRegularGrid::New(origin1d, dim1d, brick1d);
+
+  shared_ptr<XdmfWriter> writer3 =
+    XdmfWriter::New("TestXdmfRegularGrid3.xmf");
+
+  grid3->accept(writer3);
+
+  shared_ptr<XdmfRegularGrid> readgrid =
+    shared_dynamic_cast<XdmfRegularGrid>(reader->read("TestXdmfRegularGrid3.xmf"));
+
   return 0;
 }

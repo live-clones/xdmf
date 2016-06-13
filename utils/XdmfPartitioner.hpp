@@ -24,6 +24,8 @@
 #ifndef XDMFPARTITIONER_HPP_
 #define XDMFPARTITIONER_HPP_
 
+#ifdef __cplusplus
+
 // Forward Declarations
 class XdmfGraph;
 class XdmfGridCollection;
@@ -67,6 +69,7 @@ public:
    * @param set the set to ignore when partitioning.
    */
   void ignore(const shared_ptr<const XdmfSet> set);
+  void ignore(const XdmfSet *);
 
   /**
    * Partitions an XdmfGraph using the metis library. An attribute
@@ -117,17 +120,57 @@ public:
   shared_ptr<XdmfUnstructuredGrid>
   unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartition) const;
 
+  XdmfPartitioner(const XdmfPartitioner & partitioner);
+
 protected:
 
   XdmfPartitioner();
 
 private:
 
-  XdmfPartitioner(const XdmfPartitioner & partitioner);  // Not implemented.
   void operator=(const XdmfPartitioner & partitioner);  // Not implemented.
 
-  std::set<shared_ptr<const XdmfSet> > mIgnoredSets;
+  std::set<const XdmfSet * > mIgnoredSets;
 
 };
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define XDMF_PARTITIONER_SCHEME_DUAL_GRAPH  500
+#define XDMF_PARTITIONER_SCHEME_NODAL_GRAPH 501
+
+// C wrappers go here
+
+struct XDMFPARTITIONER; // Simply as a typedef to ensure correct typing
+typedef struct XDMFPARTITIONER XDMFPARTITIONER;
+
+XDMFUTILS_EXPORT XDMFPARTITIONER * XdmfPartitionerNew();
+
+XDMFUTILS_EXPORT void XdmfPartitionerIgnore(XDMFPARTITIONER * partitioner,
+                                            XDMFSET * set);
+
+XDMFUTILS_EXPORT void XdmfPartitionerPartitionGraph(XDMFPARTITIONER * partitioner,
+                                                    XDMFGRAPH * graphToPartition,
+                                                    unsigned int numberOfPartitions);
+
+XDMFUTILS_EXPORT XDMFGRIDCOLLECTION * XdmfPartitionerPartitionUnstructuredGrid(XDMFPARTITIONER * partitioner,
+                                                                               XDMFUNSTRUCTUREDGRID * gridToPartition,
+                                                                               unsigned int numberOfPartitions,
+                                                                               int metisScheme,
+                                                                               XDMFHEAVYDATAWRITER * heavyDataWriter);
+
+XDMFUTILS_EXPORT XDMFUNSTRUCTUREDGRID * XdmfPartitionerUnpartition(XDMFPARTITIONER * partitioner,
+                                                                   XDMFGRIDCOLLECTION * gridToUnPartition);
+
+XDMFUTILS_EXPORT void XdmfPartitionerFree(XDMFPARTITIONER * partitioner);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif /* XDMFPARTITIONER_HPP_ */

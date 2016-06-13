@@ -10,6 +10,12 @@ ADD_TEST_CXX_DEPENDENCIES("Xdmf")
 #	have extra arguments (id: ADD_TEST_CXX(testname inputfile))
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
+if ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+  IF (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+    ADD_MPI_TEST_CXX(DSMFileTest.sh XdmfFileAcceptTest,XdmfFileConnectTest)
+  ENDIF(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+endif ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+ADD_TEST_CXX(TestXdmfAggregate)
 ADD_TEST_CXX(TestXdmfAttribute)
 ADD_TEST_CXX(TestXdmfBinaryController)
 ADD_TEST_CXX(TestXdmfCurvilinearGrid)
@@ -17,6 +23,7 @@ ADD_TEST_CXX(TestXdmfFunction)
 ADD_TEST_CXX(TestXdmfGeometry)
 ADD_TEST_CXX(TestXdmfGraph)
 ADD_TEST_CXX(TestXdmfGridCollection)
+ADD_TEST_CXX(TestXdmfGridController)
 ADD_TEST_CXX(TestXdmfHDF5Hyperslab)
 ADD_TEST_CXX(TestXdmfHDF5Visit)
 ADD_TEST_CXX(TestXdmfMap)
@@ -29,6 +36,9 @@ ADD_TEST_CXX(XdmfPostFixCalc)
 ADD_TEST_CXX(TestXdmfSet)
 ADD_TEST_CXX(TestXdmfSubset)
 ADD_TEST_CXX(TestXdmfTime)
+if (TIFF_FOUND)
+  ADD_TEST_CXX(TestXdmfTIFFReadWriteCompressed)
+endif (TIFF_FOUND)
 ADD_TEST_CXX(TestXdmfTopology)
 ADD_TEST_CXX(TestXdmfTopologyMixed)
 ADD_TEST_CXX(TestXdmfUnstructuredGrid)
@@ -45,6 +55,14 @@ ADD_TEST_CXX(TestXdmfXPointerReference)
 #       have multiple files (ie: CLEAN_TEST_CXX(testname outputfile1 ...))
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
+if ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+  IF (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+    CLEAN_TEST_CXX(DSMFileTest.sh dsmfile.xmf dsmconnect.cfg)
+  ENDIF (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+endif ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+CLEAN_TEST_CXX(TestXdmfAggregate
+  aggregate.xmf
+  aggregate.h5)
 CLEAN_TEST_CXX(TestXdmfAttribute)
 CLEAN_TEST_CXX(TestXdmfBinaryController
   TestXdmfBinary.xmf
@@ -99,6 +117,13 @@ CLEAN_TEST_CXX(TestXdmfSubset
   subset.xmf
   subset.h5)
 CLEAN_TEST_CXX(TestXdmfTime)
+if (TIFF_FOUND)
+  CLEAN_TEST_CXX(TestXdmfTIFFReadWriteCompressed
+    compressedtiffoutput.xmf
+    compressedoutput.tif
+    compressedstripoutput.tif
+    compresseddirectories.tif)
+endif (TIFF_FOUND)
 CLEAN_TEST_CXX(TestXdmfTopology)
 CLEAN_TEST_CXX(TestXdmfTopologyMixed
   TestXdmfTopologyMixed1.xmf

@@ -24,6 +24,8 @@
 #ifndef XDMFEXODUSREADER_HPP_
 #define XDMFEXODUSREADER_HPP_
 
+#ifdef __cplusplus
+
 // Forward Declarations
 class XdmfHeavyDataWriter;
 class XdmfUnstructuredGrid;
@@ -75,5 +77,26 @@ private:
   void operator=(const XdmfExodusReader &);  // Not implemented.
 
 };
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// C wrappers go here
+
+struct XDMFEXODUSREADER; // Simply as a typedef to ensure correct typing
+typedef struct XDMFEXODUSREADER XDMFEXODUSREADER;
+
+XDMFUTILS_EXPORT XDMFEXODUSREADER * XdmfExodusReaderNew();
+
+XDMFUTILS_EXPORT XDMFUNSTRUCTUREDGRID * XdmfExodusReaderRead(XDMFEXODUSREADER * reader, char * fileName, XDMFHEAVYDATAWRITER * heavyDataWriter);
+
+XDMFUTILS_EXPORT void XdmfExodusReaderFree(XDMFEXODUSREADER * reader);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* XDMFEXODUSREADER_HPP_ */

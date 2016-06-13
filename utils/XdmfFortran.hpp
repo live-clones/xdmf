@@ -30,9 +30,11 @@ class XdmfAttribute;
 class XdmfDomain;
 class XdmfGeometry;
 class XdmfGridCollection;
+class XdmfFunction;
 class XdmfInformation;
 class XdmfTime;
 class XdmfTopology;
+class XdmfSubset;
 class XdmfArray;
 class XdmfMap;
 class XdmfSet;
@@ -46,6 +48,7 @@ class XdmfHDF5WriterDSM;
 //Includes
 #include <stack>
 #include <vector>
+#include <map>
 #include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
 
@@ -95,6 +98,13 @@ class XdmfHDF5WriterDSM;
 #ifndef XDMF_GEOMETRY_TYPE_XY
   #define XDMF_GEOMETRY_TYPE_XY                          302
 #endif
+#ifndef XDMF_GEOMETRY_TYPE_POLAR
+  #define XDMF_GEOMETRY_TYPE_POLAR                       303
+#endif
+#ifndef XDMF_GEOMETRY_TYPE_SPHERICAL
+  #define XDMF_GEOMETRY_TYPE_SPHERICAL                   304
+#endif
+
 
 /**
  * Grid Collection Type
@@ -159,6 +169,13 @@ class XdmfHDF5WriterDSM;
 #define XDMF_GRID_TYPE_REGULAR                           703
 #define XDMF_GRID_TYPE_UNSTRUCTURED                      704
 
+/**
+ * Binary Endian
+ */
+#define XDMF_BINARY_ENDIAN_NATIVE                        801
+#define XDMF_BINARY_ENDIAN_LITTLE                        802
+#define XDMF_BINARY_ENDIAN_BIG                           803
+
 
 // This works with g77 and gfortran. Different compilers require different
 // name mangling.
@@ -166,20 +183,31 @@ class XdmfHDF5WriterDSM;
 #define XdmfInit xdmfinit_
 #define XdmfClose xdmfclose_
 #define XdmfAddAttribute xdmfaddattribute_
+#define XdmfClearAttributeHeavyData xdmfclearattributeheavydata_
+#define XdmfSetAttributeHDF5 xdmfsetattributehdf5_
+#define XdmfSetAttributeBinary xdmfsetattributebinary_
 #define XdmfAddGrid xdmfaddgrid_
 #define XdmfAddGridCurvilinear xdmfaddgridcurvilinear_
 #define XdmfAddGridRectilinear xdmfaddgridrectilinear_
 #define XdmfAddGridRegular xdmfaddgridregular_
 #define XdmfAddGridCollection xdmfaddgridcollection_
+#define XdmfAddGridReference xdmfaddgridreference__
+#define XdmfAddGridCollectionReference xdmfaddgridcollectionreference_
 #define XdmfAddInformation xdmfaddinformation_
 #define XdmfAddPreviousAttribute xdmfaddpreviousattribute_
 #define XdmfAddPreviousInformation xdmfaddpreviousinformation_
 #define XdmfCloseGridCollection xdmfclosegridcollection_
 #define XdmfSetGeometry xdmfsetgeometry_
+#define XdmfClearGeometryHeavyData xdmfcleargeometryheavydata_
+#define XdmfSetGeometryHDF5 xdmfsetgeometryhdf5_
+#define XdmfSetGeometryBinary xdmfsetgeometrybinary_
 #define XdmfSetPreviousGeometry xdmfsetpreviousgeometry_
 #define XdmfSetPreviousTopology xdmfsetprevioustopology_
 #define XdmfSetTime xdmfsettime_
 #define XdmfSetTopology xdmfsettopology_
+#define XdmfClearTopologyHeavyData xdmfcleartopologyheavydata_
+#define XdmfSetTopologyHDF5 xdmfsettopologyhdf5_
+#define XdmfSetTopologyBinary xdmfsettopologybinary_
 #define XdmfSetAllowSetSplitting xdmfsetallowsetsplitting_
 #define XdmfSetMaxFileSize xdmfsetmaxfilesize_
 #define XdmfWrite xdmfwrite_
@@ -204,8 +232,10 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveDomainProperty xdmfretrievedomainproperty_
 #define XdmfRetrieveDomainPropertyByKey xdmfretrievedomainpropertybykey_
 #define XdmfOpenDomainGridCollection xdmfopendomaingridcollection_
+#define XdmfReadDomainnGridCollection xdmfreaddomaingridcollection_
 #define XdmfRemoveDomainGridCollection xdmfremovedomaingridcollection_
 #define XdmfOpenGridCollectionGridCollection xdmfopengridcollectiongridcollection_
+#define XdmfReadGridCollectionGridCollection xdmfreadgridcollectiongridcollection_
 #define XdmfRemoveGridCollectionGridCollection xdmfremovegricollectiongridcollection_
 #define XdmfRetrieveGridCollectionTag xdmfretrievegridcollectiontag_
 #define XdmfRetrieveGridCollectionNumProperties xdmfretrievegridcollectionnumproperties_
@@ -214,6 +244,7 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveGridCollectionNumGrids xdmfretrievegridcollectionnumgrids_
 #define XdmfRetrieveDomainNumGrids xdmfretrievedomainnumgrids_
 #define XdmfOpenDomainGrid xdmfopendomaingrid_
+#define XdmfReadDomainGrid xdmfreaddomaingrid_
 #define XdmfRemoveDomainGrid xdmfremovedomaingrid_
 #define XdmfReplaceDomainGrid xdmfreplacedomaingrid_
 #define XdmfRetrieveDomainGridTag xdmfretrievedomaingridtag_
@@ -222,6 +253,7 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveDomainGridProperty xdmfretrievedomaingridproperty_
 #define XdmfRetrieveDomainGridPropertyByKey xdmfretrievedomaingridpropertybykey_
 #define XdmfOpenGridCollectionGrid xdmfopengridcollectiongrid_
+#define XdmfReadGridCollectionGrid xdmfreadgridcollectiongrid_
 #define XdmfRemoveGridCollectionGrid xdmfremovegridcollectiongrid_
 #define XdmfReplaceGridCollectionGrid xdmfreplacegridcollectiongrid_
 #define XdmfRetrieveGridCollectionGridTag xdmfretrievegridcollectiongridtag_
@@ -242,6 +274,8 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveTopologyNumProperties xdmfretrievetopologynumproperties_
 #define XdmfRetrieveTopologyProperty xdmfretrievetopologyproperty_
 #define XdmfRetrieveTopologyPropertyByKey xdmfretrievetopologypropertybykey_
+#define XdmfSetTopologyAsVariable xdmfsettopologyasvariable_
+#define XdmfSetTopologyAsSubsetReference xdmfsettopologyassubsetreference_
 #define XdmfRetrieveGeometryTag xdmfretrievegeometrytag_
 #define XdmfRetrieveGeometryType xdmfretrievegeometrytype_
 #define XdmfRetrieveGeometryValues xdmfretrievegeometryvalues_
@@ -253,7 +287,12 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveGeometryNumProperties xdmfretrievegeometrynumproperties_
 #define XdmfRetrieveGeometryProperty xdmfretrievegeometryproperty_
 #define XdmfRetrieveGeometryPropertyByKey xdmfretrievegeometrypropertybykey_
+#define XdmfSetGeometryAsVariable xdmfsetgeometryasvariable_
+#define XdmfSetGeometryAsSubsetReference xdmfsetgeometryassubsetreference_
 #define XdmfSetDimensions xdmfsetdimensions_
+#define XdmfClearDimensionsHeavyData xdmfcleardimensionsheavydata_
+#define XdmfSetDimensionsHDF5 xdmfsetdimensionshdf5_
+#define XdmfSetDimensionsBinary xdmfsetdimensionsbinary_
 #define XdmfOpenPreviousDimensions xdmfopenpreviousdimensions_
 #define XdmfClearPreviousDimensions xdmfclearpreviousdimensions_
 #define XdmfModifyDimensionsValues xdmfmodifydimensionsvalues_
@@ -267,6 +306,9 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveDimensionsProperty xdmfretrievedimensionsproperty_
 #define XdmfRetrieveDimensionsPropertyByKey xdmfretrievedimensionspropertybykey_
 #define XdmfSetOrigin xdmfsetorigin_
+#define XdmfClearOriginHeavyData xdmfclearoriginheavydata_
+#define XdmfSetOriginHDF5 xdmfsetoriginhdf5_
+#define XdmfSetOriginBinary xdmfsetoriginbinary_
 #define XdmfSetPreviousOrigin xdmfsetpreviousorigin_
 #define XdmfClearPreviousOrigins xdmfclearpreviousorigins_
 #define XdmfModifyOriginValues xdmfmodifyoriginvalues_
@@ -280,6 +322,9 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveOriginProperty xdmfretrieveoriginproperty_
 #define XdmfRetrieveOriginPropertyByKey xdmfretrieveoriginpropertybykey_
 #define XdmfSetBrick xdmfsetbrick_
+#define XdmfClearBrickHeavyData xdmfclearbrickheavydata_
+#define XdmfSetBrickHDF5 xdmfsetbrickhdf5_
+#define XdmfSetBrickBinary xdmfsetbrickbinary_
 #define XdmfSetPreviousBrick xdmfsetpreviousbrick_
 #define XdmfClearPreviousBricks xdmfclearpreviousbricks_
 #define XdmfModifyBrickValues xdmfmodifybrickvalues_
@@ -322,7 +367,12 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveAttributeNumProperties xdmfretrieveattributenumproperties_
 #define XdmfRetrieveAttributeProperty xdmfretrieveattributeproperty_
 #define XdmfRetrieveAttributePropertyByKey xdmfretrieveattributepropertybykey_
+#define XdmfSetAttributeAsVariable xdmfsetattributeasvariable_
+#define XdmfSetAttributeAsSubsetReference xdmfsetattributeassubsetreference_
 #define XdmfAddCoordinate xdmfaddcoordinate_
+#define XdmfClearCoordinateHeavyData xdmfclearcoordinateheavydata_
+#define XdmfSetCoordinateHDF5 xdmfsetcoordinatehdf5_
+#define XdmfSetCoordinateBinary xdmfsetcoordinatebinary_
 #define XdmfAddPreviousCoordinate xdmfaddpreviouscoordinate_
 #define XdmfClearPreviousCoordinates xdmfclearpreviouscoordinates_
 #define XdmfModifyCoordinateValues xdmfmodifycoordinatevalues_
@@ -338,11 +388,16 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveCoordinateNumProperties xdmfretrievecoordinatenumproperties_
 #define XdmfRetrieveCoordinateProperty xdmfretrievecoordinateproperty_
 #define XdmfRetrieveCoordinatePropertyByKey xdmfretrievecoordinatepropertybykey_
+#define XdmfSetCoordinateAsVariable xdmfsetcoordinateasvariable_
+#define XdmfSetCoordinateAsSubsetReference xdmfsetcoordinateassubsetreference_
 #define XdmfRetrieveSetTag xdmfretrievesettag_
 #define XdmfRetrieveSetName xdmfretrievesetname_
 #define XdmfRetrieveSetType xdmfretrievesettype_
 #define XdmfAddSet xdmfaddset_
 #define XdmfAddPreviousSet xdmfaddpreviousset_
+#define XdmfClearSetHeavyData xdmfclearsetheavydata_
+#define XdmfSetSetHDF5 xdmfsetsethdf5_
+#define XdmfSetSetBinary xdmfsetsetbinary_
 #define XdmfClearPreviousSets xdmfclearprevioussets_
 #define XdmfClearSets xdmfclearsets_
 #define XdmfModifySetValues xdmfmodifysetvalues_
@@ -356,6 +411,8 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveSetNumProperties xdmfretrievesetnumproperties_
 #define XdmfRetrieveSetProperty xdmfretrievesetproperty_
 #define XdmfRetrieveSetPropertyByKey xdmfretrievesetpropertybykey_
+#define XdmfSetSetAsVariable xdmfsetsetasvariable_
+#define XdmfSetSetAsSubsetReference xdmfsetsetassubsetreference_
 #define XdmfRetrieveNumInformation xdmfretrievenuminformation_
 #define XdmfRetrieveInformationTag xdmfretrieveinformationtag_
 #define XdmfClearInformations xdmfclearinformations_
@@ -371,12 +428,31 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveInformationProperty xdmfretrieveinformationproperty_
 #define XdmfRetrieveInformationPropertyByKey xdmfretrieveinformationpropertybykey_
 #define XdmfAddInformationArray xdmfaddinformationarray_
+#define XdmfClearInformationArrayHeavyData xdmfclearinformationarrayheavydata_
+#define XdmfSetInformationArrayHDF5 xdmfsetinformationarrayhdf5_
+#define XdmfSetInformationArrayBinary xdmfsetinformationarraybinary_
 #define XdmfInsertInformationIntoInformation xdmfinsertinformationintoinformation_
 #define XdmfModifyInformationArray xdmfmodifyinformationarray_
 #define XdmfRemoveInformationArray xdmfremoveinformationarray_
 #define XdmfRetrieveInformationArraySize xdmfretrieveinformationarraysize_
 #define XdmfRetrieveInformationArrayValueType xdmfretrieveinformationarrayvaluetype_
 #define XdmfRetrieveInformationArrayValues xdmfretrieveinformationarrayvalues_
+#define XdmfSetInformationArrayAsVariable xdmfsetinformationarrayasvariable_
+#define XdmfSetInformationArrayAsSubsetReference xdmfsetinformationarrayassubsetreference_
+#define XdmfAddFunctionAsAttribute xdmfaddfunctionasattribute_
+#define XdmfAddFunctionAsCoordinate xdmfaddfunctionascoordinate_
+#define XdmfAddFunctionAsSet xdmfaddfunctionasset_
+#define XdmfAddFunctionAsInformationArray xdmfaddfunctionasinformationarray_
+#define XdmfSetFunctionAsTopology xdmfsetfunctionastopology_
+#define XdmfSetFunctionAsGeometry xdmfsetfunctionasgeometry_
+#define XdmfAddSubsetAsAttribute xdmfaddsubsetasattribute_
+#define XdmfAddSubsetAsCoordinate xdmfaddsubsetascoordinate_
+#define XdmfAddSubsetAsSet xdmfaddsubsetasset_
+#define XdmfAddSubsetAsInformationArray xdmfaddsubsetasinformationarray_
+#define XdmfSetSubsetAsTopology xdmfsetsubsetastopology_
+#define XdmfSetSubsetAsGeometry xdmfsetsubsetasgeometry_
+#define XdmfClearFunctionVariables xdmfclearfunctionvariables_
+#define XdmfRemoveFunctionVariable xdmfremovefunctionvariable_
 #define XdmfClearPrevious xdmfclearprevious_
 #endif
 
@@ -418,6 +494,53 @@ public:
                    const unsigned int numValues,
                    const int arrayType,
                    const void * const values);
+
+  /**
+   * Remove heavy data linkage from the specified attribute.
+   *
+   * @param     index           Index of the Attribute which will have its heavydata linkage removed.
+   */
+  void clearAttributeHeavyData(const int index);
+
+  /**
+   * Set HDF5 linkage for the specified attribute.
+   *
+   * @param     index           Index of the Attribute which will have its hdf5 linkage set.
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setAttributeHDF5(const int index,
+                        const char * hdf5File,
+                        const char * hdf5Dataset,
+                        const unsigned int start,
+                        const unsigned int stride,
+                        const unsigned int numValues,
+                        const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the specified attribute.
+   *
+   * @param     index           Index of the Attribute which will have its binary linkage set.
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setAttributeBinary(const int index,
+                          const char * binFile,
+                          const int endian,
+                          const unsigned int seek,
+                          const unsigned int start,
+                          const unsigned int stride,
+                          const unsigned int numValues,
+                          const unsigned int dataspace);
 
   /**
    * Add unstructured grid to domain or collection. Inserts geometry, topology,
@@ -480,6 +603,26 @@ public:
                          const int gridCollectionType);
 
   /**
+   * Adds a grid that is a reference to a file.
+   *
+   * @param     filePath        Path to the file where the grid is located.
+   * @param     xmlPath         Xml path to the grid being referenced.
+   */
+  void addGridCollectionReference(const char * filePath,
+                                  const char * xmlPath);
+
+  /**
+   * Adds a grid that is a reference to a file.
+   *
+   * @param     gridType        The type of grid being referenced.
+   * @param     filePath        Path to the file where the grid is located.
+   * @param     xmlPath         Xml path to the grid being referenced.
+   */
+  void addGridReference(const int gridType,
+                        const char * filePath,
+                        const char * xmlPath);
+
+  /**
    * Add an information that will be inserted into the next added
    * grid or grid collection.
    *
@@ -534,7 +677,48 @@ public:
                   const unsigned int numValues,
                   const int arrayType, 
                   const void * const pointValues);
-  
+
+  /**
+   * Remove heavy data linkage from the geometry.
+   */
+  void clearGeometryHeavyData();
+
+  /**
+   * Set HDF5 linkage for the geometry.
+   *
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setGeometryHDF5(const char * hdf5File,
+                       const char * hdf5Dataset,
+                       const unsigned int start,
+                       const unsigned int stride,
+                       const unsigned int numValues,
+                       const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the geometry.
+   *
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setGeometryBinary(const char * binFile,
+                         const int endian,
+                         const unsigned int seek,
+                         const unsigned int start,
+                         const unsigned int stride,
+                         const unsigned int numValues,
+                         const unsigned int dataspace);
+
   /**
    * Set the geometry (point data) that will be added to the next grid.
    * This will reuse a previously set geometry so that xpointers can be
@@ -577,6 +761,47 @@ public:
                   const int arrayType,
                   const void * const connectivityValues,
                   const int numNodes);
+
+  /**
+   * Remove heavy data linkage from the topology.
+   */
+  void clearTopologyHeavyData();
+
+  /**
+   * Set HDF5 linkage for the topology.
+   *
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setTopologyHDF5(const char * hdf5File,
+                       const char * hdf5Dataset,
+                       const unsigned int start,
+                       const unsigned int stride,
+                       const unsigned int numValues,
+                       const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the topology.
+   *
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setTopologyBinary(const char * binFile,
+                         const int endian,
+                         const unsigned int seek,
+                         const unsigned int start,
+                         const unsigned int stride,
+                         const unsigned int numValues,
+                         const unsigned int dataspace);
 
   /**
    * Returns the number of grid collections currently
@@ -663,6 +888,14 @@ public:
                                 const int openSets);
 
   /**
+   * Reads the the grid reference of the grid collection at the specified index in
+   * the Domain.
+   *
+   * @param     index   The index of the grid collection to be read
+   */
+  void readDomainGridCollection(const int index);
+
+  /**
    * Removes the specifed grid collection from mDomain's grid collections
    *
    * Throws an error if the index is out of bounds
@@ -691,6 +924,14 @@ public:
                                         const int openAttributes,
                                         const int openInformation,
                                         const int openSets);
+
+  /**
+   * Reads the the grid reference of the grid collection at the specified index in
+   * the grid collection on the top of the stack.
+   *
+   * @param     index   The index of the grid collection to be read
+   */
+  void readGridCollectionGridCollection(const int index);
 
   /**
    * Removes the specifed grid collection from the
@@ -787,6 +1028,13 @@ public:
                       const int openAttributes,
                       const int openInformation,
                       const int openSets);
+
+  /**
+   * Read the grid reference of a grid of the specified type at the specified
+   * index contained within the domain.
+   */
+  void readDomainGrid(const int gridType,
+                      const int index);
 
   /**
    * Removes a grid of the specified type from the domain
@@ -926,6 +1174,13 @@ public:
                               const int openAttributes,
                               const int openInformation,
                               const int openSets);
+
+  /**
+   * Reads the grid reference for a grid of the specified type
+   * at the specified index of the grid collection on the top of the stack.
+   */
+  void readGridCollectionGrid(const int gridType,
+                              const int index);
 
   /**
    * Removes a grid of the specified type from the grid collection
@@ -1212,6 +1467,18 @@ public:
   void retrieveGeometryPropertyByKey(char * key, char * value, const int valueLength);
 
   /**
+   * Sets the current geometry as a function variable.
+   *
+   * @param     varname         The name that the geometry will be associated with.
+   */
+  void setGeometryAsVariable(char * varname);
+
+  /**
+   * Sets the current geometry as the current subset reference.
+   */
+  void setGeometryAsSubsetReference();
+
+  /**
    * Retrieves the topology's tag and stores it into the provided pointer
    *
    * @param     tag             The location where the tag will be stored
@@ -1339,6 +1606,19 @@ public:
   void retrieveTopologyPropertyByKey(char * key, char * value, const int valueLength);
 
   /**
+   * Sets the topology as an array variable associated with a specific name.
+   * Used in conjuction with Functions.
+   *
+   * @param     varname The variable to accociate with the current topology.
+   */
+  void setTopologyAsVariable(char * varname);
+
+  /**
+   * Sets the topology as the current subset reference.
+   */
+  void setTopologyAsSubsetReference();
+
+  /**
    * Set the dimensions that will be added to the next grid.
    *
    * @param     numValues       Number of point values to copy.
@@ -1348,6 +1628,47 @@ public:
    * @return    int providing id to fortran if reusing.
    */
   int setDimensions(const int numValues, const int arrayType, void * pointValues);
+
+  /**
+   * Remove heavy data linkage from the dimensions.
+   */
+  void clearDimensionsHeavyData();
+
+  /**
+   * Set HDF5 linkage for the dimensions.
+   *
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setDimensionsHDF5(const char * hdf5File,
+                         const char * hdf5Dataset,
+                         const unsigned int start,
+                         const unsigned int stride,
+                         const unsigned int numValues,
+                         const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the dimensions.
+   *
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setDimensionsBinary(const char * binFile,
+                           const int endian,
+                           const unsigned int seek,
+                           const unsigned int start,
+                           const unsigned int stride,
+                           const unsigned int numValues,
+                           const unsigned int dataspace);
 
   /**
    * Replaces mDimensions with the specified dimensions from mPreviousDimensions
@@ -1483,6 +1804,47 @@ public:
   int setOrigin(const int numValues, const int arrayType, void * pointValues);
 
   /**
+   * Remove heavy data linkage from the origin.
+   */
+  void clearOriginHeavyData();
+
+  /**
+   * Set HDF5 linkage for the origin.
+   *
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setOriginHDF5(const char * hdf5File,
+                     const char * hdf5Dataset,
+                     const unsigned int start,
+                     const unsigned int stride,
+                     const unsigned int numValues,
+                     const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the origin.
+   *
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setOriginBinary(const char * binFile,
+                       const int endian,
+                       const unsigned int seek,
+                       const unsigned int start,
+                       const unsigned int stride,
+                       const unsigned int numValues,
+                       const unsigned int dataspace);
+
+  /**
    * Sets mOrigin to a specified origin in mPreviousOrigins
    *
    * @param     index   The index of the specified origin
@@ -1614,6 +1976,47 @@ public:
    * @return    int providing id to fortran if reusing.
    */
   int setBrick(const int numValues, const int arrayType, void * pointValues);
+
+  /**
+   * Remove heavy data linkage from the Brick size.
+   */
+  void clearBrickHeavyData();
+
+  /**
+   * Set HDF5 linkage for the brick size.
+   *
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setBrickHDF5(const char * hdf5File,
+                    const char * hdf5Dataset,
+                    const unsigned int start,
+                    const unsigned int stride,
+                    const unsigned int numValues,
+                    const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the brick size.
+   *
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setBrickBinary(const char * binFile,
+                      const int endian,
+                      const unsigned int seek,
+                      const unsigned int start,
+                      const unsigned int stride,
+                      const unsigned int numValues,
+                      const unsigned int dataspace);
 
   /**
    * Sets the brick size to a specified brick size stored in mPreviousBricks
@@ -2121,6 +2524,22 @@ public:
                                       const int valueLength);
 
   /**
+   * Sets the specified attribute as an array variable associated with a specific name.
+   * Used in conjuction with Functions.
+   *
+   * @param     varname The variable to accociate with the attribute.
+   * @param     index   The index of the attribute to be associated.
+   */
+  void setAttributeAsVariable(char * varname, int index);
+
+  /**
+   * Sets the specified attribute as the current subset reference.
+   *
+   * @param     index   The index of the attribute to be used.
+   */
+  void setAttributeAsSubsetReference(int index);
+
+  /**
    * Returns the number of coordinates currently loaded.
    *
    * @return    The number of coordinates in mCoordinates
@@ -2160,6 +2579,53 @@ public:
    * Clears mPreviousCoordinates. Use to reduce memory load.
    */
   void clearPreviousCoordinates();
+
+  /**
+   * Remove heavy data linkage from the specified coordinate.
+   *
+   * @param     index           Index of the Coordinate which will have its heavydata linkage removed.
+   */
+  void clearCoordinateHeavyData(const int index);
+
+  /**
+   * Set HDF5 linkage for the specified coordinate.
+   *
+   * @param     index           Index of the Coordinate which will have its hdf5 linkage set.
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setCoordinateHDF5(const int index,
+                         const char * hdf5File,
+                         const char * hdf5Dataset,
+                         const unsigned int start,
+                         const unsigned int stride,
+                         const unsigned int numValues,
+                         const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the specified coordinate.
+   *
+   * @param     index           Index of the Coordinate which will have its binary linkage set.
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setCoordinateBinary(const int index,
+                           const char * binFile,
+                           const int endian,
+                           const unsigned int seek,
+                           const unsigned int start,
+                           const unsigned int stride,
+                           const unsigned int numValues,
+                           const unsigned int dataspace);
 
   /**
    * Replaces the specified coordinate in mCoordinates with one made using
@@ -2336,6 +2802,22 @@ public:
                                        const int valueLength);
 
   /**
+   * Sets the specified coordinate as an array variable associated with a specific name.
+   * Used in conjuction with Functions.
+   *
+   * @param     varname The variable to accociate with the coordinate.
+   * @param     index   The index of the coordinate to be associated.
+   */
+  void setCoordinateAsVariable(char * varname, int index);
+
+  /**
+   * Sets the specified coordinate as the current subset reference.
+   *
+   * @param     index   The index of the coordinate to be associated.
+   */
+  void setCoordinateAsSubsetReference(int index);
+
+  /**
    * Retrieves the specified set's tag and stores it into the provided pointer
    *
    * Returns an error if the index is out of bounds
@@ -2390,6 +2872,51 @@ public:
              void * values,
              const int numValues,
              const int arrayType);
+
+  /**
+   * Remove heavy data linkage from the specified set.
+   */
+  void clearSetHeavyData(const int index);
+
+  /**
+   * Set HDF5 linkage for the specified set.
+   *
+   * @param     index           Index of the Set which will have its hdf5 linkage set.
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setSetHDF5(const int index,
+                  const char * hdf5File,
+                  const char * hdf5Dataset,
+                  const unsigned int start,
+                  const unsigned int stride,
+                  const unsigned int numValues,
+                  const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the specified set.
+   *
+   * @param     index           Index of the Set which will have its binary linkage set.
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setSetBinary(const int index,
+                    const char * binFile,
+                    const int endian,
+                    const unsigned int seek,
+                    const unsigned int start,
+                    const unsigned int stride,
+                    const unsigned int numValues,
+                    const unsigned int dataspace);
 
   /**
    * Adds the specifed set from mPreviousSets into mSets.
@@ -2585,6 +3112,22 @@ public:
                                 const int valueLength);
 
   /**
+   * Sets the specified set as an array variable associated with a specific name.
+   * Used in conjuction with Functions.
+   *
+   * @param     varname The variable to accociate with the set.
+   * @param     index   The index of the set.
+   */
+  void setSetAsVariable(char * varname, int index);
+
+  /**
+   * Sets the specified set as the current subset reference.
+   *
+   * @param     index   The index of the set.
+   */
+  void setSetAsSubsetReference(int index);
+
+  /**
    * Returns the number of information currently stored in mInformations.
    *
    * @return    the number of information contained within mInformations
@@ -2768,6 +3311,62 @@ public:
                            const int arrayType);
 
   /**
+   * Remove heavy data linkage from the specified Information Array.
+   *
+   * @param     index           Index of the Information holding the array which
+   *                            will have its heavydata linkage removed.
+   * @param     arrayIndex      Index of the array in the specified information
+   */
+  void clearInformationArrayHeavyData(const int index,
+                                      const int arrayIndex);
+
+  /**
+   * Set HDF5 linkage for the specified Information Array.
+   *
+   * @param     index           Index of the Information holding the array
+                                which will have its hdf5 linkage set.
+   * @param     arrayIndex      Index of the array in the specified information
+   * @param     hdf5File        Filename for the hdf5 linkage
+   * @param     hdf5Dataset     Dataset name for the hdf5 linkage
+   * @param     start           Starting index in the hdf5 dataset
+   * @param     stride          Distance between values in the hdf5 dataset
+   * @param     numValues       Number of values in the hdf5 dataset
+   * @param     dataspace       Total size of the hdf5 dataset.
+   */
+  void setInformationArrayHDF5(const int index,
+                               const int arrayIndex,
+                               const char * hdf5File,
+                               const char * hdf5Dataset,
+                               const unsigned int start,
+                               const unsigned int stride,
+                               const unsigned int numValues,
+                               const unsigned int dataspace);
+
+  /**
+   * Set Binary linkage for the specified Information Array.
+   *
+   * @param     index           Index of the Information holding the array
+                                which will have its binary linkage set.
+   * @param     arrayIndex      Index of the array in the specified information
+   * @param     binFile         Filename for the binary linkage
+   * @param     endian          Endianness of the dataset
+   * @param     seek            Offset of the dataset in the binary file
+   * @param     start           Starting index in the binary dataset
+   * @param     stride          Distance between values in the binary dataset
+   * @param     numValues       Number of values in the binary dataset
+   * @param     dataspace       Total size of the binary dataset.
+   */
+  void setInformationArrayBinary(const int index,
+                                 const int arrayIndex,
+                                 const char * binFile,
+                                 const int endian,
+                                 const unsigned int seek,
+                                 const unsigned int start,
+                                 const unsigned int stride,
+                                 const unsigned int numValues,
+                                 const unsigned int dataspace);
+
+  /**
    * Makes an information a child of another information.
    * Has an option to remove the Information from mInformation.
    *
@@ -2873,6 +3472,198 @@ public:
                                       const int startIndex,
                                       const int arrayStride,
                                       const int valueStride);
+
+  /**
+   * Sets the specified information array as an array variable associated with a specific name.
+   * Used in conjuction with Functions.
+   *
+   * @param     varname         The variable to accociate with the array.
+   * @param     infoindex       The index of the information holding the array
+   * @param     index           The index of the array.
+   */
+  void setInformationArrayAsVariable(char * varname, int infoindex, int index);
+
+  /**
+   * Sets the specified information array as the current subset reference.
+   *
+   * @param     infoindex       The index of the information holding the array
+   * @param     index           The index of the array.
+   */
+  void setInformationArrayAsSubsetReference(int infoindex, int index);
+
+  /**
+   * Creates an attribute that is a function of other arrays.
+   * Interacts with setXXXXAsVariable
+   *
+   * @param     expression      The function that will be processed when creating the array.
+   * @param     name            The name of the array.
+   * @param     attributeCenter The center of the attribute being created.
+   * @param     attributeType   The attribute type of the attribute being created.
+   */
+  int addFunctionAsAttribute(char * expression,
+                             const char * const name,
+                             const int attributeCenter,
+                             const int attributeType);
+
+  /**
+   * Creates a coordinate that is a function of other arrays.
+   * Interacts with setXXXXAsVariable
+   *
+   * @param     expression      The function that will be processed when creating the array.
+   * @param     name            The name of the array.
+   */
+  int addFunctionAsCoordinate(char * expression,
+                              char * name);
+
+  /**
+   * Creates a set that is a function of other arrays.
+   * Interacts with setXXXXAsVariable
+   *
+   * @param     expression      The function that will be processed when creating the array.
+   * @param     name            The name of the array.
+   * @param     newSetType      The set type of the set being created.
+   */
+  int addFunctionAsSet(char * expression,
+                       char * name,
+                       const int newSetType);
+
+  /**
+   * Creates a information array that is a function of other arrays.
+   * Interacts with setXXXXAsVariable
+   *
+   * @param     expression      The function that will be processed when creating the array.
+   * @param     index           The index of the information that the array will be added to.
+   * @param     name            The name of the array.
+   */
+  void addFunctionAsInformationArray(char * expression,
+                                     const int index,
+                                     char * name);
+
+  /**
+   * Creates a topology that is a function of other arrays.
+   * Interacts with setXXXXAsVariable
+   *
+   * @param     expression      The function that will be processed when creating the array.
+   * @param     topologyType    The set type of the set being created.
+   * @param     numNodes        The number of nodes in the new topology.
+   */
+  int setFunctionAsTopology(char * expression,
+                            const int topologyType,
+                            const int numNodes);
+
+  /**
+   * Creates a geometry that is a function of other arrays.
+   * Interacts with setXXXXAsVariable
+   *
+   * @param     expression      The function that will be processed when creating the array.
+   * @param     geometryType    The set type of the set being created.
+   */
+  int setFunctionAsGeometry(char * expression,
+                            const int geometryType);
+
+  /**
+   * Creates an attribute that is a subset of another array.
+   * Interacts with setXXXXAsSubsetReference
+   *
+   * @param     start           The starting index of the subset within the reference.
+   * @param     stride          The distance between values taken from the reference
+   * @param     dimensions      The total number of values taken from the reference.
+   * @param     name            The name of the array.
+   * @param     attributeCenter The center of the attribute being created.
+   * @param     attributeType   The attribute type of the attribute being created.
+   */
+  int addSubsetAsAttribute(int start,
+                           int stride,
+                           int dimensions,
+                           const char * const name,
+                           const int attributeCenter,
+                           const int attributeType);
+
+  /**
+   * Creates a coordinate that is a subset of another array.
+   * Interacts with setXXXXAsSubsetReference
+   *
+   * @param     start           The starting index of the subset within the reference.
+   * @param     stride          The distance between values taken from the reference
+   * @param     dimensions      The total number of values taken from the reference.
+   * @param     name            The name of the array.
+   */
+  int addSubsetAsCoordinate(int start,
+                            int stride,
+                            int dimensions,
+                            char * name);
+  /**
+   * Creates a set that is a subset of another array.
+   * Interacts with setXXXXAsSubsetReference
+   *
+   * @param     start           The starting index of the subset within the reference.
+   * @param     stride          The distance between values taken from the reference
+   * @param     dimensions      The total number of values taken from the reference.
+   * @param     name            The name of the array.
+   * @param     newSetType      The set type of the set being created.
+   */
+  int addSubsetAsSet(int start,
+                     int stride,
+                     int dimensions,
+                     char * name,
+                     const int newSetType);
+
+  /**
+   * Creates a information array that is a subset of another array.
+   * Interacts with setXXXXAsSubsetReference
+   *
+   * @param     start           The starting index of the subset within the reference.
+   * @param     stride          The distance between values taken from the reference
+   * @param     dimensions      The total number of values taken from the reference.
+   * @param     index           The index of the information that the array will be added to.
+   * @param     name            The name of the array.
+   */
+  void addSubsetAsInformationArray(int start,
+                                   int stride,
+                                   int dimensions,
+                                   const int index,
+                                   char * name);
+
+  /**
+   * Creates a topology that is a subset of another array.
+   * Interacts with setXXXXAsSubsetReference
+   *
+   * @param     start           The starting index of the subset within the reference.
+   * @param     stride          The distance between values taken from the reference
+   * @param     dimensions      The total number of values taken from the reference.
+   * @param     topologyType    The set type of the set being created.
+   * @param     numNodes        The number of nodes in the new topology.
+   */
+  int setSubsetAsTopology(int start,
+                          int stride,
+                          int dimensions,
+                          const int topologyType,
+                          const int numNodes);
+
+  /**
+   * Creates a geometry that is a subset of another array.
+   * Interacts with setXXXXAsSubsetReference
+   *
+   * @param     start           The starting index of the subset within the reference.
+   * @param     stride          The distance between values taken from the reference
+   * @param     dimensions      The total number of values taken from the reference.
+   * @param     geometryType    The set type of the set being created.
+   */
+  int setSubsetAsGeometry(int start,
+                          int stride,
+                          int dimensions,
+                          const int geometryType);
+
+  /**
+   * Clears all variables from the variable list.
+   */
+  void clearFunctionVariables();
+
+  /**
+   * Removes the variable with the specified name from the variable list.
+   *
+   */
+  void removeFunctionVariable(char * varname);
 
   /**
    * clears all of the mPrevious vectors. Used to reduce memory load.
@@ -3115,6 +3906,8 @@ private:
   std::vector<shared_ptr<XdmfInformation> >     mInformations;
   std::vector<shared_ptr<XdmfSet> >             mSets;
   std::vector<shared_ptr<XdmfMap> >             mMaps;
+  std::map<std::string, shared_ptr<XdmfArray> > mVariableSet;
+  shared_ptr<XdmfArray>                         mSubsetReference;
 
   std::vector<shared_ptr<XdmfAttribute> >       mPreviousAttributes;
   std::vector<shared_ptr<XdmfGeometry> >        mPreviousGeometries;
@@ -3126,10 +3919,11 @@ private:
   std::vector<shared_ptr<XdmfArray> >           mPreviousBricks;
   std::vector<shared_ptr<XdmfArray> >           mPreviousCoordinates;
   std::vector<shared_ptr<XdmfMap> >             mPreviousMaps;
+  std::vector<shared_ptr<XdmfFunction> >        mPreviousFunctions;
+  std::vector<shared_ptr<XdmfSubset> >          mPreviousSubsets;
 
   unsigned int mMaxFileSize;
   bool mAllowSetSplitting;
-
 
 };
 

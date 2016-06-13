@@ -1,3 +1,4 @@
+add_subdirectory(C)
 add_subdirectory(Cxx)
 
 if(XDMF_WRAP_PYTHON)

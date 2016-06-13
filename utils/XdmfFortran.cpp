@@ -31,13 +31,16 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
+#include "XdmfBinaryController.hpp"
 #include "XdmfDomain.hpp"
 #include "XdmfError.hpp"
+#include "XdmfFunction.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
+#include "XdmfGridController.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfTime.hpp"
@@ -45,6 +48,7 @@
 #include "XdmfTopologyType.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
+#include "XdmfSubset.hpp"
 #include "XdmfMap.hpp"
 #include "XdmfCurvilinearGrid.hpp"
 #include "XdmfRectilinearGrid.hpp"
@@ -306,6 +310,7 @@ XdmfFortran::XdmfFortran() :
   mDimensions(shared_ptr<XdmfArray>()),
   mHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter>()),
   mDSMWriter(shared_ptr<XdmfHDF5WriterDSM>()),
+  mSubsetReference(shared_ptr<XdmfArray>()),
   mMaxFileSize(0),
   mAllowSetSplitting(false)
 {
@@ -399,6 +404,97 @@ XdmfFortran::addAttribute(const char * const name,
   const int id = mPreviousAttributes.size();
   mPreviousAttributes.push_back(currAttribute);
   return id;
+}
+
+void
+XdmfFortran::clearAttributeHeavyData(const int index)
+{
+  if (index < mAttributes.size()) {
+    while (mAttributes[index]->getNumberHeavyDataControllers() > 0) {
+      mAttributes[index]->removeHeavyDataController(0);
+    }
+  }
+  else {
+    XdmfError::message(XdmfError::FATAL,
+                       "Error: Index out of range.");
+  }
+}
+
+void
+XdmfFortran::setAttributeHDF5(const int index,
+                              const char * hdf5File,
+                              const char * hdf5Dataset,
+                              const unsigned int start,
+                              const unsigned int stride,
+                              const unsigned int numValues,
+                              const unsigned int dataspace)
+{
+  if (index < mAttributes.size()) {
+    // create HDF5 link
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                           std::string(hdf5Dataset),
+                                                                           mAttributes[index]->getArrayType(),
+                                                                           std::vector<unsigned int>(1, start),
+                                                                           std::vector<unsigned int>(1, stride),
+                                                                           std::vector<unsigned int>(1, numValues),
+                                                                           std::vector<unsigned int>(1, dataspace));
+    while (mAttributes[index]->getNumberHeavyDataControllers() > 0) {
+      mAttributes[index]->removeHeavyDataController(0);
+    }
+
+    mAttributes[index]->insert(newController);
+  }
+  else {
+    XdmfError::message(XdmfError::FATAL,
+                       "Error: Index out of range.");
+  }
+}
+
+void
+XdmfFortran::setAttributeBinary(const int index,
+                                const char * binFile,
+                                const int endian,
+                                const unsigned int seek,
+                                const unsigned int start,
+                                const unsigned int stride,
+                                const unsigned int numValues,
+                                const unsigned int dataspace)
+{
+  if (index < mAttributes.size()) {
+    // create Binary link
+    XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+    switch (endian) {
+      case XDMF_BINARY_ENDIAN_NATIVE:
+        newEndian = XdmfBinaryController::NATIVE;
+        break;
+      case XDMF_BINARY_ENDIAN_LITTLE:
+        newEndian = XdmfBinaryController::LITTLE;
+        break;
+      case XDMF_BINARY_ENDIAN_BIG:
+        newEndian = XdmfBinaryController::BIG;
+        break;
+      default:
+        break;
+    }
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                               mAttributes[index]->getArrayType(),
+                                                                               newEndian,
+                                                                               seek,
+                                                                               std::vector<unsigned int>(1, start),
+                                                                               std::vector<unsigned int>(1, stride),
+                                                                               std::vector<unsigned int>(1, numValues),
+                                                                               std::vector<unsigned int>(1, dataspace));
+
+    while (mAttributes[index]->getNumberHeavyDataControllers() > 0) {
+      mAttributes[index]->removeHeavyDataController(0);
+    }
+
+    mAttributes[index]->insert(newController);
+  }
+  else {
+    XdmfError::message(XdmfError::FATAL,
+                       "Error: Index out of range.");
+  }
 }
 
 // unstructured version
@@ -617,6 +713,76 @@ XdmfFortran::addGridCollection(const char * const name,
   mGridCollections.push(gridCollection);
 }
 
+void
+XdmfFortran::addGridCollectionReference(const char * filePath,
+                                        const char * xmlPath)
+{
+  shared_ptr<XdmfGridCollection> gridCollection =
+    XdmfGridCollection::New();
+
+  shared_ptr<XdmfGridController> controller = XdmfGridController::New(std::string(filePath), std::string(xmlPath));
+
+  gridCollection->setGridController(controller);
+
+  if(mGridCollections.empty()) {
+    mDomain->insert(gridCollection);
+  }
+  else {
+    mGridCollections.top()->insert(gridCollection);
+  }
+}
+
+void
+XdmfFortran::addGridReference(const int gridType,
+                              const char * filePath,
+                              const char * xmlPath)
+{
+  shared_ptr<XdmfGridController> controller = XdmfGridController::New(std::string(filePath), std::string(xmlPath));
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    shared_ptr<XdmfCurvilinearGrid> grid = XdmfCurvilinearGrid::New(0, 0);
+    grid->setGridController(controller);
+    if(mGridCollections.empty()) {
+      mDomain->insert(grid);
+    }
+    else {
+      mGridCollections.top()->insert(grid);
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    shared_ptr<XdmfArray> placeholderXArray = XdmfArray::New();
+    shared_ptr<XdmfArray> placeholderYArray = XdmfArray::New();
+    shared_ptr<XdmfRectilinearGrid>grid = XdmfRectilinearGrid::New(placeholderXArray,
+                                                                   placeholderYArray);
+    grid->setGridController(controller);
+    if(mGridCollections.empty()) {
+      mDomain->insert(grid);
+    }
+    else {
+      mGridCollections.top()->insert(grid);
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    shared_ptr<XdmfRegularGrid> grid = XdmfRegularGrid::New(0, 0, 0, 0, 0, 0);
+    grid->setGridController(controller);
+    if(mGridCollections.empty()) {
+      mDomain->insert(grid);
+    }
+    else {
+      mGridCollections.top()->insert(grid);
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
+    grid->setGridController(controller);
+    if(mGridCollections.empty()) {
+      mDomain->insert(grid);
+    }
+    else {
+      mGridCollections.top()->insert(grid);
+    }
+  }
+}
+
 int
 XdmfFortran::addInformation(const char * const key,
                             const char * const value)
@@ -690,6 +856,12 @@ XdmfFortran::setGeometry(const int geometryType,
   case XDMF_GEOMETRY_TYPE_XY:
     mGeometry->setType(XdmfGeometryType::XY());
     break;
+  case XDMF_GEOMETRY_TYPE_POLAR:
+    mGeometry->setType(XdmfGeometryType::Polar());
+    break;
+  case XDMF_GEOMETRY_TYPE_SPHERICAL:
+    mGeometry->setType(XdmfGeometryType::Spherical());
+    break;
   default:
     try {
       XdmfError::message(XdmfError::FATAL,
@@ -709,6 +881,97 @@ XdmfFortran::setGeometry(const int geometryType,
   const int id = mPreviousGeometries.size();
   mPreviousGeometries.push_back(mGeometry);
   return id;
+}
+
+void
+XdmfFortran::clearGeometryHeavyData()
+{
+  if (mGeometry) {
+    XdmfError::message(XdmfError::FATAL,
+                         "Error: Geometry needs to be set before hdf5 linkage can be cleared.");
+  }
+
+  while (mGeometry->getNumberHeavyDataControllers() > 0)
+  {
+    mGeometry->removeHeavyDataController(0);
+  }
+}
+
+void
+XdmfFortran::setGeometryHDF5(const char * hdf5File,
+                             const char * hdf5Dataset,
+                             const unsigned int start,
+                             const unsigned int stride,
+                             const unsigned int numValues,
+                             const unsigned int dataspace)
+{
+  if (!mGeometry) {
+    XdmfError::message(XdmfError::FATAL,
+                         "Error: Geometry needs to be set before hdf5 linkage can be established");
+  }
+
+  // create HDF5 link
+  shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                         std::string(hdf5Dataset),
+                                                                         mGeometry->getArrayType(),
+                                                                         std::vector<unsigned int>(1, start),
+                                                                         std::vector<unsigned int>(1, stride),
+                                                                         std::vector<unsigned int>(1, numValues),
+                                                                         std::vector<unsigned int>(1, dataspace));
+
+  while (mGeometry->getNumberHeavyDataControllers() > 0)
+  {
+    mGeometry->removeHeavyDataController(0);
+  }
+
+  mGeometry->insert(newController);
+}
+
+void
+XdmfFortran::setGeometryBinary(const char * binFile,
+                               const int endian,
+                               const unsigned int seek,
+                               const unsigned int start,
+                               const unsigned int stride,
+                               const unsigned int numValues,
+                               const unsigned int dataspace)
+{
+  if (!mGeometry) {
+    XdmfError::message(XdmfError::FATAL,
+                         "Error: Geometry needs to be set before binary linkage can be established");
+  }
+
+  XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+  switch (endian) {
+    case XDMF_BINARY_ENDIAN_NATIVE:
+      newEndian = XdmfBinaryController::NATIVE;
+      break;
+    case XDMF_BINARY_ENDIAN_LITTLE:
+      newEndian = XdmfBinaryController::LITTLE;
+      break;
+    case XDMF_BINARY_ENDIAN_BIG:
+      newEndian = XdmfBinaryController::BIG;
+      break;
+    default:
+      break;
+  }
+
+  // create Binary link
+  shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                             mGeometry->getArrayType(),
+                                                                             newEndian,
+                                                                             seek,
+                                                                             std::vector<unsigned int>(1, start),
+                                                                             std::vector<unsigned int>(1, stride),
+                                                                             std::vector<unsigned int>(1, numValues),
+                                                                             std::vector<unsigned int>(1, dataspace));
+
+  while (mGeometry->getNumberHeavyDataControllers() > 0)
+  {
+    mGeometry->removeHeavyDataController(0);
+  }
+
+  mGeometry->insert(newController);
 }
 
 void 
@@ -866,8 +1129,94 @@ XdmfFortran::setTopology(const int topologyType,
   return id;
 }
 
+void
+XdmfFortran::clearTopologyHeavyData()
+{
+  if (mTopology) {
+    XdmfError::message(XdmfError::FATAL,
+                         "Error: Topology needs to be set before hdf5 linkage can be cleared.");
+  }
 
+  while (mTopology->getNumberHeavyDataControllers() > 0)
+  {
+    mTopology->removeHeavyDataController(0);
+  }
+}
 
+void
+XdmfFortran::setTopologyHDF5(const char * hdf5File,
+                             const char * hdf5Dataset,
+                             const unsigned int start,
+                             const unsigned int stride,
+                             const unsigned int numValues,
+                             const unsigned int dataspace)
+{
+  if (!mTopology) {
+    XdmfError::message(XdmfError::FATAL,
+                         "Error: Topology needs to be set before hdf5 linkage can be established.");
+  }
+
+  shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                         std::string(hdf5Dataset),
+                                                                         mTopology->getArrayType(),
+                                                                         std::vector<unsigned int>(1, start),
+                                                                         std::vector<unsigned int>(1, stride),
+                                                                         std::vector<unsigned int>(1, numValues),
+                                                                         std::vector<unsigned int>(1, dataspace));
+
+  while (mTopology->getNumberHeavyDataControllers() > 0)
+  {
+    mTopology->removeHeavyDataController(0);
+  }
+
+  mTopology->insert(newController);
+}
+
+void
+XdmfFortran::setTopologyBinary(const char * binFile,
+                               const int endian,
+                               const unsigned int seek,
+                               const unsigned int start,
+                               const unsigned int stride,
+                               const unsigned int numValues,
+                               const unsigned int dataspace)
+{
+  if (!mTopology) {
+    XdmfError::message(XdmfError::FATAL,
+                         "Error: Topology needs to be set before hdf5 linkage can be established.");
+  }
+
+  XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+  switch (endian) {
+    case XDMF_BINARY_ENDIAN_NATIVE:
+      newEndian = XdmfBinaryController::NATIVE;
+      break;
+    case XDMF_BINARY_ENDIAN_LITTLE:
+      newEndian = XdmfBinaryController::LITTLE;
+      break;
+    case XDMF_BINARY_ENDIAN_BIG:
+      newEndian = XdmfBinaryController::BIG;
+      break;
+    default:
+      break;
+  }
+
+  shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                             mTopology->getArrayType(),
+                                                                             newEndian,
+                                                                             seek,
+                                                                             std::vector<unsigned int>(1, start),
+                                                                             std::vector<unsigned int>(1, stride),
+                                                                             std::vector<unsigned int>(1, numValues),
+                                                                             std::vector<unsigned int>(1, dataspace));
+
+  while (mTopology->getNumberHeavyDataControllers() > 0)
+  {
+    mTopology->removeHeavyDataController(0);
+  }
+
+  mTopology->insert(newController);
+}
 
 
 
@@ -958,6 +1307,23 @@ XdmfFortran::retrieveDomainPropertyByKey(char * key,
 }
 
 void
+XdmfFortran::readDomainGridCollection(const int index)
+{
+  if ((int)mDomain->getNumberGridCollections() > index) {
+    mDomain->getGridCollection(index)->read();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
 XdmfFortran::removeDomainGridCollection(const int index)
 {
   if ((int)mDomain->getNumberGridCollections() > index) {
@@ -1032,6 +1398,90 @@ XdmfFortran::openDomainGridCollection(const int index,
     }
   }
 }
+
+void
+XdmfFortran::readGridCollectionGrid(const int gridType,
+                                    const int index)
+
+{
+  if (!mGridCollections.empty()) {
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        mGridCollections.top()->getCurvilinearGrid(index)->read();
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL,
+                             "Error: Index out of range.");
+        }
+        catch (XdmfError & e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        mGridCollections.top()->getRectilinearGrid(index)->read();
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL,
+                             "Error: Index out of range.");
+        }
+        catch (XdmfError & e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        mGridCollections.top()->getRegularGrid(index)->read();
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL,
+                             "Error: Index out of range.");
+        }
+        catch (XdmfError & e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        mGridCollections.top()->getUnstructuredGrid(index)->read();
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL,
+                             "Error: Index out of range.");
+        }
+        catch (XdmfError & e) {
+          throw e;
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Invalid Grid Type.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
 
 void
 XdmfFortran::removeGridCollectionGridCollection(const int index)
@@ -1110,6 +1560,34 @@ XdmfFortran::openGridCollectionGridCollection(const int index,
         }
         mGridCollections.push(openedGridCollection);
       }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: No grid collections are open.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::readGridCollectionGridCollection(const int index)
+{
+  if (!mGridCollections.empty()) {
+    if ((int)mGridCollections.top()->getNumberGridCollections() > index) {
+      mGridCollections.top()->getGridCollection(index)->read();
     }
     else {
       try {
@@ -1476,6 +1954,77 @@ XdmfFortran::openDomainGrid(const int gridType,
           mSets.push_back(openedSet);
         }
       }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::readDomainGrid(const int gridType,
+                            const int index)
+{
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      mDomain->getCurvilinearGrid(index)->read();
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      mDomain->getRectilinearGrid(index)->read();
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      mDomain->getRegularGrid(index)->read();
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      mDomain->getUnstructuredGrid(index)->read();
     }
     else {
       try {
@@ -3693,6 +4242,12 @@ XdmfFortran::retrieveGeometryType()
     else if (returnType == XdmfGeometryType::XYZ()) {
       return XDMF_GEOMETRY_TYPE_XYZ;
     }
+    else if (returnType == XdmfGeometryType::Polar()) {
+      return XDMF_GEOMETRY_TYPE_POLAR;
+    }
+    else if (returnType == XdmfGeometryType::Spherical()) {
+      return XDMF_GEOMETRY_TYPE_SPHERICAL;
+    }
     else if (returnType == XdmfGeometryType::NoGeometryType()) {
       try {
         XdmfError::message(XdmfError::FATAL,
@@ -3973,6 +4528,43 @@ XdmfFortran::retrieveGeometryPropertyByKey(char * key,
       memcpy(value, tempValue, strlen(tempValue)+1);
       delete [] tempValue;
     }
+  }
+}
+
+void
+XdmfFortran::setGeometryAsVariable(char * varname)
+{
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Must set geometry before it "
+                         "can be set as a variable.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+  else {
+    std::string newVar = varname;
+    mVariableSet[newVar] = mGeometry;
+  }
+}
+
+void
+XdmfFortran::setGeometryAsSubsetReference()
+{
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Must set geometry before it "
+                         "can be set as a variable.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+  else {
+    mSubsetReference = mGeometry;
   }
 }
 
@@ -4378,6 +4970,43 @@ XdmfFortran::retrieveTopologyPropertyByKey(char * key, char * value, const int v
   }
 }
 
+void
+XdmfFortran::setTopologyAsVariable(char * varname)
+{
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Must set Topology before it"
+                         " can be set as a variable.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+  else {
+    std::string newVar = varname;
+    mVariableSet[newVar] = mTopology;
+  }
+}
+
+void
+XdmfFortran::setTopologyAsSubsetReference()
+{
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Must set Topology before it"
+                         " can be set as a variable.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+  else {
+    mSubsetReference = mTopology;
+  }
+}
+
 int
 XdmfFortran::setDimensions(const int numValues, const int arrayType, void * pointValues)
 {
@@ -4389,6 +5018,115 @@ XdmfFortran::setDimensions(const int numValues, const int arrayType, void * poin
   int id = mPreviousDimensions.size();
   mPreviousDimensions.push_back(mDimensions);
   return id;
+}
+
+void
+XdmfFortran::clearDimensionsHeavyData()
+{
+  if (mDimensions) {
+    while (mDimensions->getNumberHeavyDataControllers() > 0)
+    {
+      mDimensions->removeHeavyDataController(0);
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Must set dimensions before hdf5 linkage"
+                         " can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setDimensionsHDF5(const char * hdf5File,
+                               const char * hdf5Dataset,
+                               const unsigned int start,
+                               const unsigned int stride,
+                               const unsigned int numValues,
+                               const unsigned int dataspace)
+{
+  if (mDimensions) {
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                         std::string(hdf5Dataset),
+                                                                         mDimensions->getArrayType(),
+                                                                         std::vector<unsigned int>(1, start),
+                                                                         std::vector<unsigned int>(1, stride),
+                                                                         std::vector<unsigned int>(1, numValues),
+                                                                         std::vector<unsigned int>(1, dataspace));
+
+    while (mDimensions->getNumberHeavyDataControllers() > 0)
+    {
+      mDimensions->removeHeavyDataController(0);
+    }
+
+    mDimensions->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Must set dimensions before hdf5 linkage"
+                         " can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setDimensionsBinary(const char * binFile,
+                                const int endian,
+                                const unsigned int seek,
+                                const unsigned int start,
+                                const unsigned int stride,
+                                const unsigned int numValues,
+                                const unsigned int dataspace)
+{
+  if (mDimensions) {
+    XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+    switch (endian) {
+      case XDMF_BINARY_ENDIAN_NATIVE:
+        newEndian = XdmfBinaryController::NATIVE;
+        break;
+      case XDMF_BINARY_ENDIAN_LITTLE:
+        newEndian = XdmfBinaryController::LITTLE;
+        break;
+      case XDMF_BINARY_ENDIAN_BIG:
+        newEndian = XdmfBinaryController::BIG;
+        break;
+      default:
+        break;
+    }
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                               mDimensions->getArrayType(),
+                                                                               newEndian,
+                                                                               seek,
+                                                                               std::vector<unsigned int>(1, start),
+                                                                               std::vector<unsigned int>(1, stride),
+                                                                               std::vector<unsigned int>(1, numValues),
+                                                                               std::vector<unsigned int>(1, dataspace));
+
+    while (mDimensions->getNumberHeavyDataControllers() > 0)
+    {
+      mDimensions->removeHeavyDataController(0);
+    }
+
+    mDimensions->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Must set dimensions before hdf5 linkage"
+                         " can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
 }
 
 void
@@ -4687,6 +5425,112 @@ XdmfFortran::setOrigin(const int numValues, const int arrayType, void * pointVal
 }
 
 void
+XdmfFortran::clearOriginHeavyData()
+{
+  if (mOrigin) {
+    while (mOrigin->getNumberHeavyDataControllers() > 0)
+    {
+      mOrigin->removeHeavyDataController(0);
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Must set Origin before hdf5 linkage can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setOriginHDF5(const char * hdf5File,
+                           const char * hdf5Dataset,
+                           const unsigned int start,
+                           const unsigned int stride,
+                           const unsigned int numValues,
+                           const unsigned int dataspace)
+{
+  if (mOrigin) {
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                         std::string(hdf5Dataset),
+                                                                         mOrigin->getArrayType(),
+                                                                         std::vector<unsigned int>(1, start),
+                                                                         std::vector<unsigned int>(1, stride),
+                                                                         std::vector<unsigned int>(1, numValues),
+                                                                         std::vector<unsigned int>(1, dataspace));
+
+    while (mOrigin->getNumberHeavyDataControllers() > 0)
+    {
+      mOrigin->removeHeavyDataController(0);
+    }
+
+    mOrigin->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Must set Origin before hdf5 linkage can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setOriginBinary(const char * binFile,
+                             const int endian,
+                             const unsigned int seek,
+                             const unsigned int start,
+                             const unsigned int stride,
+                             const unsigned int numValues,
+                             const unsigned int dataspace)
+{
+  if (mOrigin) {
+    XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+    switch (endian) {
+      case XDMF_BINARY_ENDIAN_NATIVE:
+        newEndian = XdmfBinaryController::NATIVE;
+        break;
+      case XDMF_BINARY_ENDIAN_LITTLE:
+        newEndian = XdmfBinaryController::LITTLE;
+        break;
+      case XDMF_BINARY_ENDIAN_BIG:
+        newEndian = XdmfBinaryController::BIG;
+        break;
+      default:
+        break;
+    }
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                               mOrigin->getArrayType(),
+                                                                               newEndian,
+                                                                               seek,
+                                                                               std::vector<unsigned int>(1, start),
+                                                                               std::vector<unsigned int>(1, stride),
+                                                                               std::vector<unsigned int>(1, numValues),
+                                                                               std::vector<unsigned int>(1, dataspace));
+
+    while (mOrigin->getNumberHeavyDataControllers() > 0)
+    {
+      mOrigin->removeHeavyDataController(0);
+    }
+
+    mOrigin->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Must set Origin before hdf5 linkage can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
 XdmfFortran::setPreviousOrigin(const int index)
 {
   if (index < (int)mPreviousOrigins.size()) {
@@ -4974,6 +5818,115 @@ XdmfFortran::setBrick(const int numValues, const int arrayType, void * pointValu
   int id = mPreviousBricks.size();
   mPreviousBricks.push_back(mBrick);
   return id;
+}
+
+void
+XdmfFortran::clearBrickHeavyData()
+{
+  if (!mBrick) {
+    while (mBrick->getNumberHeavyDataControllers() > 0)
+    {
+      mBrick->removeHeavyDataController(0);
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Must set Brick before hdf5 linkage"
+                         " can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setBrickHDF5(const char * hdf5File,
+                          const char * hdf5Dataset,
+                          const unsigned int start,
+                          const unsigned int stride,
+                          const unsigned int numValues,
+                          const unsigned int dataspace)
+{
+  if (mBrick) {
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                           std::string(hdf5Dataset),
+                                                                           mBrick->getArrayType(),
+                                                                           std::vector<unsigned int>(1, start),
+                                                                           std::vector<unsigned int>(1, stride),
+                                                                           std::vector<unsigned int>(1, numValues),
+                                                                           std::vector<unsigned int>(1, dataspace));
+
+    while (mBrick->getNumberHeavyDataControllers() > 0)
+    {
+      mBrick->removeHeavyDataController(0);
+    }
+
+    mBrick->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Must set Brick before hdf5 linkage"
+                         " can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setBrickBinary(const char * binFile,
+                                const int endian,
+                                const unsigned int seek,
+                                const unsigned int start,
+                                const unsigned int stride,
+                                const unsigned int numValues,
+                                const unsigned int dataspace)
+{
+  if (!mBrick) {
+    XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+    switch (endian) {
+      case XDMF_BINARY_ENDIAN_NATIVE:
+        newEndian = XdmfBinaryController::NATIVE;
+        break;
+      case XDMF_BINARY_ENDIAN_LITTLE:
+        newEndian = XdmfBinaryController::LITTLE;
+        break;
+      case XDMF_BINARY_ENDIAN_BIG:
+        newEndian = XdmfBinaryController::BIG;
+        break;
+      default:
+        break;
+    }
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                               mBrick->getArrayType(),
+                                                                               newEndian,
+                                                                               seek,
+                                                                               std::vector<unsigned int>(1, start),
+                                                                               std::vector<unsigned int>(1, stride),
+                                                                               std::vector<unsigned int>(1, numValues),
+                                                                               std::vector<unsigned int>(1, dataspace));
+
+    while (mBrick->getNumberHeavyDataControllers() > 0)
+    {
+      mBrick->removeHeavyDataController(0);
+    }
+
+    mBrick->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Must set Brick before hdf5 linkage"
+                         " can be established.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
 }
 
 void
@@ -6012,6 +6965,41 @@ XdmfFortran::retrieveAttributePropertyByKey(const int index,
   }
 }
 
+void
+XdmfFortran::setAttributeAsVariable(char * varname, int index)
+{
+  if (index < (int)mAttributes.size()) {
+    std::string newVar = varname;
+    mVariableSet[newVar] = mAttributes[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setAttributeAsSubsetReference(int index)
+{
+  if (index < (int)mAttributes.size()) {
+    mSubsetReference = mAttributes[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
 int
 XdmfFortran::addCoordinate(char * name, const int numValues, const int arrayType, void * values)
 {
@@ -6032,6 +7020,114 @@ XdmfFortran::addPreviousCoordinate(const int index)
 {
   if (index < (int)mPreviousCoordinates.size()) {
     mCoordinates.push_back(mPreviousCoordinates[index]);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::clearCoordinateHeavyData(const int index)
+{
+  if (index < (int)mCoordinates.size()) {
+    while (mCoordinates[index]->getNumberHeavyDataControllers() > 0)
+    {
+      mCoordinates[index]->removeHeavyDataController(0);
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setCoordinateHDF5(const int index,
+                               const char * hdf5File,
+                               const char * hdf5Dataset,
+                               const unsigned int start,
+                               const unsigned int stride,
+                               const unsigned int numValues,
+                               const unsigned int dataspace)
+{
+  if (index < (int)mCoordinates.size()) {
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                         std::string(hdf5Dataset),
+                                                                         mCoordinates[index]->getArrayType(),
+                                                                         std::vector<unsigned int>(1, start),
+                                                                         std::vector<unsigned int>(1, stride),
+                                                                         std::vector<unsigned int>(1, numValues),
+                                                                         std::vector<unsigned int>(1, dataspace));
+
+    while (mCoordinates[index]->getNumberHeavyDataControllers() > 0)
+    {
+      mCoordinates[index]->removeHeavyDataController(0);
+    }
+
+    mCoordinates[index]->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setCoordinateBinary(const int index,
+                               const char * binFile,
+                                const int endian,
+                                const unsigned int seek,
+                                const unsigned int start,
+                                const unsigned int stride,
+                                const unsigned int numValues,
+                                const unsigned int dataspace)
+{
+  if (index < (int)mCoordinates.size()) {
+    XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+    switch (endian) {
+      case XDMF_BINARY_ENDIAN_NATIVE:
+        newEndian = XdmfBinaryController::NATIVE;
+        break;
+      case XDMF_BINARY_ENDIAN_LITTLE:
+        newEndian = XdmfBinaryController::LITTLE;
+        break;
+      case XDMF_BINARY_ENDIAN_BIG:
+        newEndian = XdmfBinaryController::BIG;
+        break;
+      default:
+        break;
+    }
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                               mCoordinates[index]->getArrayType(),
+                                                                               newEndian,
+                                                                               seek,
+                                                                               std::vector<unsigned int>(1, start),
+                                                                               std::vector<unsigned int>(1, stride),
+                                                                               std::vector<unsigned int>(1, numValues),
+                                                                               std::vector<unsigned int>(1, dataspace));
+
+    while (mCoordinates[index]->getNumberHeavyDataControllers() > 0)
+    {
+      mCoordinates[index]->removeHeavyDataController(0);
+    }
+
+    mCoordinates[index]->insert(newController);
   }
   else {
     try {
@@ -6379,6 +7475,41 @@ XdmfFortran::retrieveCoordinatePropertyByKey(const int index,
   }
 }
 
+void
+XdmfFortran::setCoordinateAsVariable(char * varname, int index)
+{
+  if (index < (int)mCoordinates.size()) {
+    std::string newVar = varname;
+    mVariableSet[newVar] = mCoordinates[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setCoordinateAsSubsetReference(int index)
+{
+  if (index < (int)mCoordinates.size()) {
+    mSubsetReference = mCoordinates[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
 int 
 XdmfFortran::addSet(char * name,
                     const int newSetType,
@@ -6437,6 +7568,114 @@ XdmfFortran::addSet(char * name,
   int id = mPreviousSets.size();
   mPreviousSets.push_back(newSet);
   return id;
+}
+
+void
+XdmfFortran::clearSetHeavyData(const int index)
+{
+  if (index < (int)mSets.size()) {
+    while (mSets[index]->getNumberHeavyDataControllers() > 0)
+    {
+      mSets[index]->removeHeavyDataController(0);
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setSetHDF5(const int index,
+                        const char * hdf5File,
+                        const char * hdf5Dataset,
+                        const unsigned int start,
+                        const unsigned int stride,
+                        const unsigned int numValues,
+                        const unsigned int dataspace)
+{
+  if (index < (int)mSets.size()) {
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                         std::string(hdf5Dataset),
+                                                                         mSets[index]->getArrayType(),
+                                                                         std::vector<unsigned int>(1, start),
+                                                                         std::vector<unsigned int>(1, stride),
+                                                                         std::vector<unsigned int>(1, numValues),
+                                                                         std::vector<unsigned int>(1, dataspace));
+
+    while (mSets[index]->getNumberHeavyDataControllers() > 0)
+    {
+      mSets[index]->removeHeavyDataController(0);
+    }
+
+    mSets[index]->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setSetBinary(const int index,
+                          const char * binFile,
+                          const int endian,
+                          const unsigned int seek,
+                          const unsigned int start,
+                          const unsigned int stride,
+                          const unsigned int numValues,
+                          const unsigned int dataspace)
+{
+  if (index < (int)mSets.size()) {
+    XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+    switch (endian) {
+      case XDMF_BINARY_ENDIAN_NATIVE:
+        newEndian = XdmfBinaryController::NATIVE;
+        break;
+      case XDMF_BINARY_ENDIAN_LITTLE:
+        newEndian = XdmfBinaryController::LITTLE;
+        break;
+      case XDMF_BINARY_ENDIAN_BIG:
+        newEndian = XdmfBinaryController::BIG;
+        break;
+      default:
+        break;
+    }
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                               mSets[index]->getArrayType(),
+                                                                               newEndian,
+                                                                               seek,
+                                                                               std::vector<unsigned int>(1, start),
+                                                                               std::vector<unsigned int>(1, stride),
+                                                                               std::vector<unsigned int>(1, numValues),
+                                                                               std::vector<unsigned int>(1, dataspace));
+
+    while (mSets[index]->getNumberHeavyDataControllers() > 0)
+    {
+      mSets[index]->removeHeavyDataController(0);
+    }
+
+    mSets[index]->insert(newController);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
 }
 
 void
@@ -6911,6 +8150,41 @@ XdmfFortran::retrieveSetPropertyByKey(const int index,
   }
 }
 
+void
+XdmfFortran::setSetAsVariable(char * varname, int index)
+{
+  if (index < (int)mSets.size()) {
+    std::string newVar = varname;
+    mVariableSet[newVar] = mSets[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setSetAsSubsetReference(int index)
+{
+  if (index < (int)mSets.size()) {
+    mSubsetReference = mSets[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
 int
 XdmfFortran::retrieveNumInformation()
 {
@@ -7228,6 +8502,154 @@ XdmfFortran::addInformationArray(const int index,
 }
 
 void
+XdmfFortran::clearInformationArrayHeavyData(const int index,
+                                            const int arrayIndex)
+{
+  if (index < (int)mInformations.size()) {
+    if (arrayIndex < (int)mInformations[index]->getNumberArrays()) {
+      shared_ptr<XdmfArray> modifiedArray =
+        mInformations[index]->getArray(arrayIndex);
+      while (modifiedArray->getNumberHeavyDataControllers() > 0)
+      {
+        modifiedArray->removeHeavyDataController(0);
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setInformationArrayHDF5(const int index,
+                                     const int arrayIndex,
+                                     const char * hdf5File,
+                                     const char * hdf5Dataset,
+                                     const unsigned int start,
+                                     const unsigned int stride,
+                                     const unsigned int numValues,
+                                     const unsigned int dataspace)
+{
+  if (index < (int)mInformations.size()) {
+    if (arrayIndex < (int)mInformations[index]->getNumberArrays()) {
+      shared_ptr<XdmfArray> modifiedArray =
+        mInformations[index]->getArray(arrayIndex);
+      shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                             std::string(hdf5Dataset),
+                                                                             modifiedArray->getArrayType(),
+                                                                             std::vector<unsigned int>(1, start),
+                                                                             std::vector<unsigned int>(1, stride),
+                                                                             std::vector<unsigned int>(1, numValues),
+                                                                             std::vector<unsigned int>(1, dataspace));
+      while (modifiedArray->getNumberHeavyDataControllers() > 0)
+      {
+        modifiedArray->removeHeavyDataController(0);
+      }
+
+      modifiedArray->insert(newController);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setInformationArrayBinary(const int index,
+                                       const int arrayIndex,
+                                       const char * binFile,
+                                       const int endian,
+                                       const unsigned int seek,
+                                       const unsigned int start,
+                                       const unsigned int stride,
+                                       const unsigned int numValues,
+                                       const unsigned int dataspace)
+{
+  if (index < (int)mInformations.size()) {
+    if (arrayIndex < (int)mInformations[index]->getNumberArrays()) {
+      shared_ptr<XdmfArray> modifiedArray =
+        mInformations[index]->getArray(arrayIndex);
+      XdmfBinaryController::Endian newEndian = XdmfBinaryController::NATIVE;
+      switch (endian) {
+        case XDMF_BINARY_ENDIAN_NATIVE:
+          newEndian = XdmfBinaryController::NATIVE;
+          break;
+        case XDMF_BINARY_ENDIAN_LITTLE:
+          newEndian = XdmfBinaryController::LITTLE;
+          break;
+        case XDMF_BINARY_ENDIAN_BIG:
+          newEndian = XdmfBinaryController::BIG;
+          break;
+        default:
+          break;
+      }
+      shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
+                                                                                 mDimensions->getArrayType(),
+                                                                                 newEndian,
+                                                                                 seek,
+                                                                                 std::vector<unsigned int>(1, start),
+                                                                                 std::vector<unsigned int>(1, stride),
+                                                                                 std::vector<unsigned int>(1, numValues),
+                                                                                 std::vector<unsigned int>(1, dataspace));
+      while (modifiedArray->getNumberHeavyDataControllers() > 0)
+      {
+        modifiedArray->removeHeavyDataController(0);
+      }
+
+      modifiedArray->insert(newController);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
 XdmfFortran::insertInformationIntoInformation(const int toIndex,
                                               const int fromIndex,
                                               const bool removeFromArray)
@@ -7479,6 +8901,878 @@ XdmfFortran::retrieveInformationArrayValues(const int index,
 }
 
 void
+XdmfFortran::setInformationArrayAsVariable(char * varname, int infoindex, int index)
+{
+  if (infoindex < (int)mInformations.size()) {
+    if (index < mInformations[infoindex]->getNumberArrays()) {
+      std::string newVar = varname;
+      mVariableSet[newVar] = mInformations[infoindex]->getArray(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::setInformationArrayAsSubsetReference(int infoindex, int index)
+{
+  if (infoindex < (int)mInformations.size()) {
+    if (index < mInformations[infoindex]->getNumberArrays()) {
+      mSubsetReference = mInformations[infoindex]->getArray(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Index out of range.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+int
+XdmfFortran::addFunctionAsAttribute(char * expression,
+                                    const char * const name,
+                                    const int attributeCenter,
+                                    const int attributeType)
+{
+  shared_ptr<XdmfAttribute> currAttribute = XdmfAttribute::New();
+  currAttribute->setName(name);
+
+  switch(attributeCenter) {
+  case XDMF_ATTRIBUTE_CENTER_GRID:
+    currAttribute->setCenter(XdmfAttributeCenter::Grid());
+    break;
+  case XDMF_ATTRIBUTE_CENTER_CELL:
+    currAttribute->setCenter(XdmfAttributeCenter::Cell());
+    break;
+  case XDMF_ATTRIBUTE_CENTER_FACE:
+    currAttribute->setCenter(XdmfAttributeCenter::Face());
+    break;
+  case XDMF_ATTRIBUTE_CENTER_EDGE:
+    currAttribute->setCenter(XdmfAttributeCenter::Edge());
+    break;
+  case XDMF_ATTRIBUTE_CENTER_NODE:
+    currAttribute->setCenter(XdmfAttributeCenter::Node());
+    break;
+  default:
+    try {
+      XdmfError::message(XdmfError::FATAL, "Invalid attribute center");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+
+  switch(attributeType) {
+  case XDMF_ATTRIBUTE_TYPE_SCALAR:
+    currAttribute->setType(XdmfAttributeType::Scalar());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_VECTOR:
+    currAttribute->setType(XdmfAttributeType::Vector());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_TENSOR:
+    currAttribute->setType(XdmfAttributeType::Tensor());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_MATRIX:
+    currAttribute->setType(XdmfAttributeType::Matrix());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_TENSOR6:
+    currAttribute->setType(XdmfAttributeType::Tensor6());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_GLOBALID:
+    currAttribute->setType(XdmfAttributeType::GlobalId());
+    break;
+  default:
+    try {
+      XdmfError::message(XdmfError::FATAL, "Invalid attribute type");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+
+  for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+        mInformations.begin();
+      iter != mInformations.end();
+      ++iter) {
+    currAttribute->insert(*iter);
+  }
+  mInformations.clear();
+
+  // Set Function instead of setting values
+  std::string expressionstring = std::string(expression);
+
+  std::map<std::string, shared_ptr<XdmfArray> > functionVariables = std::map<std::string, shared_ptr<XdmfArray> >(mVariableSet);
+
+  // Copy variables into new map
+
+  shared_ptr<XdmfFunction> function = XdmfFunction::New(expression, functionVariables);
+
+  currAttribute->setReference(function);
+  currAttribute->setReadMode(XdmfArray::Reference);
+
+  mAttributes.push_back(currAttribute);
+
+  const int id = mPreviousAttributes.size();
+  mPreviousAttributes.push_back(currAttribute);
+  return id;
+}
+
+int
+XdmfFortran::addFunctionAsCoordinate(char * expression,
+                                     char * name)
+{
+  shared_ptr<XdmfArray> currArray = XdmfArray::New();
+  currArray->setName(name);
+
+  // Set Function instead of setting values
+  std::string expressionstring = std::string(expression);
+
+  std::map<std::string, shared_ptr<XdmfArray> > functionVariables = std::map<std::string, shared_ptr<XdmfArray> >(mVariableSet);
+
+  // Copy variables into new map
+
+  shared_ptr<XdmfFunction> function = XdmfFunction::New(expression, functionVariables);
+
+  currArray->setReference(function);
+  currArray->setReadMode(XdmfArray::Reference);
+
+  mCoordinates.push_back(currArray);
+
+  const int id = mPreviousCoordinates.size();
+  mPreviousCoordinates.push_back(currArray);
+  return id;
+}
+
+int
+XdmfFortran::addFunctionAsSet(char * expression,
+                              char * name,
+                              const int newSetType)
+{
+  const shared_ptr<XdmfSet> newSet = XdmfSet::New();
+  newSet->setName(name);
+
+  switch (newSetType) {
+    case XDMF_SET_TYPE_NODE:
+      newSet->setType(XdmfSetType::Node());
+      break;
+    case XDMF_SET_TYPE_CELL:
+      newSet->setType(XdmfSetType::Cell());
+      break;
+    case XDMF_SET_TYPE_FACE:
+      newSet->setType(XdmfSetType::Face());
+      break;
+    case XDMF_SET_TYPE_EDGE:
+      newSet->setType(XdmfSetType::Edge());
+      break;
+    default:
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Invalid set type.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+      return -1;
+  }
+
+  for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+      mAttributes.begin();
+      iter != mAttributes.end();
+      ++iter) {
+    newSet->insert(*iter);
+  }
+  mAttributes.clear();
+
+  if (!mInformations.empty()) {
+    for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+        mInformations.begin();
+        iter != mInformations.end();
+        ++iter) {
+      newSet->insert(*iter);
+    }
+    mInformations.clear();
+  }
+
+  // Set Function instead of setting values
+  std::string expressionstring = std::string(expression);
+
+  std::map<std::string, shared_ptr<XdmfArray> > functionVariables = std::map<std::string, shared_ptr<XdmfArray> >(mVariableSet);
+
+  // Copy variables into new map
+
+  shared_ptr<XdmfFunction> function = XdmfFunction::New(expression, functionVariables);
+
+  newSet->setReference(function);
+  newSet->setReadMode(XdmfArray::Reference);
+
+  mSets.push_back(newSet);
+  int id = mPreviousSets.size();
+  mPreviousSets.push_back(newSet);
+  return id;
+}
+
+void
+XdmfFortran::addFunctionAsInformationArray(char * expression,
+                                           const int index,
+                                           char * name)
+{
+  if (index < (int)mInformations.size()) {
+    shared_ptr<XdmfArray> newArray = XdmfArray::New();
+    newArray->setName(name);
+    // Set Function instead of setting values
+    std::string expressionstring = std::string(expression);
+    std::map<std::string, shared_ptr<XdmfArray> > functionVariables = std::map<std::string, shared_ptr<XdmfArray> >(mVariableSet);
+    // Copy variables into new map
+    shared_ptr<XdmfFunction> function = XdmfFunction::New(expression, functionVariables);
+    newArray->setReference(function);
+    newArray->setReadMode(XdmfArray::Reference);
+    mInformations[index]->insert(newArray);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+int
+XdmfFortran::setFunctionAsTopology(char * expression,
+                                   const int topologyType,
+                                   const int numNodes)
+{
+  mTopology = XdmfTopology::New();
+
+  switch(topologyType) {
+  case XDMF_TOPOLOGY_TYPE_POLYVERTEX:
+    mTopology->setType(XdmfTopologyType::Polyvertex());
+    break;
+  case XDMF_TOPOLOGY_TYPE_POLYLINE:
+    mTopology->setType(XdmfTopologyType::Polyline(numNodes));
+    break;
+  case XDMF_TOPOLOGY_TYPE_POLYGON:
+    mTopology->setType(XdmfTopologyType::Polygon(numNodes));
+    break;
+  case XDMF_TOPOLOGY_TYPE_TRIANGLE:
+    mTopology->setType(XdmfTopologyType::Triangle());
+    break;
+  case XDMF_TOPOLOGY_TYPE_QUADRILATERAL:
+    mTopology->setType(XdmfTopologyType::Quadrilateral());
+    break;
+  case XDMF_TOPOLOGY_TYPE_TETRAHEDRON:
+    mTopology->setType(XdmfTopologyType::Tetrahedron());
+    break;
+  case XDMF_TOPOLOGY_TYPE_PYRAMID:
+    mTopology->setType(XdmfTopologyType::Pyramid());
+    break;
+  case XDMF_TOPOLOGY_TYPE_WEDGE:
+    mTopology->setType(XdmfTopologyType::Wedge());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON:
+    mTopology->setType(XdmfTopologyType::Hexahedron());
+    break;
+  case XDMF_TOPOLOGY_TYPE_EDGE_3:
+    mTopology->setType(XdmfTopologyType::Edge_3());
+    break;
+  case XDMF_TOPOLOGY_TYPE_TRIANGLE_6:
+    mTopology->setType(XdmfTopologyType::Triangle_6());
+    break;
+  case XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8:
+    mTopology->setType(XdmfTopologyType::Quadrilateral_8());
+    break;
+  case XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9:
+    mTopology->setType(XdmfTopologyType::Quadrilateral_9());
+    break;
+  case XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10:
+    mTopology->setType(XdmfTopologyType::Tetrahedron_10());
+    break;
+  case XDMF_TOPOLOGY_TYPE_PYRAMID_13:
+    mTopology->setType(XdmfTopologyType::Pyramid_13());
+    break;
+  case XDMF_TOPOLOGY_TYPE_WEDGE_15:
+    mTopology->setType(XdmfTopologyType::Wedge_15());
+    break;
+  case XDMF_TOPOLOGY_TYPE_WEDGE_18:
+    mTopology->setType(XdmfTopologyType::Wedge_18());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20:
+    mTopology->setType(XdmfTopologyType::Hexahedron_20());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24:
+    mTopology->setType(XdmfTopologyType::Hexahedron_24());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27:
+    mTopology->setType(XdmfTopologyType::Hexahedron_27());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64:
+    mTopology->setType(XdmfTopologyType::Hexahedron_64());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125:
+    mTopology->setType(XdmfTopologyType::Hexahedron_125());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216:
+    mTopology->setType(XdmfTopologyType::Hexahedron_216());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343:
+    mTopology->setType(XdmfTopologyType::Hexahedron_343());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512:
+    mTopology->setType(XdmfTopologyType::Hexahedron_512());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729:
+    mTopology->setType(XdmfTopologyType::Hexahedron_729());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000:
+    mTopology->setType(XdmfTopologyType::Hexahedron_1000());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331:
+    mTopology->setType(XdmfTopologyType::Hexahedron_1331());
+    break;
+  case XDMF_TOPOLOGY_TYPE_MIXED:
+    mTopology->setType(XdmfTopologyType::Mixed());
+    break;
+  default:
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Invalid topology type.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+
+  // Set Function instead of setting values
+  std::string expressionstring = std::string(expression);
+
+  std::map<std::string, shared_ptr<XdmfArray> > functionVariables = std::map<std::string, shared_ptr<XdmfArray> >(mVariableSet);
+
+  // Copy variables into new map
+
+  shared_ptr<XdmfFunction> function = XdmfFunction::New(expression, functionVariables);
+
+  mTopology->setReference(function);
+  mTopology->setReadMode(XdmfArray::Reference);
+
+  const int id = mPreviousTopologies.size();
+  mPreviousTopologies.push_back(mTopology);
+  return id;
+}
+
+int
+XdmfFortran::setFunctionAsGeometry(char * expression,
+                                   const int geometryType)
+{
+  mGeometry = XdmfGeometry::New();
+
+  switch(geometryType) {
+  case XDMF_GEOMETRY_TYPE_XYZ:
+    mGeometry->setType(XdmfGeometryType::XYZ());
+    break;
+  case XDMF_GEOMETRY_TYPE_XY:
+    mGeometry->setType(XdmfGeometryType::XY());
+    break;
+  case XDMF_GEOMETRY_TYPE_POLAR:
+    mGeometry->setType(XdmfGeometryType::Polar());
+    break;
+  case XDMF_GEOMETRY_TYPE_SPHERICAL:
+    mGeometry->setType(XdmfGeometryType::Spherical());
+    break;
+  default:
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Invalid geometry type.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+
+  // Set Function instead of setting values
+  std::string expressionstring = std::string(expression);
+
+  std::map<std::string, shared_ptr<XdmfArray> > functionVariables = std::map<std::string, shared_ptr<XdmfArray> >(mVariableSet);
+
+  // Copy variables into new map
+
+  shared_ptr<XdmfFunction> function = XdmfFunction::New(expression, functionVariables);
+
+  mGeometry->setReference(function);
+  mGeometry->setReadMode(XdmfArray::Reference);
+
+  const int id = mPreviousGeometries.size();
+  mPreviousGeometries.push_back(mGeometry);
+  return id;
+}
+
+int
+XdmfFortran::addSubsetAsAttribute(int start,
+                                  int stride,
+                                  int dimensions,
+                                  const char * const name,
+                                  const int attributeCenter,
+                                  const int attributeType)
+{
+  shared_ptr<XdmfAttribute> currAttribute = XdmfAttribute::New();
+  currAttribute->setName(name);
+
+  switch(attributeCenter) {
+  case XDMF_ATTRIBUTE_CENTER_GRID:
+    currAttribute->setCenter(XdmfAttributeCenter::Grid());
+    break;
+  case XDMF_ATTRIBUTE_CENTER_CELL:
+    currAttribute->setCenter(XdmfAttributeCenter::Cell());
+    break;
+  case XDMF_ATTRIBUTE_CENTER_FACE:
+    currAttribute->setCenter(XdmfAttributeCenter::Face());
+    break;
+  case XDMF_ATTRIBUTE_CENTER_EDGE:
+    currAttribute->setCenter(XdmfAttributeCenter::Edge());
+    break;
+  case XDMF_ATTRIBUTE_CENTER_NODE:
+    currAttribute->setCenter(XdmfAttributeCenter::Node());
+    break;
+  default:
+    try {
+      XdmfError::message(XdmfError::FATAL, "Invalid attribute center");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+
+  switch(attributeType) {
+  case XDMF_ATTRIBUTE_TYPE_SCALAR:
+    currAttribute->setType(XdmfAttributeType::Scalar());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_VECTOR:
+    currAttribute->setType(XdmfAttributeType::Vector());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_TENSOR:
+    currAttribute->setType(XdmfAttributeType::Tensor());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_MATRIX:
+    currAttribute->setType(XdmfAttributeType::Matrix());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_TENSOR6:
+    currAttribute->setType(XdmfAttributeType::Tensor6());
+    break;
+  case XDMF_ATTRIBUTE_TYPE_GLOBALID:
+    currAttribute->setType(XdmfAttributeType::GlobalId());
+    break;
+  default:
+    try {
+      XdmfError::message(XdmfError::FATAL, "Invalid attribute type");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+
+  for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+        mInformations.begin();
+      iter != mInformations.end();
+      ++iter) {
+    currAttribute->insert(*iter);
+  }
+  mInformations.clear();
+
+  // Generate Subset instead of filling values
+
+  std::vector<unsigned int> newStart;
+  newStart.push_back(start);
+  std::vector<unsigned int> newStride;
+  newStride.push_back(stride);
+  std::vector<unsigned int> newDimension;
+  newDimension.push_back(dimensions);
+
+  shared_ptr<XdmfSubset> subset = XdmfSubset::New(mSubsetReference,
+                                                  newStart,
+                                                  newStride,
+                                                  newDimension);
+
+  currAttribute->setReference(subset);
+  currAttribute->setReadMode(XdmfArray::Reference);
+
+  mAttributes.push_back(currAttribute);
+
+  const int id = mPreviousAttributes.size();
+  mPreviousAttributes.push_back(currAttribute);
+  return id;
+}
+
+int
+XdmfFortran::addSubsetAsCoordinate(int start,
+                                   int stride,
+                                   int dimensions,
+                                   char * name)
+{
+  shared_ptr<XdmfArray> currArray = XdmfArray::New();
+  currArray->setName(name);
+
+  // Generate Subset instead of filling values
+
+  std::vector<unsigned int> newStart;
+  newStart.push_back(start);
+  std::vector<unsigned int> newStride;
+  newStride.push_back(stride);
+  std::vector<unsigned int> newDimension;
+  newDimension.push_back(dimensions);
+
+  shared_ptr<XdmfSubset> subset = XdmfSubset::New(mSubsetReference,
+                                                  newStart,
+                                                  newStride,
+                                                  newDimension);
+
+  currArray->setReference(subset);
+  currArray->setReadMode(XdmfArray::Reference);
+
+  mCoordinates.push_back(currArray);
+
+  const int id = mPreviousCoordinates.size();
+  mPreviousCoordinates.push_back(currArray);
+  return id;
+
+}
+
+int
+XdmfFortran::addSubsetAsSet(int start,
+                            int stride,
+                            int dimensions,
+                            char * name,
+                            const int newSetType)
+{
+  const shared_ptr<XdmfSet> newSet = XdmfSet::New();
+  newSet->setName(name);
+
+  switch (newSetType) {
+    case XDMF_SET_TYPE_NODE:
+      newSet->setType(XdmfSetType::Node());
+      break;
+    case XDMF_SET_TYPE_CELL:
+      newSet->setType(XdmfSetType::Cell());
+      break;
+    case XDMF_SET_TYPE_FACE:
+      newSet->setType(XdmfSetType::Face());
+      break;
+    case XDMF_SET_TYPE_EDGE:
+      newSet->setType(XdmfSetType::Edge());
+      break;
+    default:
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Invalid set type.");
+      }
+      catch (XdmfError & e) {
+        throw e;
+      }
+      return -1;
+  }
+
+  for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+      mAttributes.begin();
+      iter != mAttributes.end();
+      ++iter) {
+    newSet->insert(*iter);
+  }
+  mAttributes.clear();
+
+  if (!mInformations.empty()) {
+    for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+        mInformations.begin();
+        iter != mInformations.end();
+        ++iter) {
+      newSet->insert(*iter);
+    }
+    mInformations.clear();
+  }
+
+  // Generate Subset instead of filling values
+
+  std::vector<unsigned int> newStart;
+  newStart.push_back(start);
+  std::vector<unsigned int> newStride;
+  newStride.push_back(stride);
+  std::vector<unsigned int> newDimension;
+  newDimension.push_back(dimensions);
+
+  shared_ptr<XdmfSubset> subset = XdmfSubset::New(mSubsetReference,
+                                                  newStart,
+                                                  newStride,
+                                                  newDimension);
+
+  newSet->setReference(subset);
+  newSet->setReadMode(XdmfArray::Reference);
+
+  mSets.push_back(newSet);
+  int id = mPreviousSets.size();
+  mPreviousSets.push_back(newSet);
+  return id;
+}
+
+void
+XdmfFortran::addSubsetAsInformationArray(int start,
+                                         int stride,
+                                         int dimensions,
+                                         const int index,
+                                         char * name)
+{
+  if (index < (int)mInformations.size()) {
+    shared_ptr<XdmfArray> newArray = XdmfArray::New();
+    newArray->setName(name);
+    // Generate Subset instead of filling values
+    std::vector<unsigned int> newStart;
+    newStart.push_back(start);
+    std::vector<unsigned int> newStride;
+    newStride.push_back(stride);
+    std::vector<unsigned int> newDimension;
+    newDimension.push_back(dimensions);
+    shared_ptr<XdmfSubset> subset = XdmfSubset::New(mSubsetReference,
+                                                    newStart,
+                                                    newStride,
+                                                    newDimension);
+    newArray->setReference(subset);
+    newArray->setReadMode(XdmfArray::Reference);
+    mInformations[index]->insert(newArray);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Index out of range.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+}
+
+int
+XdmfFortran::setSubsetAsTopology(int start,
+                                 int stride,
+                                 int dimensions,
+                                 const int topologyType,
+                                 const int numNodes)
+{
+  mTopology = XdmfTopology::New();
+
+  switch(topologyType) {
+  case XDMF_TOPOLOGY_TYPE_POLYVERTEX:
+    mTopology->setType(XdmfTopologyType::Polyvertex());
+    break;
+  case XDMF_TOPOLOGY_TYPE_POLYLINE:
+    mTopology->setType(XdmfTopologyType::Polyline(numNodes));
+    break;
+  case XDMF_TOPOLOGY_TYPE_POLYGON:
+    mTopology->setType(XdmfTopologyType::Polygon(numNodes));
+    break;
+  case XDMF_TOPOLOGY_TYPE_TRIANGLE:
+    mTopology->setType(XdmfTopologyType::Triangle());
+    break;
+  case XDMF_TOPOLOGY_TYPE_QUADRILATERAL:
+    mTopology->setType(XdmfTopologyType::Quadrilateral());
+    break;
+  case XDMF_TOPOLOGY_TYPE_TETRAHEDRON:
+    mTopology->setType(XdmfTopologyType::Tetrahedron());
+    break;
+  case XDMF_TOPOLOGY_TYPE_PYRAMID:
+    mTopology->setType(XdmfTopologyType::Pyramid());
+    break;
+  case XDMF_TOPOLOGY_TYPE_WEDGE:
+    mTopology->setType(XdmfTopologyType::Wedge());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON:
+    mTopology->setType(XdmfTopologyType::Hexahedron());
+    break;
+  case XDMF_TOPOLOGY_TYPE_EDGE_3:
+    mTopology->setType(XdmfTopologyType::Edge_3());
+    break;
+  case XDMF_TOPOLOGY_TYPE_TRIANGLE_6:
+    mTopology->setType(XdmfTopologyType::Triangle_6());
+    break;
+  case XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8:
+    mTopology->setType(XdmfTopologyType::Quadrilateral_8());
+    break;
+  case XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9:
+    mTopology->setType(XdmfTopologyType::Quadrilateral_9());
+    break;
+  case XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10:
+    mTopology->setType(XdmfTopologyType::Tetrahedron_10());
+    break;
+  case XDMF_TOPOLOGY_TYPE_PYRAMID_13:
+    mTopology->setType(XdmfTopologyType::Pyramid_13());
+    break;
+  case XDMF_TOPOLOGY_TYPE_WEDGE_15:
+    mTopology->setType(XdmfTopologyType::Wedge_15());
+    break;
+  case XDMF_TOPOLOGY_TYPE_WEDGE_18:
+    mTopology->setType(XdmfTopologyType::Wedge_18());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20:
+    mTopology->setType(XdmfTopologyType::Hexahedron_20());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24:
+    mTopology->setType(XdmfTopologyType::Hexahedron_24());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27:
+    mTopology->setType(XdmfTopologyType::Hexahedron_27());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64:
+    mTopology->setType(XdmfTopologyType::Hexahedron_64());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125:
+    mTopology->setType(XdmfTopologyType::Hexahedron_125());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216:
+    mTopology->setType(XdmfTopologyType::Hexahedron_216());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343:
+    mTopology->setType(XdmfTopologyType::Hexahedron_343());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512:
+    mTopology->setType(XdmfTopologyType::Hexahedron_512());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729:
+    mTopology->setType(XdmfTopologyType::Hexahedron_729());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000:
+    mTopology->setType(XdmfTopologyType::Hexahedron_1000());
+    break;
+  case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331:
+    mTopology->setType(XdmfTopologyType::Hexahedron_1331());
+    break;
+  case XDMF_TOPOLOGY_TYPE_MIXED:
+    mTopology->setType(XdmfTopologyType::Mixed());
+    break;
+  default:
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Invalid topology type.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+
+  // Generate Subset instead of filling values
+
+  std::vector<unsigned int> newStart;
+  newStart.push_back(start);
+  std::vector<unsigned int> newStride;
+  newStride.push_back(stride);
+  std::vector<unsigned int> newDimension;
+  newDimension.push_back(dimensions);
+
+  shared_ptr<XdmfSubset> subset = XdmfSubset::New(mSubsetReference,
+                                                  newStart,
+                                                  newStride,
+                                                  newDimension);
+
+  mTopology->setReference(subset);
+  mTopology->setReadMode(XdmfArray::Reference);
+
+  const int id = mPreviousTopologies.size();
+  mPreviousTopologies.push_back(mTopology);
+  return id;
+}
+
+int
+XdmfFortran::setSubsetAsGeometry(int start,
+                                 int stride,
+                                 int dimensions,
+                                 const int geometryType)
+{
+  mGeometry = XdmfGeometry::New();
+
+  switch(geometryType) {
+  case XDMF_GEOMETRY_TYPE_XYZ:
+    mGeometry->setType(XdmfGeometryType::XYZ());
+    break;
+  case XDMF_GEOMETRY_TYPE_XY:
+    mGeometry->setType(XdmfGeometryType::XY());
+    break;
+  case XDMF_GEOMETRY_TYPE_POLAR:
+    mGeometry->setType(XdmfGeometryType::Polar());
+    break;
+  case XDMF_GEOMETRY_TYPE_SPHERICAL:
+    mGeometry->setType(XdmfGeometryType::Spherical());
+    break;
+  default:
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Invalid geometry type.");
+    }
+    catch (XdmfError & e) {
+      throw e;
+    }
+  }
+
+  // Generate Subset instead of filling values
+
+  std::vector<unsigned int> newStart;
+  newStart.push_back(start);
+  std::vector<unsigned int> newStride;
+  newStride.push_back(stride);
+  std::vector<unsigned int> newDimension;
+  newDimension.push_back(dimensions);
+
+  shared_ptr<XdmfSubset> subset = XdmfSubset::New(mSubsetReference,
+                                                  newStart,
+                                                  newStride,
+                                                  newDimension);
+
+  mGeometry->setReference(subset);
+  mGeometry->setReadMode(XdmfArray::Reference);
+
+  const int id = mPreviousGeometries.size();
+  mPreviousGeometries.push_back(mGeometry);
+  return id;
+}
+
+void
+XdmfFortran::clearFunctionVariables()
+{
+  mVariableSet.clear();
+}
+
+void
+XdmfFortran::removeFunctionVariable(char * varname)
+{
+  std::string tempstring = varname;
+  mVariableSet.erase(tempstring);
+}
+
+void
 XdmfFortran::clearPrevious()
 {
   mPreviousTopologies.clear();
@@ -7635,7 +9929,7 @@ XdmfFortran::connectDSM(const char * const filePath,
   // Currently uses default config file name
   mDSMWriter->getServerBuffer()->GetComm()->ReadDsmPortName();
 
-  mDSMWriter->getServerManager()->Connect();
+  mDSMWriter->getServerBuffer()->Connect();
   // To check if the DSM writer is using server mode
   // bool test = mDSMWriter->getServerMode();
 }
@@ -7847,6 +10141,7 @@ XdmfFortran::writeToDSM(const char * const dsmDataSetPath,
                  arrayType,
                  values);
     writtenArray->insert(writerController);
+    mDSMWriter->setNotifyOnWrite(false);
     writtenArray->accept(mDSMWriter);
   }
   else {
@@ -7950,6 +10245,54 @@ extern "C"
   }
 
   void
+  XdmfClearAttributeHeavyData(long * pointer,
+                              int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearAttributeHeavyData(*index);
+  }
+
+  void XdmfSetAttributeHDF5(long * pointer,
+                            int * index,
+                            char * const hdf5File,
+                            char * const hdf5Dataset,
+                            unsigned int * start,
+                            unsigned int * stride,
+                            unsigned int * numValues,
+                            unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setAttributeHDF5(*index,
+                                  hdf5File,
+                                  hdf5Dataset,
+                                  *start,
+                                  *stride,
+                                  *numValues,
+                                  *dataspace);
+  }
+
+  void XdmfSetAttributeBinary(long * pointer,
+                              int * index,
+                              char * binFile,
+                              int * endian,
+                              unsigned int * seek,
+                              unsigned int * start,
+                              unsigned int * stride,
+                              unsigned int * numValues,
+                              unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setAttributeBinary(*index,
+                                  binFile,
+                                  *endian,
+                                  *seek,
+                                  *start,
+                                  *stride,
+                                  *numValues,
+                                  *dataspace);
+  }
+
+  void
   XdmfAddGrid(long * pointer, 
               char * gridName,
               bool * writeToHDF5)
@@ -7993,6 +10336,26 @@ extern "C"
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->addGridCollection(name,
                                    *gridCollectionType);
+  }
+
+  void XdmfAddGridReference(long * pointer,
+                            int * gridType,
+                            char * filePath,
+                            const char * xmlPath)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addGridReference(*gridType,
+                                  filePath,
+                                  xmlPath);
+  }
+
+  void XdmfAddGridCollectionReference(long * pointer,
+                                      char * filePath,
+                                      char * xmlPath)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addGridCollectionReference(filePath,
+                                            xmlPath);
   }
 
   int
@@ -8043,6 +10406,49 @@ extern "C"
   }
 
   void
+  XdmfClearGeometryHeavyData(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearGeometryHeavyData();
+  }
+
+  void XdmfSetGeometryHDF5(long * pointer,
+                           char * hdf5File,
+                           char * hdf5Dataset,
+                           unsigned int * start,
+                           unsigned int * stride,
+                           unsigned int * numValues,
+                           unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setGeometryHDF5(hdf5File,
+                                 hdf5Dataset,
+                                 *start,
+                                 *stride,
+                                 *numValues,
+                                 *dataspace);
+  }
+
+  void XdmfSetGeometryBinary(long * pointer,
+                             char * binFile,
+                             int * endian,
+                             unsigned int * seek,
+                             unsigned int * start,
+                             unsigned int * stride,
+                             unsigned int * numValues,
+                             unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setGeometryBinary(binFile,
+                                   *endian,
+                                   *seek,
+                                   *start,
+                                   *stride,
+                                   *numValues,
+                                   *dataspace);
+  }
+
+  void
   XdmfSetPreviousGeometry(long * pointer, 
                           int  * geometryId)
   {
@@ -8079,6 +10485,49 @@ extern "C"
                                     *arrayType,
                                     connectivityValues,
                                     0);
+  }
+
+  void
+  XdmfClearTopologyHeavyData(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearTopologyHeavyData();
+  }
+
+  void XdmfSetTopologyHDF5(long * pointer,
+                           char * hdf5File,
+                           char * hdf5Dataset,
+                           unsigned int * start,
+                           unsigned int * stride,
+                           unsigned int * numValues,
+                           unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setTopologyHDF5(hdf5File,
+                                 hdf5Dataset,
+                                 *start,
+                                 *stride,
+                                 *numValues,
+                                 *dataspace);
+  }
+
+  void XdmfsetTopologyBinary(long * pointer,
+                             char * binFile,
+                             int * endian,
+                             unsigned int * seek,
+                             unsigned int * start,
+                             unsigned int * stride,
+                             unsigned int * numValues,
+                             unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setTopologyBinary(binFile,
+                                   *endian,
+                                   *seek,
+                                   *start,
+                                   *stride,
+                                   *numValues,
+                                   *dataspace);
   }
 
   void
@@ -8151,6 +10600,13 @@ extern "C"
                                           *openSets);
   }
 
+  void XdmfReadDomainGridCollection(long * pointer,
+                                     int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->readDomainGridCollection(*index);
+  }
+
   void
   XdmfRemoveDomainGridCollection(long * pointer, int * index)
   {
@@ -8172,6 +10628,13 @@ extern "C"
                                                   *openAttributes,
                                                   *openInformation,
                                                   *openSets);
+  }
+
+  void XdmfReadGridCollectionGridCollection(long * pointer,
+                                            int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->readGridCollectionGridCollection(*index);
   }
 
   void
@@ -8251,6 +10714,15 @@ extern "C"
                                 *openAttributes,
                                 *openInformation,
                                 *openSets);
+  }
+
+  void XdmfReadDomainGrid(long * pointer,
+                          int * gridType,
+                          int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->readDomainGrid(*gridType,
+                                *index);
   }
 
   void
@@ -8347,6 +10819,15 @@ extern "C"
                                         *openAttributes,
                                         *openInformation,
                                         *openSets);
+  }
+
+  void XdmfReadGridCollectionGrid(long * pointer,
+                                  int * gridType,
+                                  int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->readGridCollectionGrid(*gridType,
+                                        *index);
   }
 
   void
@@ -8553,6 +11034,20 @@ extern "C"
   }
 
   void
+  XdmfSetTopologyAsVariable(long * pointer, char * varname)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setTopologyAsVariable(varname);
+  }
+
+  void
+  XdmfSetTopologyAsSubsetReference(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setTopologyAsSubsetReference();
+  }
+
+  void
   XdmfRetrieveGeometryTag(long * pointer, char * tag, int * tagLength)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -8659,12 +11154,69 @@ extern "C"
     xdmfFortran->retrieveGeometryPropertyByKey(key, value, *valueLength);
   }
 
+  void
+  XdmfSetGeometryAsVariable(long * pointer, char * varname)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setGeometryAsVariable(varname);
+  }
+
+  void
+  XdmfSetGeometryAsSubsetReference(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setGeometryAsSubsetReference();
+  }
+
   int
   XdmfSetDimensions(long * pointer, int  * numValues, int  * arrayType, void * pointValues)
   {
 
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     return xdmfFortran->setDimensions(*numValues, *arrayType, pointValues);
+  }
+
+  void
+  XdmfClearDimensionsHeavyData(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearDimensionsHeavyData();
+  }
+
+  void XdmfSetDimensionsHDF5(long * pointer,
+                             char * hdf5File,
+                             char * hdf5Dataset,
+                             unsigned int * start,
+                             unsigned int * stride,
+                             unsigned int * numValues,
+                             unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setDimensionsHDF5(hdf5File,
+                                   hdf5Dataset,
+                                   *start,
+                                   *stride,
+                                   *numValues,
+                                   *dataspace);
+  }
+
+  void XdmfSetDimensionsBinary(long * pointer,
+                               char * binFile,
+                               int * endian,
+                               unsigned int * seek,
+                               unsigned int * start,
+                               unsigned int * stride,
+                               unsigned int * numValues,
+                               unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setDimensionsBinary(binFile,
+                                     *endian,
+                                     *seek,
+                                     *start,
+                                     *stride,
+                                     *numValues,
+                                     *dataspace);
   }
 
   void
@@ -8769,6 +11321,49 @@ extern "C"
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     return xdmfFortran->setOrigin(*numValues, *arrayType, pointValues);
+  }
+
+  void
+  XdmfClearOriginHeavyData(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearOriginHeavyData();
+  }
+
+  void XdmfSetOriginHDF5(long * pointer,
+                         char * hdf5File,
+                         char * hdf5Dataset,
+                         unsigned int * start,
+                         unsigned int * stride,
+                         unsigned int * numValues,
+                         unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setOriginHDF5(hdf5File,
+                               hdf5Dataset,
+                               *start,
+                               *stride,
+                               *numValues,
+                               *dataspace);
+  }
+
+  void XdmfSetOriginBinary(long * pointer,
+                           char * binFile,
+                           int * endian,
+                           unsigned int * seek,
+                           unsigned int * start,
+                           unsigned int * stride,
+                           unsigned int * numValues,
+                           unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setOriginBinary(binFile,
+                                 *endian,
+                                 *seek,
+                                 *start,
+                                 *stride,
+                                 *numValues,
+                                 *dataspace);
   }
 
   void
@@ -8877,6 +11472,49 @@ extern "C"
 
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     return xdmfFortran->setBrick(*numValues, *arrayType, pointValues);
+  }
+
+  void
+  XdmfClearBrickHeavyData(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearBrickHeavyData();
+  }
+
+  void XdmfSetBrickHDF5(long * pointer,
+                        char * hdf5File,
+                        char * hdf5Dataset,
+                        unsigned int * start,
+                        unsigned int * stride,
+                        unsigned int * numValues,
+                        unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setBrickHDF5(hdf5File,
+                              hdf5Dataset,
+                              *start,
+                              *stride,
+                              *numValues,
+                              *dataspace);
+  }
+
+  void XdmfSetBrickBinary(long * pointer,
+                          char * binFile,
+                          int * endian,
+                          unsigned int * seek,
+                          unsigned int * start,
+                          unsigned int * stride,
+                          unsigned int * numValues,
+                          unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setBrickBinary(binFile,
+                                *endian,
+                                *seek,
+                                *start,
+                                *stride,
+                                *numValues,
+                                *dataspace);
   }
 
   void
@@ -9281,6 +11919,20 @@ extern "C"
   }
 
   void
+  XdmfSetAttributeAsVariable(long * pointer, char * varname, int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setAttributeAsVariable(varname, *index);
+  }
+
+  void
+  XdmfSetAttributeAsSubsetReference(long * pointer, int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setAttributeAsSubsetReference(*index);
+  }
+
+  void
   XdmfRetrieveNumCoordinates(long * pointer, int * total)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -9292,6 +11944,54 @@ extern "C"
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     return xdmfFortran->addCoordinate(name, *numValues, *arrayType, values);
+  }
+
+  void
+  XdmfClearCoordinateHeavyData(long * pointer,
+                               int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearCoordinateHeavyData(*index);
+  }
+
+  void XdmfSetCoordinateHDF5(long * pointer,
+                             int * index,
+                             char * hdf5File,
+                             char * hdf5Dataset,
+                             unsigned int * start,
+                             unsigned int * stride,
+                             unsigned int * numValues,
+                             unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setCoordinateHDF5(*index,
+                                   hdf5File,
+                                   hdf5Dataset,
+                                   *start,
+                                   *stride,
+                                   *numValues,
+                                   *dataspace);
+  }
+
+  void XdmfSetCoordinateBinary(long * pointer,
+                               int * index,
+                               char * binFile,
+                               int * endian,
+                               unsigned int * seek,
+                               unsigned int * start,
+                               unsigned int * stride,
+                               unsigned int * numValues,
+                               unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setCoordinateBinary(*index,
+                                     binFile,
+                                     *endian,
+                                     *seek,
+                                     *start,
+                                     *stride,
+                                     *numValues,
+                                     *dataspace);
   }
 
   void
@@ -9439,6 +12139,20 @@ extern "C"
   }
 
   void
+  XdmfSetCoordinateAsVariable(long * pointer, char * varname, int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setCoordinateAsVariable(varname, *index);
+  }
+
+  void
+  XdmfSetCoordinateAsSubsetReference(long * pointer, int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setCoordinateAsSubsetReference(*index);
+  }
+
+  void
   XdmfRetrieveSetTag(long * pointer, int * index, char * tag, int * tagLength)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -9469,6 +12183,54 @@ extern "C"
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     return xdmfFortran->addSet(name, *newSetType, values, *numValues, *arrayType);
+  }
+
+  void
+  XdmfClearSetHeavyData(long * pointer,
+                        int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearSetHeavyData(*index);
+  }
+
+  void XdmfSetSetHDF5(long * pointer,
+                      int * index,
+                      char * hdf5File,
+                      char * hdf5Dataset,
+                      unsigned int * start,
+                      unsigned int * stride,
+                      unsigned int * numValues,
+                      unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setSetHDF5(*index,
+                            hdf5File,
+                            hdf5Dataset,
+                            *start,
+                            *stride,
+                            *numValues,
+                            *dataspace);
+  }
+
+  void XdmfSetSetBinary(long * pointer,
+                        int * index,
+                        char * binFile,
+                        int * endian,
+                        unsigned int * seek,
+                        unsigned int * start,
+                        unsigned int * stride,
+                        unsigned int * numValues,
+                        unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setSetBinary(*index,
+                              binFile,
+                              *endian,
+                              *seek,
+                              *start,
+                              *stride,
+                              *numValues,
+                              *dataspace);
   }
 
   void
@@ -9612,6 +12374,20 @@ extern "C"
   }
 
   void
+  XdmfSetSetAsVariable(long * pointer, char * varname, int * index)
+  {
+   XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+   xdmfFortran->setSetAsVariable(varname, *index);
+  }
+
+  void
+  XdmfSetSetAsSubsetReference(long * pointer, int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setSetAsSubsetReference(*index);
+  }
+
+  void
   XdmfRetrieveNumInformation(long * pointer, int * total)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -9733,6 +12509,59 @@ extern "C"
   }
 
   void
+  XdmfClearInformationArrayHeavyData(long * pointer,
+                                     int * index,
+                                     int * arrayIndex)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->clearInformationArrayHeavyData(*index, *arrayIndex);
+  }
+
+  void XdmfSetInformationArrayHDF5(long * pointer,
+                                   int * index,
+                                   int * arrayIndex,
+                                   char * hdf5File,
+                                   char * hdf5Dataset,
+                                   unsigned int * start,
+                                   unsigned int * stride,
+                                   unsigned int * numValues,
+                                   unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setInformationArrayHDF5(*index,
+                                         *arrayIndex,
+                                         hdf5File,
+                                         hdf5Dataset,
+                                         *start,
+                                         *stride,
+                                         *numValues,
+                                         *dataspace);
+  }
+
+  void XdmfSetInformationArrayBinary(long * pointer,
+                                     int * index,
+                                     int * arrayIndex,
+                                     char * binFile,
+                                     int * endian,
+                                     unsigned int * seek,
+                                     unsigned int * start,
+                                     unsigned int * stride,
+                                     unsigned int * numValues,
+                                     unsigned int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setInformationArrayBinary(*index,
+                                           *arrayIndex,
+                                           binFile,
+                                           *endian,
+                                           *seek,
+                                           *start,
+                                           *stride,
+                                           *numValues,
+                                           *dataspace);
+  }
+
+  void
   XdmfInsertInformationIntoInformation(long * pointer,
                                        int * toIndex,
                                        int * fromIndex,
@@ -9811,6 +12640,187 @@ extern "C"
                                                 *startIndex,
                                                 *arrayStride,
                                                 *valueStride);
+  }
+
+  void
+  XdmfSetInformationArrayAsVariable(long * pointer, char * varname, int * infoindex, int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setInformationArrayAsVariable(varname, *infoindex, *index);
+  }
+
+  void
+  XdmfSetInformationArrayAsSubsetReference(long * pointer, int * infoindex, int * index)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setInformationArrayAsSubsetReference(*infoindex, *index);
+  }
+
+  int
+  XdmfAddFunctionAsAttribute(long * pointer,
+                             char * expression,
+                             char * name,
+                             int * attributeCenter,
+                             int * attributeType)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->addFunctionAsAttribute(expression, name, *attributeCenter, *attributeType);
+  }
+
+  int
+  XdmfAddFunctionAsCoordinate(long * pointer,
+                              char * expression,
+                              char * name)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->addFunctionAsCoordinate(expression, name);
+  }
+
+  int
+  XdmfAddFunctionAsSet(long * pointer,
+                       char * expression,
+                       char * name,
+                       int * newSetType)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->addFunctionAsSet(expression, name, *newSetType);
+  }
+
+  void
+  XdmfAddFunctionAsInformationArray(long * pointer,
+                                    char * expression,
+                                    int * index,
+                                    char * name)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addFunctionAsInformationArray(expression, *index, name);
+  }
+
+  int
+  XdmfSetFunctionAsTopology(long * pointer,
+                            char * expression,
+                            int * topologyType,
+                            int * numNodes)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->setFunctionAsTopology(expression, *topologyType, *numNodes);
+  }
+
+  int
+  XdmfSetFunctionAsGeometry(long * pointer,
+                            char * expression,
+                            int * geometryType)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->setFunctionAsGeometry(expression, *geometryType);
+  }
+
+  int
+  XdmfAddSubsetAsAttribute(long * pointer,
+                           int * start,
+                           int * stride,
+                           int * dimensions,
+                           char * name,
+                           int * attributeCenter,
+                           int * attributeType)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->addSubsetAsAttribute(*start,
+                                             *stride,
+                                             *dimensions,
+                                             name,
+                                             *attributeCenter,
+                                             *attributeType);
+  }
+
+  int
+  XdmfAddSubsetAsCoordinate(long * pointer,
+                            int * start,
+                            int * stride,
+                            int * dimensions,
+                            char * name)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->addSubsetAsCoordinate(*start,
+                                              *stride,
+                                              *dimensions,
+                                              name);
+  }
+
+  int
+  XdmfAddSubsetAsSet(long * pointer,
+                     int * start,
+                     int * stride,
+                     int * dimensions,
+                     char * name,
+                     int * newSetType)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->addSubsetAsSet(*start,
+                                       *stride,
+                                       *dimensions,
+                                       name,
+                                       *newSetType);
+  }
+
+  void
+  XdmfAddSubsetAsInformationArray(long * pointer,
+                                  int * start,
+                                  int * stride,
+                                  int * dimensions,
+                                  int * index,
+                                  char * name)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addSubsetAsInformationArray(*start,
+                                             *stride,
+                                             *dimensions,
+                                             *index,
+                                             name);
+  }
+
+  int
+  XdmfSetSubsetAsTopology(long * pointer,
+                          int * start,
+                          int * stride,
+                          int * dimensions,
+                          int * topologyType,
+                          int * numNodes)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);\
+    return xdmfFortran->setSubsetAsTopology(*start,
+                                            *stride,
+                                            *dimensions,
+                                            *topologyType,
+                                            *numNodes);
+  }
+
+  int
+  XdmfSetSubsetAsGeometry(long * pointer,
+                          int * start,
+                          int * stride,
+                          int * dimensions,
+                          int * geometryType)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->setSubsetAsGeometry(*start,
+                                            *stride,
+                                            *dimensions,
+                                            *geometryType);
+  }
+
+  void
+  XdmfClearFunctionVariables(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->clearFunctionVariables();
+  }
+
+  void
+  XdmfRemoveFunctionVariable(long * pointer, char * varname)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->removeFunctionVariable(varname);
   }
 
   void

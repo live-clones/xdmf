@@ -14,17 +14,20 @@ include(AddTestsFortran)
 #       have extra arguments (id: ADD_TEST_CXX(testname inputfile))
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
-if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
-  EXECUTE_PROCESS(
-    COMMAND ${MPIEXEC} --version
-    OUTPUT_VARIABLE MPI_TYPE_OUTPUT
-    ERROR_VARIABLE MPI_TYPE_ERROR
-  )
-  STRING(REGEX MATCH "Open" IS_OPENMPI "${MPI_TYPE_ERROR}")
-  IF ("${IS_OPENMPI}" STREQUAL "")
-    ADD_MPI_TEST_FORTRAN(ConnectDSMFortran.sh AcceptDSMFortran,ConnectDSMFortran2,ConnectDSMFortran)
-  ENDIF ("${IS_OPENMPI}" STREQUAL "")
-endif(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+if ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+  if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+    EXECUTE_PROCESS(
+      COMMAND ${MPIEXEC} --version
+      OUTPUT_VARIABLE MPI_TYPE_OUTPUT
+      ERROR_VARIABLE MPI_TYPE_ERROR
+    )
+    STRING(REGEX MATCH "Open" IS_OPENMPI "${MPI_TYPE_ERROR}")
+    IF ("${IS_OPENMPI}" STREQUAL "")
+      ADD_MPI_TEST_FORTRAN(ConnectDSMFortran.sh AcceptDSMFortran,ConnectDSMFortran2,ConnectDSMFortran)
+    ENDIF ("${IS_OPENMPI}" STREQUAL "")
+  endif(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+endif ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+SET_SOURCE_FILES_PROPERTIES(BinaryFortran.f90 PROPERTIES COMPILE_FLAGS -fno-range-check)
 ADD_TEST_FORTRAN(OutputTestXdmfFortran)
 ADD_TEST_FORTRAN(EditTestXdmfFortran)
 ADD_TEST_FORTRAN(TestXdmfFortran)
@@ -40,6 +43,8 @@ IF ("${IS_INTEL}" STREQUAL "ifort")
   SET_SOURCE_FILES_PROPERTIES(FixedOutputTestXdmfFortran.f90 PROPERTIES COMPILE_FLAGS "-fixed")
 ENDIF ("${IS_INTEL}" STREQUAL "ifort")
 ADD_TEST_FORTRAN(FixedOutputTestXdmfFortran)
+ADD_TEST_FORTRAN(FunctionTestXdmfFortran)
+ADD_TEST_FORTRAN(SubsetTestXdmfFortran)
 
 # Add any cxx cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -57,3 +62,9 @@ CLEAN_TEST_FORTRAN(EditTestXdmfFortran
   edited_output.xmf
   edited_output.h5)
 CLEAN_TEST_FORTRAN(FixedOutputTestXdmfFortran)
+CLEAN_TEST_FORTRAN(FunctionTestXdmfFortran
+  function_output.h5
+  function_output.xmf)
+CLEAN_TEST_FORTRAN(SubsetTestXdmfFortran
+  subset_output.h5
+  subset_output.xmf)

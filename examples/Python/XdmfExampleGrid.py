@@ -46,3 +46,30 @@ if __name__ == "__main__":
         exampleTopology = exampleGrid.getTopology()
 
         #//getTopology end
+
+        #//setGridController begin
+
+        newGridController = XdmfGridController.New("gridFile.xmf", "/Xdmf/Domain/Grid[1]")
+
+        exampleGrid.setGridController(gridController)
+
+        #//setGridController end
+
+        #//getGridController begin
+
+        exampleGridController = exampleGrid.getGridController()
+
+        #//getGridController end
+
+        #//read begin
+
+        exampleGrid.read()
+
+        #//read end
+
+        #//release begin
+
+        exampleGrid.release()
+
+        #//release end
+

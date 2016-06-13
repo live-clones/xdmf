@@ -69,6 +69,12 @@ if __name__ == "__main__":
 
         #//getSize end
 
+        #//getDataspaceSize begin
+
+        exampleDataspaceSize = exampleController.getDataspaceSize()
+
+        #//getDataspaceSize end
+
         #//getType begin
 
         exampleType = exampleController.getType()
