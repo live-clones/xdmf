@@ -319,6 +319,8 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     XdmfUnstructuredGrid)
 
   add_library(XdmfObjects OBJECT ${XdmfSources})
+  set_target_properties(XdmfObjects PROPERTIES
+    POSITION_INDEPENDENT_CODE True)
   add_library(${XDMF_LIBNAME} $<TARGET_OBJECTS:XdmfObjects>)
   if (BUILD_SHARED_LIBS)
     add_library(Xdmf_Static STATIC $<TARGET_OBJECTS:XdmfObjects>)

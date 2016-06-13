@@ -151,6 +151,8 @@ if (TIFF_FOUND)
 endif()
 
 add_library(XdmfCoreObjects OBJECT ${XdmfCoreSources})
+set_target_properties(XdmfCoreObjects PROPERTIES
+  POSITION_INDEPENDENT_CODE True)
 add_library(XdmfCore ${LIBTYPE} $<TARGET_OBJECTS:XdmfCoreObjects>)
 if (BUILD_SHARED_LIBS)
   add_library(XdmfCore_Static STATIC $<TARGET_OBJECTS:XdmfCoreObjects>)

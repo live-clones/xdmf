@@ -90,6 +90,8 @@ if (XDMF_DSM_IS_CRAY)
 endif (XDMF_DSM_IS_CRAY)
 
 add_library(XdmfDSMObjects OBJECT ${XdmfDSMSources})
+set_target_properties(XdmfDSMObjects PROPERTIES
+  POSITION_INDEPENDENT_CODE True)
 add_library(XdmfDSM $<TARGET_OBJECTS:XdmfDSMObjects>)
 if (BUILD_SHARED_LIBS)
   add_library(XdmfDSM_Static STATIC $<TARGET_OBJECTS:XdmfDSMObjects>)
