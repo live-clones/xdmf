@@ -169,6 +169,8 @@ namespace {
     num_nodes = numberNodes;
     num_elem = numberElements;
 
+    std::cout << num_dim << std::endl;
+
     // get exodus topology type
     const std::string exodusTopologyType = 
       xdmfToExodusTopologyType(topologyType);
@@ -519,10 +521,10 @@ XdmfExodusWriter::write(const std::string & filePath,
   }
   
   // read nodal positions
-  geometry->getValues(0, x, num_nodes, 3);
-  geometry->getValues(1, y, num_nodes, 3);
+  geometry->getValues(0, x, num_nodes, num_dim);
+  geometry->getValues(1, y, num_nodes, num_dim);
   if(num_dim == 3) {
-    geometry->getValues(2, z, num_nodes, 3);
+    geometry->getValues(2, z, num_nodes, num_dim);
   }
     
   // release data
@@ -917,4 +919,46 @@ XdmfExodusWriter::write(const std::string & filePath,
   // close exodus file
   ex_close(exodusHandle);
 
+}
+
+// C Wrappers
+
+XDMFEXODUSWRITER *
+XdmfExodusWriterNew()
+{
+  shared_ptr<XdmfExodusWriter> generatedWriter = XdmfExodusWriter::New();
+  return (XDMFEXODUSWRITER *)((void *)(new XdmfExodusWriter(*generatedWriter.get())));
+}
+
+void
+XdmfExodusWriterWriteGrid(XDMFEXODUSWRITER * writer,
+                          char * filePath,
+                          XDMFUNSTRUCTUREDGRID * grid,
+                          int * status)
+{
+  XDMF_ERROR_WRAP_START(status)
+  shared_ptr<XdmfUnstructuredGrid> tempGrid = shared_ptr<XdmfUnstructuredGrid>((XdmfUnstructuredGrid *)grid, XdmfNullDeleter());
+  ((XdmfExodusWriter *)writer)->write(std::string(filePath), tempGrid);
+  XDMF_ERROR_WRAP_END(status)
+}
+
+void
+XdmfExodusWriterWriteGridCollection(XDMFEXODUSWRITER * writer,
+                                    char * filePath,
+                                    XDMFGRIDCOLLECTION * grid,
+                                    int * status)
+{
+  XDMF_ERROR_WRAP_START(status)
+  shared_ptr<XdmfGridCollection> tempGrid = shared_ptr<XdmfGridCollection>((XdmfGridCollection *)grid, XdmfNullDeleter());
+  ((XdmfExodusWriter *)writer)->write(std::string(filePath), tempGrid);
+  XDMF_ERROR_WRAP_END(status)
+}
+
+void
+XdmfExodusWriterFree(XDMFEXODUSWRITER * writer)
+{
+  if (writer != NULL) {
+    delete ((XdmfExodusWriter *)writer);
+    writer = NULL;
+  }
 }

@@ -1,3 +1,5 @@
+print "Connect 1"
+
 from mpi4py.MPI import *
 from Xdmf import *
 import time
@@ -18,6 +20,7 @@ if __name__ == "__main__":
 
           # Initializing objects
 
+          '''
           testComm = XdmfDSMCommMPI()
           testComm.DupComm(comm)
           testComm.Init()
@@ -25,8 +28,14 @@ if __name__ == "__main__":
           testBuffer.SetIsServer(False)
           testBuffer.SetComm(testComm)
           testBuffer.SetIsConnected(True)
+          '''
 
-          exampleWriter = XdmfHDF5WriterDSM.New(newPath, testBuffer)
+          exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, "Connect 1")
+
+          id = exampleWriter.getServerBuffer().GetComm().GetId()
+          size = exampleWriter.getServerBuffer().GetComm().GetIntraSize()
+
+          testComm = exampleWriter.getServerBuffer().GetComm()
 
           #//initMPI end
 
@@ -57,7 +66,7 @@ if __name__ == "__main__":
 
           #//Connect begin
 
-          exampleWriter.getServerManager().Connect()
+          exampleWriter.getServerBuffer().Connect()
 
           #//Connect end
 
@@ -133,17 +142,22 @@ if __name__ == "__main__":
 
           # Done initializing
 
+          print "for i in range", 0, " ", size
+
           for i in range(0, size):
+                  print "core id checking array", i
                   exampleWriter.getServerBuffer().GetComm().GetIntraComm().Barrier()
+                  print i, "==", id
                   if i == id:
                           outputstream = "Array on core " + str(exampleWriter.getServerBuffer().GetComm().GetInterId()) + " contains:\n"
                           for j in range(0, writeArray.getSize()):
-                                  outputstream  = outputstream + "[" + str(j) + "]" + str(writeArray.getValueAsInt32(j)) + "\n"
+                                  outputstream = outputstream + "[" + str(j) + "]" + str(writeArray.getValueAsInt32(j)) + "\n"
                           print outputstream
 
           loopamount = 4
 
           for numloops in range(0, loopamount):
+                  print "loop ", numloops
                   if writeArray.getNumberHeavyDataControllers() > 0:
                           writeArray.removeHeavyDataController(0);
                   writeArray.insert(writeController)
@@ -187,7 +201,7 @@ if __name__ == "__main__":
 
           #//Disconnectmanager begin
 
-          exampleWriter.getServerManager().Disconnect()
+          exampleWriter.getServerBuffer().Disconnect()
 
           #//Disconnectmanager end
 

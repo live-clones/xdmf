@@ -250,6 +250,25 @@ if __name__ == "__main__":
 
         #//setHeavyDataController end
 
+        #//setHeavyDataControllerVector begin
+
+        sourceArray = XdmfArray.New()
+
+        sourceArray.pushBackAsInt32(5)
+
+        heavywriter = XdmfHDF5Writer.New("heavyfile.h5")
+
+        sourceArray.accept(heavywriter)
+
+        transferVector = HeavyControllerVector()
+
+        for i in range(0, sourceArray.getNumberHeavyDataControllers()):
+          transferVector.push_back(sourceArray.getHeavyDataController(i))
+
+        exampleArray.setHeavyDataController(transferVector)
+
+        #//setHeavyDataControllerVector end
+
         #//readController begin
 
         newArray->readController()

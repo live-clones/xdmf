@@ -1371,6 +1371,10 @@ XdmfTopologyConverter::XdmfTopologyConverter()
 {
 }
 
+XdmfTopologyConverter::XdmfTopologyConverter(const XdmfTopologyConverter &)
+{
+}
+
 XdmfTopologyConverter::~XdmfTopologyConverter()
 {
 }
@@ -1949,4 +1953,170 @@ XdmfTopologyConverter::insertInHash(std::vector<long> nodes,
     newFace.push_back(nodes[i]);
   }
   currHash.push_back(newFace);
+}
+
+// C Wrappers
+
+shared_ptr<const XdmfTopologyType> convertIntToType(int type, int nodes = 0)
+{
+  switch (type) {
+    case XDMF_TOPOLOGY_TYPE_POLYVERTEX:
+      return XdmfTopologyType::Polyvertex();
+      break;
+    case XDMF_TOPOLOGY_TYPE_POLYLINE:
+      return XdmfTopologyType::Polyline(nodes);
+      break;
+    case XDMF_TOPOLOGY_TYPE_POLYGON:
+      return XdmfTopologyType::Polygon(nodes);
+      break;
+    case XDMF_TOPOLOGY_TYPE_TRIANGLE:
+      return XdmfTopologyType::Triangle();
+      break;
+    case XDMF_TOPOLOGY_TYPE_QUADRILATERAL:
+      return XdmfTopologyType::Quadrilateral();
+      break;
+    case XDMF_TOPOLOGY_TYPE_TETRAHEDRON:
+      return XdmfTopologyType::Tetrahedron();
+      break;
+    case XDMF_TOPOLOGY_TYPE_PYRAMID:
+      return XdmfTopologyType::Pyramid();
+      break;
+    case XDMF_TOPOLOGY_TYPE_WEDGE:
+      return XdmfTopologyType::Wedge();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON:
+      return XdmfTopologyType::Hexahedron();
+      break;
+    case XDMF_TOPOLOGY_TYPE_EDGE_3:
+      return XdmfTopologyType::Edge_3();
+      break;
+    case XDMF_TOPOLOGY_TYPE_TRIANGLE_6:
+      return XdmfTopologyType::Triangle_6();
+      break;
+    case XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8:
+      return XdmfTopologyType::Quadrilateral_8();
+      break;
+    case XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9:
+      return XdmfTopologyType::Quadrilateral_9();
+      break;
+    case XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10:
+      return XdmfTopologyType::Tetrahedron_10();
+      break;
+    case XDMF_TOPOLOGY_TYPE_PYRAMID_13:
+      return XdmfTopologyType::Pyramid_13();
+      break;
+    case XDMF_TOPOLOGY_TYPE_WEDGE_15:
+      return XdmfTopologyType::Wedge_15();
+      break;
+    case XDMF_TOPOLOGY_TYPE_WEDGE_18:
+      return XdmfTopologyType::Wedge_18();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20:
+      return XdmfTopologyType::Hexahedron_20();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24:
+      return XdmfTopologyType::Hexahedron_24();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27:
+      return XdmfTopologyType::Hexahedron_27();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64:
+      return XdmfTopologyType::Hexahedron_64();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125:
+      return XdmfTopologyType::Hexahedron_125();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216:
+      return XdmfTopologyType::Hexahedron_216();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343:
+      return XdmfTopologyType::Hexahedron_343();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512:
+      return XdmfTopologyType::Hexahedron_512();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729:
+      return XdmfTopologyType::Hexahedron_729();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000:
+      return XdmfTopologyType::Hexahedron_1000();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331:
+      return XdmfTopologyType::Hexahedron_1331();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_64:
+      return XdmfTopologyType::Hexahedron_Spectral_64();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_125:
+      return XdmfTopologyType::Hexahedron_Spectral_125();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_216:
+      return XdmfTopologyType::Hexahedron_Spectral_216();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_343:
+      return XdmfTopologyType::Hexahedron_Spectral_343();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_512:
+      return XdmfTopologyType::Hexahedron_Spectral_512();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_729:
+      return XdmfTopologyType::Hexahedron_Spectral_729();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1000:
+      return XdmfTopologyType::Hexahedron_Spectral_1000();
+      break;
+    case XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1331:
+      return XdmfTopologyType::Hexahedron_Spectral_1331();
+      break;
+    case XDMF_TOPOLOGY_TYPE_MIXED:
+      return XdmfTopologyType::Mixed();
+      break;
+    default:
+      return shared_ptr<const XdmfTopologyType>();
+      break;
+  }
+}
+
+XDMFTOPOLOGYCONVERTER *
+XdmfTopologyConverterNew()
+{
+  shared_ptr<XdmfTopologyConverter> generatedConverter = XdmfTopologyConverter::New();
+  return (XDMFTOPOLOGYCONVERTER *)((void *)(new XdmfTopologyConverter(*generatedConverter.get())));
+}
+
+XDMFUNSTRUCTUREDGRID *
+XdmfTopologyConverterConvert(XDMFTOPOLOGYCONVERTER * converter,
+                             XDMFUNSTRUCTUREDGRID * gridToConvert,
+                             int topologytype,
+                             XDMFHEAVYDATAWRITER * heavyDataWriter)
+{
+  XdmfItem * tempPointer = (XdmfItem *)(gridToConvert);
+  XdmfUnstructuredGrid * gridPointer = dynamic_cast<XdmfUnstructuredGrid *>(tempPointer);
+  shared_ptr<XdmfUnstructuredGrid> tempgrid = shared_ptr<XdmfUnstructuredGrid>((XdmfUnstructuredGrid *)gridPointer, XdmfNullDeleter());
+  shared_ptr<const XdmfTopologyType> convertedType = convertIntToType(topologytype);
+  shared_ptr<XdmfHeavyDataWriter> tempwriter = shared_ptr<XdmfHeavyDataWriter>();
+  if (heavyDataWriter) {
+    tempwriter = shared_ptr<XdmfHeavyDataWriter>((XdmfHeavyDataWriter *)heavyDataWriter, XdmfNullDeleter());
+    return (XDMFUNSTRUCTUREDGRID *)((void *)((XdmfItem *)(new XdmfUnstructuredGrid(*((((XdmfTopologyConverter *)converter)->convert(tempgrid, convertedType, tempwriter)).get())))));
+  }
+  else {
+    return (XDMFUNSTRUCTUREDGRID *)((void *)((XdmfItem *)(new XdmfUnstructuredGrid(*((((XdmfTopologyConverter *)converter)->convert(tempgrid, convertedType)).get())))));
+  }
+}
+
+XDMFTOPOLOGY *
+XdmfTopologyConverterGetExternalFaces(XDMFTOPOLOGYCONVERTER * converter,
+                                      XDMFTOPOLOGY * convertedTopology)
+{
+  shared_ptr<XdmfTopology> temptopo = shared_ptr<XdmfTopology>((XdmfTopology *)convertedTopology, XdmfNullDeleter());
+  return (XDMFTOPOLOGY *)((void *)(new XdmfTopology(*((((XdmfTopologyConverter *)converter)->getExternalFaces(temptopo)).get()))));
+}
+
+void
+XdmfTopologyConverterFree(XDMFTOPOLOGYCONVERTER * converter)
+{
+  if (converter != NULL) {
+    delete ((XdmfTopologyConverter *)converter);
+    converter = NULL;
+  }
 }

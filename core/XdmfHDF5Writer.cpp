@@ -27,12 +27,14 @@
 #include <cmath>
 #include <set>
 #include <list>
+#include <string.h>
 #include "XdmfItem.hpp"
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfError.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfSystemUtils.hpp"
 
 namespace {
 
@@ -40,91 +42,74 @@ namespace {
 
 }
 
-/**
- * PIMPL
- */
-class XdmfHDF5Writer::XdmfHDF5WriterImpl  {
+XdmfHDF5Writer::XdmfHDF5WriterImpl::XdmfHDF5WriterImpl():
+  mHDF5Handle(-1),
+  mFapl(H5P_DEFAULT),
+  mChunkSize(DEFAULT_CHUNK_SIZE),
+  mOpenFile(""),
+  mDepth(0)
+{
+};
 
-public:
+XdmfHDF5Writer::XdmfHDF5WriterImpl::~XdmfHDF5WriterImpl()
+{
+  closeFile();
+};
 
-  XdmfHDF5WriterImpl():
-    mHDF5Handle(-1),
-    mChunkSize(DEFAULT_CHUNK_SIZE),
-    mOpenFile(""),
-    mDepth(0)
-  {
-  };
+void
+XdmfHDF5Writer::XdmfHDF5WriterImpl::closeFile()
+{
+  if(mHDF5Handle >= 0) {
+    H5Fclose(mHDF5Handle);
+    mHDF5Handle = -1;
+  }
+  mOpenFile = "";
+};
 
-  ~XdmfHDF5WriterImpl()
-  {
+int
+XdmfHDF5Writer::XdmfHDF5WriterImpl::openFile(const std::string & filePath,
+                                             const int mDataSetId)
+{
+  if(mHDF5Handle >= 0) {
+    // Perhaps we should throw a warning.
     closeFile();
-  };
+  }
+  // Save old error handler and turn off error handling for now
+  H5E_auto_t old_func;
+  void * old_client_data;
+  H5Eget_auto(0, &old_func, &old_client_data);
+  H5Eset_auto2(0, NULL, NULL);
 
-  void
-  closeFile()
-  {
-    if(mHDF5Handle >= 0) {
-      /*herr_t status =*/H5Fclose(mHDF5Handle);
-      mHDF5Handle = -1;
-    }
-    mOpenFile = "";
-  };  
+  int toReturn = 0;
 
-  int
-  openFile(const std::string & filePath,
-           const int fapl,
-           const int mDataSetId)
-  {
-    if(mHDF5Handle >= 0) {
-      // Perhaps we should throw a warning.
-      closeFile();
-    }
-    // Save old error handler and turn off error handling for now
-    H5E_auto_t old_func;
-    void * old_client_data;
-    H5Eget_auto(0, &old_func, &old_client_data);
-    H5Eset_auto2(0, NULL, NULL);
-  
-    int toReturn = 0;
+  mOpenFile.assign(filePath);
 
-    mOpenFile.assign(filePath);
-
-
-    if(H5Fis_hdf5(filePath.c_str()) > 0) {
-      mHDF5Handle = H5Fopen(filePath.c_str(), 
-                            H5F_ACC_RDWR, 
-                            fapl);
-      if(mDataSetId == 0) {
-        hsize_t numObjects;
-        /*herr_t status = */H5Gget_num_objs(mHDF5Handle,
-                                            &numObjects);
-        toReturn = numObjects;
-      }
-      else {
-        toReturn = mDataSetId;
-      }
+  if(H5Fis_hdf5(filePath.c_str()) > 0) {
+    mHDF5Handle = H5Fopen(filePath.c_str(),
+                          H5F_ACC_RDWR,
+                          mFapl);
+    if(mDataSetId == 0) {
+      hsize_t numObjects;
+      /*herr_t status = */H5Gget_num_objs(mHDF5Handle,
+                                          &numObjects);
+      toReturn = numObjects;
     }
     else {
-      // This is where it currently fails
-      mHDF5Handle = H5Fcreate(filePath.c_str(),
-                              H5F_ACC_TRUNC,
-                              H5P_DEFAULT,
-                              fapl);
+      toReturn = mDataSetId;
     }
-
-    // Restore previous error handler
-    H5Eset_auto2(0, old_func, old_client_data);
-
-    return toReturn;
-
+  }
+  else {
+    mHDF5Handle = H5Fcreate(filePath.c_str(),
+                            H5F_ACC_TRUNC,
+                            H5P_DEFAULT,
+                            mFapl);
   }
 
-  hid_t mHDF5Handle;
-  unsigned int mChunkSize;
-  std::string mOpenFile;
-  int mDepth;
-  std::set<const XdmfItem *> mWrittenItems;
-};
+  // Restore previous error handler
+  H5Eset_auto2(0, old_func, old_client_data);
+
+  return toReturn;
+}
 
 shared_ptr<XdmfHDF5Writer>
 XdmfHDF5Writer::New(const std::string & filePath,
@@ -139,7 +124,17 @@ XdmfHDF5Writer::New(const std::string & filePath,
 
 XdmfHDF5Writer::XdmfHDF5Writer(const std::string & filePath) :
   XdmfHeavyDataWriter(filePath, 1, 800),
-  mImpl(new XdmfHDF5WriterImpl())
+  mImpl(new XdmfHDF5WriterImpl()),
+  mUseDeflate(false),
+  mDeflateFactor(0)
+{
+}
+
+XdmfHDF5Writer::XdmfHDF5Writer(const XdmfHDF5Writer & writerRef) :
+  XdmfHeavyDataWriter(writerRef.getFilePath(), 1, 800),
+  mImpl(new XdmfHDF5WriterImpl()),
+  mUseDeflate(false),
+  mDeflateFactor(0)
 {
 }
 
@@ -150,17 +145,19 @@ XdmfHDF5Writer::~XdmfHDF5Writer()
 
 void
 XdmfHDF5Writer::controllerSplitting(XdmfArray & array,
-                                    const int & fapl,
                                     int & controllerIndexOffset,
                                     shared_ptr<XdmfHeavyDataController> heavyDataController,
                                     const std::string & checkFileName,
                                     const std::string & checkFileExt,
                                     const std::string & dataSetPath,
+                                    int dataSetId,
                                     const std::vector<unsigned int> & dimensions,
                                     const std::vector<unsigned int> & dataspaceDimensions,
                                     const std::vector<unsigned int> & start,
                                     const std::vector<unsigned int> & stride,
                                     std::list<std::string> & filesWritten,
+                                    std::list<std::string> & datasetsWritten,
+                                    std::list<int> & datasetIdsWritten,
                                     std::list<void *> & arraysWritten,
                                     std::list<std::vector<unsigned int> > & startsWritten,
                                     std::list<std::vector<unsigned int> > & stridesWritten,
@@ -219,7 +216,13 @@ XdmfHDF5Writer::controllerSplitting(XdmfArray & array,
         // If overwrite subtract previous data size.
         if (mMode == Overwrite || mMode == Hyperslab) {
           // Find previous data size
-          int checkfilesize = getDataSetSize(testFile.str(), dataSetPath, fapl);
+          std::stringstream currentDataSetPath;
+          currentDataSetPath << dataSetPath;
+          if (dataSetId >= 0)
+          {
+            currentDataSetPath << dataSetId;
+          }
+          int checkfilesize = getDataSetSize(testFile.str(), currentDataSetPath.str());
           if (checkfilesize < 0) {
             checkfilesize = 0;
           }
@@ -248,7 +251,9 @@ XdmfHDF5Writer::controllerSplitting(XdmfArray & array,
       else if (previousDataSize == 0) {
         fileSize += getFileOverhead();
       }
-
+      if (fileSize > (unsigned int)getFileSizeLimit()*(1024*1024)) {
+        fileSize = (unsigned int)getFileSizeLimit()*(1024*1024);
+      }
       //Start of splitting section
 
       // If needed split the written array
@@ -324,8 +329,8 @@ XdmfHDF5Writer::controllerSplitting(XdmfArray & array,
         // If remaining size is less than available space, just write all of what's left
         remainingSize = remainingValues * dataItemSize;
       }
-      if (remainingSize + previousDataSize + fileSize
-          < (unsigned int)getFileSizeLimit()*(1024*1024)) {
+      if (remainingSize + previousDataSize + fileSize - (hyperslabSize * dataItemSize)
+          <= (unsigned int)getFileSizeLimit()*(1024*1024)) {
         // If the array hasn't been split
         if (amountAlreadyWritten == 0) {
           // Just pass all data to the partial vectors
@@ -412,11 +417,11 @@ XdmfHDF5Writer::controllerSplitting(XdmfArray & array,
         // then take a fraction of the dimension
         // Calculate the number of values of the data type you're using will fit
         unsigned int usableSpace = (getFileSizeLimit()*(1024*1024) -
-                                    fileSize) / dataItemSize;
+                                    (fileSize + previousDataSize)) / dataItemSize;
         if ((unsigned int)getFileSizeLimit()*(1024*1024) < previousDataSize + fileSize) {
           usableSpace = 0;
         }
-        usableSpace += hyperslabSize-previousDataSize;
+        usableSpace += hyperslabSize;
         // If the array hasn't been split
         if (amountAlreadyWritten == 0) {
           // See if it will fit in the next file
@@ -727,6 +732,8 @@ XdmfHDF5Writer::controllerSplitting(XdmfArray & array,
           }
           arraysWritten.push_back(partialArray);
           filesWritten.push_back(testFile.str());
+          datasetsWritten.push_back(dataSetPath);
+          datasetIdsWritten.push_back(dataSetId);
           startsWritten.push_back(partialStarts);
           stridesWritten.push_back(partialStrides);
           dimensionsWritten.push_back(partialDimensions);
@@ -809,6 +816,7 @@ XdmfHDF5Writer::controllerSplitting(XdmfArray & array,
           }
         }
       }
+      ++dataSetId;
     }
 
     if (mMode == Append) {
@@ -893,6 +901,8 @@ XdmfHDF5Writer::controllerSplitting(XdmfArray & array,
 
     arraysWritten.push_back(partialArray);
     filesWritten.push_back(writtenFileName);
+    datasetsWritten.push_back(dataSetPath);
+    datasetIdsWritten.push_back(dataSetId);
     // Also need to push the starts and strides loaded from the HeavyDataController
     startsWritten.push_back(start);
     stridesWritten.push_back(stride);
@@ -919,24 +929,6 @@ XdmfHDF5Writer::createController(const std::string & hdf5FilePath,
                                  dataspaceDimensions);
 }
 
-shared_ptr<XdmfHeavyDataController>
-XdmfHDF5Writer::createController(const shared_ptr<XdmfHeavyDataController> & refController)
-{
-  if (shared_ptr<XdmfHDF5Controller> controller = shared_dynamic_cast<XdmfHDF5Controller>(refController)) {
-    return createController(controller->getFilePath(),
-                            controller->getDataSetPath(),
-                            controller->getType(),
-                            controller->getStart(),
-                            controller->getStride(),
-                            controller->getDimensions(),
-                            controller->getDataspaceDimensions());
-  }
-  else {
-    XdmfError::message(XdmfError::FATAL, "Error: Invalid Controller Conversion");
-    return shared_ptr<XdmfHeavyDataController>();
-  }
-}
-
 unsigned int
 XdmfHDF5Writer::getChunkSize() const
 {
@@ -944,27 +936,34 @@ XdmfHDF5Writer::getChunkSize() const
 }
 
 int
-XdmfHDF5Writer::getDataSetSize(const std::string & fileName, const std::string & dataSetName, const int fapl)
+XdmfHDF5Writer::getDataSetSize(shared_ptr<XdmfHeavyDataController> descriptionController)
+{
+  return getDataSetSize(descriptionController->getFilePath(),
+                        shared_dynamic_cast<XdmfHDF5Controller>(descriptionController)->getDataSetPath());
+}
+
+int
+XdmfHDF5Writer::getDataSetSize(const std::string & fileName, const std::string & dataSetName)
 {
   hid_t handle = -1;
   H5E_auto_t old_func;
   void * old_client_data;
   H5Eget_auto(0, &old_func, &old_client_data);
   H5Eset_auto2(0, NULL, NULL);
-  if (fileName !=  mImpl->mOpenFile) {
+  if (XdmfSystemUtils::getRealPath(fileName) !=  mImpl->mOpenFile) {
     // Save old error handler and turn off error handling for now
 
     if(H5Fis_hdf5(fileName.c_str()) > 0) {
       handle = H5Fopen(fileName.c_str(),
                        H5F_ACC_RDWR,
-                       fapl);
+                       mImpl->mFapl);
     }
     else {
       // This is where it currently fails
       handle = H5Fcreate(fileName.c_str(),
                          H5F_ACC_TRUNC,
                          H5P_DEFAULT,
-                         fapl);
+                         mImpl->mFapl);
     }
   }
   else {
@@ -973,6 +972,13 @@ XdmfHDF5Writer::getDataSetSize(const std::string & fileName, const std::string &
 
   // Restore previous error handler
   H5Eset_auto2(0, old_func, old_client_data);
+
+  if (!H5Lexists(mImpl->mHDF5Handle,
+                 dataSetName.c_str(),
+                 H5P_DEFAULT))
+  {
+     return 0;
+  }
 
   hid_t checkset = H5Dopen(handle,
                            dataSetName.c_str(),
@@ -990,23 +996,28 @@ XdmfHDF5Writer::getDataSetSize(const std::string & fileName, const std::string &
   return checksize;
 }
 
+int
+XdmfHDF5Writer::getDeflateFactor() const
+{
+  return mDeflateFactor;
+}
+
+bool
+XdmfHDF5Writer::getUseDeflate() const
+{
+  return mUseDeflate;
+}
+
 void 
 XdmfHDF5Writer::closeFile()
 {
   mImpl->closeFile();
 }
 
-void 
+void
 XdmfHDF5Writer::openFile()
 {
-  this->openFile(H5P_DEFAULT);
-}
-
-void
-XdmfHDF5Writer::openFile(const int fapl)
-{
   mDataSetId = mImpl->openFile(mFilePath,
-                               fapl,
                                mDataSetId);
 }
 
@@ -1017,17 +1028,29 @@ XdmfHDF5Writer::setChunkSize(const unsigned int chunkSize)
 }
 
 void
+XdmfHDF5Writer::setDeflateFactor(int factor)
+{
+  mDeflateFactor = factor;
+}
+
+void
+XdmfHDF5Writer::setUseDeflate(bool status)
+{
+  mUseDeflate = status;
+}
+
+void
 XdmfHDF5Writer::visit(XdmfArray & array,
                       const shared_ptr<XdmfBaseVisitor> visitor)
 {
   mImpl->mDepth++;
   std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&array);
-  if (checkWritten == mImpl->mWrittenItems.end() || array.getItemTag() == "DataItem") {
+  if (checkWritten == mImpl->mWrittenItems.end()) {
     // If it has children send the writer to them too.
     array.traverse(visitor);
-    if (array.isInitialized()) {
+    if (array.isInitialized() && array.getSize() > 0) {
       // Only do this if the object has not already been written
-      this->write(array, H5P_DEFAULT);
+      this->write(array);
       mImpl->mWrittenItems.insert(&array);
     }
   }
@@ -1060,8 +1083,7 @@ XdmfHDF5Writer::visit(XdmfItem & item,
 
 
 void
-XdmfHDF5Writer::write(XdmfArray & array,
-                      const int fapl)
+XdmfHDF5Writer::write(XdmfArray & array)
 {
   hid_t datatype = -1;
   bool closeDatatype = false;
@@ -1132,7 +1154,12 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
     // Hold the controllers in order to base the new controllers on them
     for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); ++i) {
-      previousControllers.push_back(array.getHeavyDataController(i));
+     // discard controllers of the wrong type
+      if (shared_ptr<XdmfHDF5Controller> controller =
+            shared_dynamic_cast<XdmfHDF5Controller>(array.getHeavyDataController(i)) )
+      {
+        previousControllers.push_back(array.getHeavyDataController(i));
+      }
     }
 
     // Remove controllers from the array
@@ -1141,10 +1168,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
       array.removeHeavyDataController(array.getNumberHeavyDataControllers() -1);
     }
 
-
+    bool hasControllers = true;
 
     if (previousControllers.size() == 0) {
       // Create a temporary controller if the array doesn't have one
+      hasControllers = false;
       shared_ptr<XdmfHeavyDataController> tempDataController =
         this->createController(hdf5FilePath,
                                "Data",
@@ -1170,6 +1198,8 @@ XdmfHDF5Writer::write(XdmfArray & array,
       }
 
       std::list<std::string> filesWritten;
+      std::list<std::string> datasetsWritten;
+      std::list<int> datasetIdsWritten;
       std::list<void *> arraysWritten;
       std::list<std::vector<unsigned int> > startsWritten;
       std::list<std::vector<unsigned int> > stridesWritten;
@@ -1237,17 +1267,19 @@ XdmfHDF5Writer::write(XdmfArray & array,
         // Then check subsequent files for the same limitation
         std::string passPath = dataSetPath.str();
         controllerSplitting(array,
-                            fapl,
                             controllerIndexOffset,
                             heavyDataController,
                             checkFileName,
                             checkFileExt,
-                            dataSetPath.str(),
+                            heavyDataController->getDataSetPrefix(),
+                            heavyDataController->getDataSetId(),
                             dimensions,
                             dataspaceDimensions,
                             start,
                             stride,
                             filesWritten,
+                            datasetsWritten,
+                            datasetIdsWritten,
                             arraysWritten,
                             startsWritten,
                             stridesWritten,
@@ -1265,6 +1297,8 @@ XdmfHDF5Writer::write(XdmfArray & array,
       }
 
       std::list<std::string>::iterator fileNameWalker = filesWritten.begin();
+      std::list<std::string>::iterator datasetWalker = datasetsWritten.begin();
+      std::list<int>::iterator datasetIdWalker = datasetIdsWritten.begin();
       std::list<void *>::iterator arrayWalker = arraysWritten.begin();
       std::list<std::vector<unsigned int> >::iterator startWalker = startsWritten.begin();
       std::list<std::vector<unsigned int> >::iterator strideWalker = stridesWritten.begin();
@@ -1274,11 +1308,12 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
       // Loop based on the amount of blocks split from the array.
       for (unsigned int writeIndex = 0; writeIndex < arraysWritten.size(); ++writeIndex) {
-
 	// This is the section where the data is written to hdf5
 	// If you want to change the writer to write to a different data format, do it here
 
         std::string curFileName = *fileNameWalker;
+        std::string currDataset = *datasetWalker;
+        int currDatasetId = *datasetIdWalker;
         void * curArray = *arrayWalker;
         std::vector<unsigned int> curStart = *startWalker;
         std::vector<unsigned int> curStride = *strideWalker;
@@ -1295,7 +1330,14 @@ XdmfHDF5Writer::write(XdmfArray & array,
             closeFile = true;
           }
           mImpl->openFile(curFileName,
-                          fapl, mDataSetId);
+                          mDataSetId);
+        }
+
+        if (currDatasetId >= 0)
+        {
+          mDataSetId = currDatasetId;
+          dataSetPath.str(std::string());
+          dataSetPath << currDataset << mDataSetId;
         }
 
 	htri_t testingSet = H5Lexists(mImpl->mHDF5Handle,
@@ -1315,13 +1357,17 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
         // If default mode find a new data set to write to (keep
         // incrementing dataSetId)
-        if(dataset >=0 && mMode == Default) {
+        if(dataset >=0 &&
+           (mMode == Default ||
+            (mMode == Hyperslab && !hasControllers))) {
           while(true) {
             dataSetPath.str(std::string());
-            dataSetPath << "Data" << ++mDataSetId;
+            dataSetPath << currDataset << ++mDataSetId;
             if(!H5Lexists(mImpl->mHDF5Handle,
                           dataSetPath.str().c_str(),
                           H5P_DEFAULT)) {
+              //Close previous dataset
+              status = H5Dclose(dataset);
               dataset = H5Dopen(mImpl->mHDF5Handle,
                                 dataSetPath.str().c_str(),
                                 H5P_DEFAULT);
@@ -1370,6 +1416,12 @@ XdmfHDF5Writer::write(XdmfArray & array,
                 *iter = 1;
               }
             }
+          }
+
+          // Set ZLIB / DEFLATE Compression
+          if (mUseDeflate)
+          {
+            status = H5Pset_deflate(property, mDeflateFactor);
           }
 
           status = H5Pset_chunk(property, current_dims.size(), &chunk_size[0]);
@@ -1506,13 +1558,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
         status = H5Dclose(dataset);
 
+        H5Fflush(mImpl->mHDF5Handle, H5F_SCOPE_GLOBAL);
+
 	// This is causing a lot of overhead
         if(closeFile) {
           mImpl->closeFile();
-        }
-
-        if(mMode == Default) {
-          ++mDataSetId;
         }
 
         // Attach a new controller to the array
@@ -1524,7 +1574,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         if(mMode == Append) {
           // Find data size
           mImpl->openFile(curFileName,
-                          fapl, mDataSetId);
+                          mDataSetId);
           hid_t checkset = H5Dopen(mImpl->mHDF5Handle,
                                    dataSetPath.str().c_str(),
                                    H5P_DEFAULT);
@@ -1572,6 +1622,8 @@ XdmfHDF5Writer::write(XdmfArray & array,
         array.insert(newDataController);
 
         fileNameWalker++;
+        datasetWalker++;
+        datasetIdWalker++;
         arrayWalker++;
         startWalker++;
         strideWalker++;
@@ -1579,6 +1631,10 @@ XdmfHDF5Writer::write(XdmfArray & array,
         dataSizeWalker++;
         arrayOffsetWalker++;
 
+        if (mMode == Default) {
+          dataSetPath.str(std::string());
+          dataSetPath << "Data" << ++mDataSetId;
+        }
 
       }
 
@@ -1593,3 +1649,52 @@ XdmfHDF5Writer::write(XdmfArray & array,
     }
   }
 }
+
+// C Wrappers
+
+XDMFHDF5WRITER * XdmfHDF5WriterNew(char * fileName, int clobberFile)
+{
+  try
+  {
+    shared_ptr<XdmfHDF5Writer> generatedWriter = XdmfHDF5Writer::New(std::string(fileName), clobberFile);
+    return (XDMFHDF5WRITER *)((void *)(new XdmfHDF5Writer(*generatedWriter.get())));
+  }
+  catch (...)
+  {
+    shared_ptr<XdmfHDF5Writer> generatedWriter = XdmfHDF5Writer::New(std::string(fileName), clobberFile);
+    return (XDMFHDF5WRITER *)((void *)(new XdmfHDF5Writer(*generatedWriter.get())));
+  }
+}
+
+void XdmfHDF5WriterCloseFile(XDMFHDF5WRITER * writer, int * status)
+{
+  XDMF_ERROR_WRAP_START(status)
+  ((XdmfHDF5Writer *)writer)->closeFile();
+  XDMF_ERROR_WRAP_END(status)
+}
+
+unsigned int XdmfHDF5WriterGetChunkSize(XDMFHDF5WRITER * writer, int * status)
+{
+  XDMF_ERROR_WRAP_START(status)
+  return ((XdmfHDF5Writer *)writer)->getChunkSize();
+  XDMF_ERROR_WRAP_END(status)
+  return 0;
+}
+
+void XdmfHDF5WriterOpenFile(XDMFHDF5WRITER * writer, int * status)
+{
+  XDMF_ERROR_WRAP_START(status)
+  ((XdmfHDF5Writer *)writer)->openFile();
+  XDMF_ERROR_WRAP_END(status)
+}
+
+void XdmfHDF5WriterSetChunkSize(XDMFHDF5WRITER * writer, unsigned int chunkSize, int * status)
+{
+  XDMF_ERROR_WRAP_START(status)
+  ((XdmfHDF5Writer *)writer)->setChunkSize(chunkSize);
+  XDMF_ERROR_WRAP_END(status)
+}
+
+// C Wrappers for parent classes are generated by macros
+
+XDMF_HEAVYWRITER_C_CHILD_WRAPPER(XdmfHDF5Writer, XDMFHDF5WRITER)

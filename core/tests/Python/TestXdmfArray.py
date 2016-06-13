@@ -28,6 +28,13 @@ if __name__ == "__main__":
     print str(array4.getArrayType()) + " ?= " + str(XdmfArrayType.Int64())
     assert array4.getArrayType() == XdmfArrayType.Int64()
 
+    # Stride on List
+    array4a = XdmfArray.New()
+    array4a.insertAsInt64(0, values1, 2, 4, 2, 1);
+    print array4a.getValuesString()
+    print str(array4a.getArrayType()) + " ?= " + str(XdmfArrayType.Int64())
+    assert array4a.getArrayType() == XdmfArrayType.Int64()
+
     # Reverse
     array5 = XdmfArray.New()
     array5.insertAsFloat32(0, values1[::-1])
@@ -80,3 +87,21 @@ if __name__ == "__main__":
     assert stringArray.getSize() == 5
     assert stringArray.getValueAsString(4) == ""
     print stringArray.getValuesString()
+
+    # Retrieving data from XdmfArray
+    sourceArray = XdmfArray.New()
+    for i in range(0,20):
+      sourceArray.pushBackAsInt32(i)
+    output = []
+    sourceArray.getValues(0, output, sourceArray.getSize())
+    print output
+    for i in range(0,20):
+      assert(output[i] == i)
+    output2 = []
+    sourceArray.getValues(0, output2, sourceArray.getSize()/2, 2, 2)
+    print output2
+    for i in range(0,len(output2)):
+      if (i % 2 == 0):
+        assert(output2[i] == i)
+      else:
+        assert(output2[i] == 0)

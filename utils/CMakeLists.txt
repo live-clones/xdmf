@@ -8,6 +8,7 @@ option(XDMF_BUILD_DSM OFF)
 
 set(XdmfUtilsSources
   XdmfDiff
+  XdmfGeometryConverter
   XdmfTopologyConverter
   XdmfUtils)
 set(XdmfUtilsLinkLibraries Xdmf)
@@ -91,8 +92,19 @@ if(XDMF_BUILD_PARTITIONER)
   set(XdmfUtilsLinkLibraries ${XdmfUtilsLinkLibraries} ${METIS_LIBRARIES})
 endif(XDMF_BUILD_PARTITIONER)
 
-add_library(XdmfUtils ${XdmfUtilsSources})
+add_library(XdmfUtilsObjects OBJECT ${XdmfUtilsSources})
+add_library(XdmfUtils $<TARGET_OBJECTS:XdmfUtilsObjects>)
+if (BUILD_SHARED_LIBS)
+  add_library(XdmfUtils_Static STATIC $<TARGET_OBJECTS:XdmfUtilsObjects>)
+  if (UNIX)
+    set_target_properties(XdmfUtils_Static PROPERTIES
+      OUTPUT_NAME "XdmfUtils")
+  endif (UNIX)
+endif (BUILD_SHARED_LIBS)
 target_link_libraries(XdmfUtils ${XdmfUtilsLinkLibraries})
+if (BUILD_SHARED_LIBS)
+  target_link_libraries(XdmfUtils_Static ${XdmfUtilsLinkLibraries})
+endif (BUILD_SHARED_LIBS)
 
 if(WIN32)
   set_target_properties(${executable} PROPERTIES
@@ -134,6 +146,10 @@ endif(XDMF_WRAP_JAVA)
 
 
 if(XDMF_WRAP_PYTHON)
+  if (NOT BUILD_SHARED_LIBS)
+    message(FATAL_ERROR "Python Wrappers do not function"
+                        " properly without shared libraries")
+  endif (NOT BUILD_SHARED_LIBS)
   XDMF_SWIG_PYTHON(XdmfUtils Xdmf)
 endif(XDMF_WRAP_PYTHON)
 
@@ -150,6 +166,12 @@ install(TARGETS XdmfUtils
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
+if (BUILD_SHARED_LIBS)
+install(TARGETS XdmfUtils_Static
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
+endif (BUILD_SHARED_LIBS)
 install(TARGETS ${XdmfUtilsExecutables} 
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib

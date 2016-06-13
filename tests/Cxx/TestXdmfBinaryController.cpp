@@ -22,18 +22,30 @@ int main(int, char **)
                        
   std::ofstream output("binary.bin",
                        std::ofstream::binary);
+
+  // Dummy data to test seek
+
+  std::vector<int> dummyData;
+  dummyData.push_back(5);
+  dummyData.push_back(-5);
+  dummyData.push_back(12);
+
+  output.write(reinterpret_cast<char *>(&(dummyData[0])),
+               sizeof(int) * dummyData.size());
+
   output.write(reinterpret_cast<char *>(&(outputData[0])),
                sizeof(int) * outputData.size());
   output.close();
 
   //
   // read binary file using XdmfBinaryController
+  // Checking use of seek
   //
   shared_ptr<XdmfBinaryController> binaryController = 
     XdmfBinaryController::New("binary.bin",
                               XdmfArrayType::Int32(),
                               XdmfBinaryController::NATIVE,
-                              0,
+                              sizeof(int) * dummyData.size(),
                               std::vector<unsigned int>(1, 4));
   
   shared_ptr<XdmfArray> testArray = XdmfArray::New();

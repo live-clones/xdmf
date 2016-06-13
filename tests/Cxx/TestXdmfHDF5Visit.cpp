@@ -6,6 +6,7 @@
 #include "XdmfReader.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfWriter.hpp"
 #include <iostream>
@@ -67,6 +68,47 @@ int main(int, char **)
     XdmfWriter::New("TestXdmfHDF5Visit.xmf");
   grid->accept(writer->getHeavyDataWriter());
   grid->accept(writer);
+
+  // Testing writing to specified datasets
+
+  shared_ptr<XdmfArray> array1 = XdmfArray::New();
+
+  shared_ptr<XdmfArray> array2 = XdmfArray::New();
+
+  for (unsigned int i = 0; i < 10; ++i)
+  {
+    array1->pushBack(i);
+    array2->pushBack(i + 5);
+  }
+
+  shared_ptr<XdmfHDF5Controller> controller1 =
+    XdmfHDF5Controller::New("TestXdmfHDF5Visit.h5",
+                            "Test Dataset1",
+                            array1->getArrayType(),
+                            std::vector<unsigned int>(1, 0),
+                            std::vector<unsigned int>(1, 1),
+                            std::vector<unsigned int>(1, 10),
+                            std::vector<unsigned int>(1, 10));
+
+  shared_ptr<XdmfHDF5Controller> controller2 =
+    XdmfHDF5Controller::New("TestXdmfHDF5Visit.h5",
+                            "Test Dataset2",
+                            array2->getArrayType(),
+                            std::vector<unsigned int>(1, 0),
+                            std::vector<unsigned int>(1, 1),
+                            std::vector<unsigned int>(1, 10),
+                            std::vector<unsigned int>(1, 10));
+
+  array1->insert(controller1);
+  array2->insert(controller2);
+
+  std::cout << "writing array 1 to specified dataset" << std::endl;
+
+  array1->accept(writer->getHeavyDataWriter());
+
+  std::cout << "writing array 2 to specified dataset" << std::endl;
+
+  array2->accept(writer->getHeavyDataWriter());
 
   return 0;
 }

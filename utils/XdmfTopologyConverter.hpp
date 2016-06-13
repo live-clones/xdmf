@@ -24,13 +24,19 @@
 #ifndef XDMFTOPOLOGYCONVERTER_HPP_
 #define XDMFTOPOLOGYCONVERTER_HPP_
 
+// C Compatible Includes
+#include "XdmfUtils.hpp"
+#include "XdmfUnstructuredGrid.hpp"
+#include "XdmfHeavyDataWriter.hpp"
+
+#ifdef __cplusplus
+
 // Forward Declarations
-class XdmfHeavyDataWriter;
+//class XdmfHeavyDataWriter;
 class XdmfTopologyType;
-class XdmfUnstructuredGrid;
+//class XdmfUnstructuredGrid;
 
 // Includes
-#include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
 
 /**
@@ -120,6 +126,8 @@ public:
   shared_ptr<XdmfTopology>
   getExternalFaces(const shared_ptr<XdmfTopology> convertedTopology);
 
+  XdmfTopologyConverter(const XdmfTopologyConverter &);
+
 protected:
 
   XdmfTopologyConverter();
@@ -130,9 +138,35 @@ private:
                     std::vector<std::vector<std::vector<long> > > & hash,
                     unsigned int numCornerNodes);
 
-  XdmfTopologyConverter(const XdmfTopologyConverter &);  // Not implemented.
   void operator=(const XdmfTopologyConverter &);  // Not implemented.
 
 };
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// C wrappers go here
+
+struct XDMFTOPOLOGYCONVERTER; // Simply as a typedef to ensure correct typing
+typedef struct XDMFTOPOLOGYCONVERTER XDMFTOPOLOGYCONVERTER;
+
+XDMFUTILS_EXPORT XDMFTOPOLOGYCONVERTER * XdmfTopologyConverterNew();
+
+XDMFUTILS_EXPORT XDMFUNSTRUCTUREDGRID * XdmfTopologyConverterConvert(XDMFTOPOLOGYCONVERTER * converter,
+                                                                     XDMFUNSTRUCTUREDGRID * gridToConvert,
+                                                                     int topologytype,
+                                                                     XDMFHEAVYDATAWRITER * heavyDataWriter);
+
+XDMFUTILS_EXPORT XDMFTOPOLOGY * XdmfTopologyConverterGetExternalFaces(XDMFTOPOLOGYCONVERTER * converter,
+                                                                      XDMFTOPOLOGY * convertedTopology);
+
+XDMFUTILS_EXPORT void XdmfTopologyConverterFree(XDMFTOPOLOGYCONVERTER * converter);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* XDMFTOPOLOGYCONVERTER_HPP_ */

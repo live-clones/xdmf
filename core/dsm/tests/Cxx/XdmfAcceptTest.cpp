@@ -5,6 +5,7 @@
 #include <XdmfArray.hpp>
 #include <XdmfArrayType.hpp>
 #include <XdmfHDF5WriterDSM.hpp>
+#include <XdmfDSMCommMPI.hpp>
 
 
 int main(int argc, char *argv[])
@@ -24,13 +25,14 @@ int main(int argc, char *argv[])
         MPI_Comm_rank(comm, &id);
         MPI_Comm_size(comm, &size);
 
+        XdmfDSMCommMPI::SetUseEnvFileName(true);
 
         std::string newPath = "dsm";
         int numServersCores = size - 1;
         int numConnections = 2;
 
-
-        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
+//        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
+        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, 1, 1, "Accept");
 
         if (id == 0)
         {

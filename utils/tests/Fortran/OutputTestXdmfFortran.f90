@@ -128,43 +128,55 @@ PROGRAM XdmfFortranExample
 !! Unstructured Only
   tempID = XDMFSETTOPOLOGY(obj, XDMF_TOPOLOGY_TYPE_HEXAHEDRON, 16, &
        XDMF_ARRAY_TYPE_INT32, myConnections, 0)
+  CALL XDMFSETTOPOLOGYHDF5(obj, 'my_output.h5'//CHAR(0), 'Topology'//CHAR(0), 0, 1, 16, 16)
 !! /Unstructured Only
 !! Curvilinear and Rectilinear Only
   tempID = XDMFSETDIMENSIONS(obj, 3, XDMF_ARRAY_TYPE_INT32, myDimensions)
+  CALL XDMFSETDIMENSIONSHDF5(obj, 'my_output.h5'//CHAR(0), 'Dimensions'//CHAR(0), 0, 1, 3, 3)
 !! /Curvilinear and Rectilinear Only
 !! Unstructured and Curvilinear Only
   tempID = XDMFSETGEOMETRY(obj, XDMF_GEOMETRY_TYPE_XYZ, 36, &
        XDMF_ARRAY_TYPE_FLOAT32, myPoints)
+  CALL XDMFSETGEOMETRYHDF5(obj, 'my_output.h5'//CHAR(0), 'Geometry'//CHAR(0), 0, 1, 36, 36)
 !! /Unstructured and Curvilinear Only
 !! Rectilinear Only
   tempID = XDMFADDCOORDINATE(obj, "XCoordinates"//CHAR(0), 12, XDMF_ARRAY_TYPE_FLOAT32, myPoints(1,1,1))
   tempID = XDMFADDCOORDINATE(obj, "YCoordinates"//CHAR(0), 12, XDMF_ARRAY_TYPE_FLOAT32, myPoints(1,2,2))
   tempID = XDMFADDCOORDINATE(obj, "ZCoordinates"//CHAR(0), 12, XDMF_ARRAY_TYPE_FLOAT32, myPoints(1,3,3))
+  CALL XDMFSETCOORDINATEHDF5(obj, 0, 'my_output.h5'//CHAR(0), 'XCoordinate'//CHAR(0), 0, 1, 12, 12)
+  CALL XDMFSETCOORDINATEHDF5(obj, 1, 'my_output.h5'//CHAR(0), 'YCoordinate'//CHAR(0), 0, 1, 12, 12)
+  CALL XDMFSETCOORDINATEHDF5(obj, 2, 'my_output.h5'//CHAR(0), 'ZCoordinate'//CHAR(0), 0, 1, 12, 12)
 !! /Rectilinear Only
 !! Regular Only
   tempID = XDMFSETORIGIN(obj, 3, XDMF_ARRAY_TYPE_FLOAT64, myOrigin)
+  CALL XDMFSETORIGINHDF5(obj, 'my_output.h5'//CHAR(0), 'Origin'//CHAR(0), 0, 1, 3, 3)
   tempID = XDMFSETBRICK(obj, 3, XDMF_ARRAY_TYPE_FLOAT64, myBrick)
+  CALL XDMFSETBRICKHDF5(obj, 'my_output.h5'//CHAR(0), 'Brick'//CHAR(0), 0, 1, 3, 3)
 !! /Regular Only
   testSetID = XDMFADDSET(obj, 'TestSet'//CHAR(0), XDMF_SET_TYPE_NODE, myNodeAttribute,  12, XDMF_ARRAY_TYPE_FLOAT64)
   tempID =  XDMFADDINFORMATION(obj, 'Attrib1'//CHAR(0), 'This is Attribute 1'//CHAR(0))
   nodeAttributeId = XDMFADDATTRIBUTE(obj, 'NodeValues'//CHAR(0), &
        XDMF_ATTRIBUTE_CENTER_NODE, XDMF_ATTRIBUTE_TYPE_SCALAR, 12, &
        XDMF_ARRAY_TYPE_FLOAT64, myNodeAttribute)
+  CALL XDMFSETATTRIBUTEHDF5(obj, 0, 'my_output.h5'//CHAR(0), 'NodeAttr'//CHAR(0), 0, 1, 12, 12)
   PRINT *, 'Node Attribute ID: ', nodeAttributeId
   CALL XDMFRETRIEVEATTRIBUTEVALUES(obj, 0, mySmallerNode, XDMF_ARRAY_TYPE_FLOAT64, 6, 0, 1, 1)
   tempID =  XDMFADDINFORMATION(obj, 'Attrib2'//CHAR(0), 'This is Attribute 2'//CHAR(0))
   cellAttributeId = XDMFADDATTRIBUTE(obj, 'CellValues'//CHAR(0), &
        XDMF_ATTRIBUTE_CENTER_CELL, XDMF_ATTRIBUTE_TYPE_SCALAR, 2, &
        XDMF_ARRAY_TYPE_FLOAT64, myCellAttribute)
+  CALL XDMFSETATTRIBUTEHDF5(obj, 1, 'my_output.h5'//CHAR(0), 'CellAttr'//CHAR(0), 0, 1, 2, 2)
   PRINT *, 'Cell Attribute ID: ', cellAttributeId
   nodeSmallAttributeId = XDMFADDATTRIBUTE(obj, 'SmallNodeValues'//CHAR(0), &
        XDMF_ATTRIBUTE_CENTER_NODE, XDMF_ATTRIBUTE_TYPE_SCALAR, 6, &
        XDMF_ARRAY_TYPE_FLOAT64, mySmallerNode)
+  CALL XDMFSETATTRIBUTEHDF5(obj, 2, 'my_output.h5'//CHAR(0), 'SmallNodeAttr'//CHAR(0), 0, 1, 6, 6)
   PRINT *, 'Node Attribute ID: ', nodeSmallAttributeId
   tempID = XDMFADDINFORMATION(obj, 'Grid1'//CHAR(0), 'This is Grid 1'//CHAR(0))
   tempID = XDMFADDINFORMATION(obj, 'SubInformation'//CHAR(0), 'This is an information inside an information'//CHAR(0))
-  CALL XDMFADDINFORMATIONARRAY(obj, 1, "Array"//CHAR(0), myBrick, 3, XDMF_ARRAY_TYPE_FLOAT64)
+  CALL XDMFADDINFORMATIONARRAY(obj, 1, 'Array'//CHAR(0), myBrick, 3, XDMF_ARRAY_TYPE_FLOAT64)
   CALL XDMFMODIFYINFORMATIONARRAY(obj, 1, 0, myBrick, XDMF_ARRAY_TYPE_FLOAT64, 3, 3, 1, 1)
+  CALL XDMFSETINFORMATIONARRAYHDF5(obj, 1, 0, 'my_output.h5'//CHAR(0), 'Info Array'//CHAR(0), 0, 1, 3, 3)
   CALL XDMFINSERTINFORMATIONINTOINFORMATION(obj, 0, 1, .TRUE.)
   CALL XDMFADDGRID(obj, 'TestGrid'//CHAR(0), .FALSE.)
   myTime = 2.0

@@ -25,6 +25,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include "XdmfSystemUtils.hpp"
+#include "string.h"
 
 XdmfSystemUtils::XdmfSystemUtils()
 {
@@ -40,10 +41,23 @@ XdmfSystemUtils::getRealPath(const std::string & path)
   xmlURIPtr ref = NULL;
   ref = xmlCreateURI();
   xmlParseURIReference(ref, path.c_str());
-  
-  char realPath[PATH_MAX];
-  realpath(ref->path, realPath);
 
+#ifdef WIN32
+  char realPath[_MAX_PATH];
+  _fullpath(realPath, path.c_str(), _MAX_PATH);
   xmlFreeURI(ref);
   return realPath;
+#else
+  char realPath[PATH_MAX];
+  realpath(ref->path, realPath);
+  xmlFreeURI(ref);
+  return realPath;
+#endif
+}
+
+char * XdmfSystemUtilsGetRealPath(char * path)
+{
+  std::string returnstring = XdmfSystemUtils::getRealPath(std::string(path));
+  char * returnPointer = strdup(returnstring.c_str());
+  return returnPointer;
 }

@@ -24,10 +24,15 @@
 #ifndef XDMFTOPOLOGYTYPE_HPP_
 #define XDMFTOPOLOGYTYPE_HPP_
 
-// Includes
-#include <vector>
+// C Compatible Includes
 #include "Xdmf.hpp"
+
+#ifdef __cplusplus
+
+// Includes
 #include "XdmfItemProperty.hpp"
+#include <map>
+#include <vector>
 
 /**
  * @brief Property describing the types of elements stored in an
@@ -265,7 +270,7 @@ public:
    *
    * @return	The face's topology type
    */
-  shared_ptr<const XdmfTopologyType>  getFaceType();
+  shared_ptr<const XdmfTopologyType>  getFaceType() const;
 
   /**
    * Get the id of this cell type, necessary in order to create grids
@@ -351,6 +356,12 @@ protected:
                    const CellType cellType,
                    const unsigned int id);
 
+  unsigned int calculateHypercubeNumElements(unsigned int numDims, unsigned int elementNumDims) const;
+
+  static std::map<std::string, shared_ptr<const XdmfTopologyType>(*)()> mTopologyDefinitions;
+
+  static void InitTypes();
+
 private:
 
   XdmfTopologyType(const XdmfTopologyType &); // Not implemented.
@@ -368,5 +379,122 @@ private:
   const unsigned int mNodesPerElement;
 
 };
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// C wrappers go here
+
+#define XDMF_TOPOLOGY_TYPE_POLYVERTEX                    500
+#define XDMF_TOPOLOGY_TYPE_POLYLINE                      501
+#define XDMF_TOPOLOGY_TYPE_POLYGON                       502
+#define XDMF_TOPOLOGY_TYPE_TRIANGLE                      503
+#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL                 504
+#define XDMF_TOPOLOGY_TYPE_TETRAHEDRON                   505
+#define XDMF_TOPOLOGY_TYPE_PYRAMID                       506
+#define XDMF_TOPOLOGY_TYPE_WEDGE                         507
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON                    508
+#define XDMF_TOPOLOGY_TYPE_EDGE_3                        509
+#define XDMF_TOPOLOGY_TYPE_TRIANGLE_6                    510
+#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8               511
+#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9               512
+#define XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10                513
+#define XDMF_TOPOLOGY_TYPE_PYRAMID_13                    514
+#define XDMF_TOPOLOGY_TYPE_WEDGE_15                      515
+#define XDMF_TOPOLOGY_TYPE_WEDGE_18                      516
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20                 517
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24                 518
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27                 519
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64                 520
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125                521
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216                522
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343                523
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512                524
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729                525
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000               526
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331               527
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_64        528
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_125       529
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_216       530
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_343       531
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_512       532
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_729       533
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1000      534
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1331      535
+#define XDMF_TOPOLOGY_TYPE_MIXED                         536
+
+#define XDMF_TOPOLOGY_CELL_TYPE_NO_CELL_TYPE             0
+#define XDMF_TOPOLOGY_CELL_TYPE_LINEAR                   1
+#define XDMF_TOPOLOGY_CELL_TYPE_QUADRATIC                2
+#define XDMF_TOPOLOGY_CELL_TYPE_CUBIC                    3
+#define XDMF_TOPOLOGY_CELL_TYPE_QUARTIC                  4
+#define XDMF_TOPOLOGY_CELL_TYPE_QUINTIC                  5
+#define XDMF_TOPOLOGY_CELL_TYPE_SEXTIC                   6
+#define XDMF_TOPOLOGY_CELL_TYPE_SEPTIC                   7
+#define XDMF_TOPOLOGY_CELL_TYPE_OCTIC                    8
+#define XDMF_TOPOLOGY_CELL_TYPE_NONIC                    9
+#define XDMF_TOPOLOGY_CELL_TYPE_DECIC                    10
+#define XDMF_TOPOLOGY_CELL_TYPE_ARBITRARY                100
+#define XDMF_TOPOLOGY_CELL_TYPE_STRUCTURED               101
+
+XDMF_EXPORT int XdmfTopologyTypePolyvertex();
+XDMF_EXPORT int XdmfTopologyTypePolyline();
+XDMF_EXPORT int XdmfTopologyTypePolygon();
+XDMF_EXPORT int XdmfTopologyTypeTriangle();
+XDMF_EXPORT int XdmfTopologyTypeQuadrilateral();
+XDMF_EXPORT int XdmfTopologyTypeTetrahedron();
+XDMF_EXPORT int XdmfTopologyTypePyramid();
+XDMF_EXPORT int XdmfTopologyTypeWedge();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron();
+XDMF_EXPORT int XdmfTopologyTypeEdge_3();
+XDMF_EXPORT int XdmfTopologyTypeTriangle_6();
+XDMF_EXPORT int XdmfTopologyTypeQuadrilateral_8();
+XDMF_EXPORT int XdmfTopologyTypeQuadrilateral_9();
+XDMF_EXPORT int XdmfTopologyTypeTetrahedron_10();
+XDMF_EXPORT int XdmfTopologyTypePyramid_13();
+XDMF_EXPORT int XdmfTopologyTypeWedge_15();
+XDMF_EXPORT int XdmfTopologyTypeWedge_18();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_20();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_24();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_27();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_64();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_125();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_216();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_343();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_512();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_729();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_1000();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_1331();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_Spectral_64();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_Spectral_125();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_Spectral_216();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_Spectral_343();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_Spectral_512();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_Spectral_729();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_Spectral_1000();
+XDMF_EXPORT int XdmfTopologyTypeHexahedron_Spectral_1331();
+XDMF_EXPORT int XdmfTopologyTypeMixed();
+
+
+XDMF_EXPORT int XdmfTopologyTypeGetCellType(int type);
+
+XDMF_EXPORT unsigned int XdmfTopologyTypeGetEdgesPerElement(int type, int * status);
+
+XDMF_EXPORT unsigned int XdmfTopologyTypeGetFacesPerElement(int type, int * status);
+
+XDMF_EXPORT int XdmfTopologyTypeGetFaceType(int type);
+
+XDMF_EXPORT unsigned int XdmfTopologyTypeGetID(int type);
+
+XDMF_EXPORT char * XdmfTopologyTypeGetName(int type);
+
+XDMF_EXPORT unsigned int XdmfTopologyTypeGetNodesPerElement(int type);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* XDMFTOPOLOGYTYPE_HPP_ */

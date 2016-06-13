@@ -652,6 +652,7 @@ XdmfArray::initialize(const unsigned int size)
     mTmpReserveSize = 0;
   }
   mArray = newArray;
+  this->setIsChanged(true);
   return newArray;
 }
 
@@ -698,6 +699,7 @@ XdmfArray::insert(const unsigned int startIndex,
                                  valuesStride,
                                  mDimensions),
                        mArray);
+  this->setIsChanged(true);
 }
 
 template <typename T>
@@ -707,6 +709,7 @@ XdmfArray::pushBack(const T & value)
   return boost::apply_visitor(PushBack<T>(value,
                                           this),
                               mArray);
+  this->setIsChanged(true);
 }
 
 template<typename T>
@@ -718,8 +721,7 @@ XdmfArray::resize(const unsigned int numValues,
                                         numValues,
                                         value),
                               mArray);
-  std::vector<unsigned int> newDimensions;
-  newDimensions.push_back(numValues);
+  this->setIsChanged(true);
 }
 
 template<typename T>
@@ -733,6 +735,7 @@ XdmfArray::resize(const std::vector<unsigned int> & dimensions,
                                             std::multiplies<unsigned int>());
   this->resize(size, value);
   mDimensions = dimensions;
+  this->setIsChanged(true);
 }
 
 template <typename T>
@@ -752,6 +755,7 @@ XdmfArray::setValuesInternal(const T * const arrayPointer,
     mArray = newArrayPointer;
   }
   mArrayPointerNumValues = numValues;
+  this->setIsChanged(true);
 }
 
 template <typename T>
@@ -767,6 +771,7 @@ XdmfArray::setValuesInternal(std::vector<T> & array,
     shared_ptr<std::vector<T> > newArray(&array, NullDeleter());
     mArray = newArray;
   }
+  this->setIsChanged(true);
 }
 
 template <typename T>
@@ -774,6 +779,7 @@ void
 XdmfArray::setValuesInternal(const shared_ptr<std::vector<T> > array)
 {
   mArray = array;
+  this->setIsChanged(true);
 }
 
 template <typename T>
@@ -793,6 +799,7 @@ XdmfArray::swap(std::vector<T> & array)
   catch(const boost::bad_get & exception) {
     return false;
   }
+  this->setIsChanged(true);
 }
 
 template <typename T>

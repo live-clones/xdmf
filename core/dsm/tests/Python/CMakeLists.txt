@@ -23,17 +23,29 @@ ADD_TEST_PYTHON_PATH("${LIBXML2_BINARY_DIRS}")
 #       have extra arguments (ie: ADD_TEST_PYTHON(testname inputfile))
 #       Read UsePYTHONTest.cmake for more information
 # ---------------------------------------
-if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
-  ADD_MPI_TEST_PYTHON(PythonDSM.sh XdmfExampleDsmTest)
-  ADD_MPI_TEST_PYTHON(PythonConnect.sh XdmfExampleAcceptTest,XdmfExampleConnectTest2,XdmfExampleConnectTest)
-endif(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+if ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+  if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+    ADD_MPI_TEST_PYTHON(PythonDSM.sh XdmfExampleDsmTest)
+    ADD_MPI_TEST_PYTHON(PythonConnect.sh XdmfExampleAcceptTest,XdmfExampleConnectTest2,XdmfExampleConnectTest)
+  endif(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+else ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+  if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+    ADD_MPI_TEST_PYTHON(CrayPythonConnect.sh XdmfExampleAcceptTest,XdmfExampleConnectTest2,XdmfExampleConnectTest)
+  endif(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+endif ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
 
 # Add any python cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
 #       have multiple files (ie: CLEAN_TEST_PYTHON(testname outputfile1 ...))
 #       Read UsePYTHONTest.cmake for more information
 # ---------------------------------------
-if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
-  CLEAN_TEST_PYTHON(PythonDSM.sh)
-  CLEAN_TEST_PYTHON(PythonConnect.sh dsmconnect.cfg)
-endif (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+if ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+  if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+    CLEAN_TEST_PYTHON(PythonDSM.sh)
+    CLEAN_TEST_PYTHON(PythonConnect.sh dsmconnect.cfg)
+  endif (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+else ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
+  if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+    CLEAN_TEST_PYTHON(CrayPythonConnect.sh dsmconnect.cfg)
+  endif(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+endif ("${XDMF_DSM_IS_CRAY}" STREQUAL "")

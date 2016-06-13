@@ -23,3 +23,31 @@ if __name__ == "__main__":
         exampleChunk = exampleWriter.getChunkSize()
 
         #//getChunkSize end
+
+        #//setUseDeflate
+
+        useDeflate = True
+
+        exampleWriter.setUseDeflate(useDeflate)
+
+        #//setUseDeflate
+
+        #//getUseDeflate
+
+        isUsingDeflate = exampleWriter.getUseDeflate()
+
+        #//getUseDeflate
+
+        #//setDeflateFactor
+
+        newDeflateFactor = 6
+
+        exampleWriter.setDeflateFactor(newDeflateFactor)
+
+        #//setDeflateFactor
+
+        #//getDeflateFactor
+
+        currentDeflateFactor = exampleWriter.getDeflateFactor()
+
+        #//getDeflateFactor

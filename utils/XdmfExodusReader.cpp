@@ -671,3 +671,28 @@ XdmfExodusReader::read(const std::string & fileName,
 
   return toReturn;
 }
+
+// C Wrappers
+
+XDMFEXODUSREADER *
+XdmfExodusReaderNew()
+{
+  shared_ptr<XdmfExodusReader> generatedReader = XdmfExodusReader::New();
+  return (XDMFEXODUSREADER *)((void *)(new XdmfExodusReader(*generatedReader.get())));
+}
+
+XDMFUNSTRUCTUREDGRID *
+XdmfExodusReaderRead(XDMFEXODUSREADER * reader, char * fileName, XDMFHEAVYDATAWRITER * heavyDataWriter)
+{
+  shared_ptr<XdmfHeavyDataWriter> tempWriter = shared_ptr<XdmfHeavyDataWriter>((XdmfHeavyDataWriter *)heavyDataWriter, XdmfNullDeleter());
+  return (XDMFUNSTRUCTUREDGRID)((void *)(new XdmfUnstructuredGrid(*((((XdmfExodusReader *)reader)->read(fileName, tempWriter)).get()))));
+}
+
+void
+XdmfExodusReaderFree(XDMFEXODUSREADER * reader)
+{
+  if (reader != NULL) {
+    delete ((XdmfExodusReader *)reader);
+    reader = NULL;
+  }
+}

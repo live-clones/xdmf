@@ -24,6 +24,11 @@
 #ifndef XDMFDIFF_HPP_
 #define XDMFDIFF_HPP_
 
+// C Compatible Includes
+#include "XdmfUtils.hpp"
+
+#ifdef __cplusplus
+
 // Forward Declarations
 class XdmfItem;
 
@@ -79,18 +84,44 @@ public:
   void
   setAbsoluteTolerance(const double absoluteTolerance);
 
+  XdmfDiff(const XdmfDiff &);
+
 protected:
 
   XdmfDiff();
 
 private:
 
-  XdmfDiff(const XdmfDiff &);  // Not implemented.
   void operator=(const XdmfDiff &);  // Not implemented.
 
   double mAbsoluteTolerance;
 
 };
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// C wrappers go here
+
+struct XDMFDIFF; // Simply as a typedef to ensure correct typing
+typedef struct XDMFDIFF XDMFDIFF;
+
+XDMFUTILS_EXPORT XDMFDIFF * XdmfDiffNew();
+
+XDMFUTILS_EXPORT int XdmfDiffCompare(XDMFDIFF * diff, XDMFITEM * item1, XDMFITEM * item2);
+
+XDMFUTILS_EXPORT double XdmfDiffGetAbsoluteTolerance(XDMFDIFF * diff);
+
+XDMFUTILS_EXPORT void XdmfDiffSetAbsoluteTolerance(XDMFDIFF * diff, double tolerance);
+
+XDMFUTILS_EXPORT void XdmfDiffFree(XDMFDIFF * diff);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* XDMFDIFF_HPP_ */
 

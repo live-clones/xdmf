@@ -113,12 +113,23 @@ XdmfPartitioner::XdmfPartitioner()
 {
 }
 
+XdmfPartitioner::XdmfPartitioner(const XdmfPartitioner & partitioner) :
+  mIgnoredSets(partitioner.mIgnoredSets)
+{
+}
+
 XdmfPartitioner::~XdmfPartitioner()
 {
 }
 
 void
 XdmfPartitioner::ignore(const shared_ptr<const XdmfSet> set)
+{
+  mIgnoredSets.insert(set.get());
+}
+
+void
+XdmfPartitioner::ignore(const XdmfSet * set)
 {
   mIgnoredSets.insert(set);
 }
@@ -657,7 +668,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   const unsigned int numberSets = gridToPartition->getNumberSets();
   for(unsigned int i=0; i<numberSets; ++i) {
     const shared_ptr<XdmfSet> set = gridToPartition->getSet(i);
-    if(mIgnoredSets.find(set) == mIgnoredSets.end()) {
+    if(mIgnoredSets.find(set.get()) == mIgnoredSets.end()) {
       bool releaseSet = false;
       if(!set->isInitialized()) {
         set->read();
@@ -1060,6 +1071,79 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
     return returnValue;
 
   }
+
+// C Wrappers
+
+XDMFPARTITIONER *
+XdmfPartitionerNew()
+{
+  shared_ptr<XdmfPartitioner> generatedPartitioner = XdmfPartitioner::New();
+  return (XDMFPARTITIONER *)((void *)(new XdmfPartitioner(*generatedPartitioner.get())));
+}
+
+void
+XdmfPartitionerIgnore(XDMFPARTITIONER * partitioner,
+                      XDMFSET * set)
+{
+  ((XdmfPartitioner *)partitioner)->ignore((XdmfSet *)set);
+}
+
+void
+XdmfPartitionerPartitionGraph(XDMFPARTITIONER * partitioner,
+                              XDMFGRAPH * graphToPartition,
+                              unsigned int numberOfPartitions)
+{
+  shared_ptr<XdmfGraph> tempGraph = shared_ptr<XdmfGraph>((XdmfGraph *) graphToPartition, XdmfNullDeleter());
+  ((XdmfPartitioner *)partitioner)->partition(tempGraph, numberOfPartitions);
+}
+
+XDMFGRIDCOLLECTION *
+XdmfPartitionerPartitionUnstructuredGrid(XDMFPARTITIONER * partitioner,
+                                         XDMFUNSTRUCTUREDGRID * gridToPartition,
+                                         unsigned int numberOfPartitions,
+                                         int metisScheme,
+                                         XDMFHEAVYDATAWRITER * heavyDataWriter)
+{
+  XdmfPartitioner::MetisScheme passedScheme = XdmfPartitioner::DUAL_GRAPH;
+  switch (metisScheme)
+  {
+    case XDMF_PARTITIONER_SCHEME_DUAL_GRAPH:
+      passedScheme = XdmfPartitioner::DUAL_GRAPH;
+      break;
+    case XDMF_PARTITIONER_SCHEME_NODAL_GRAPH:
+      passedScheme = XdmfPartitioner::NODAL_GRAPH;
+      break;
+    default:
+      break;
+  }
+  shared_ptr<XdmfUnstructuredGrid> tempGrid = shared_ptr<XdmfUnstructuredGrid>((XdmfUnstructuredGrid *) gridToPartition, XdmfNullDeleter());
+  if (heavyDataWriter)
+  {
+    shared_ptr<XdmfHeavyDataWriter> tempwriter = shared_ptr<XdmfHeavyDataWriter>((XdmfHeavyDataWriter *) heavyDataWriter, XdmfNullDeleter());
+    return (XDMFGRIDCOLLECTION *)((void *)(new XdmfGridCollection(*((((XdmfPartitioner *)partitioner)->partition(tempGrid, numberOfPartitions, passedScheme, tempwriter)).get()))));
+  }
+  else
+  {
+    return (XDMFGRIDCOLLECTION *)((void *)(new XdmfGridCollection(*((((XdmfPartitioner *)partitioner)->partition(tempGrid, numberOfPartitions, passedScheme)).get()))));
+  }
+}
+
+XDMFUNSTRUCTUREDGRID *
+XdmfPartitionerUnpartition(XDMFPARTITIONER * partitioner,
+                           XDMFGRIDCOLLECTION * gridToUnPartition)
+{
+  shared_ptr<XdmfGridCollection> tempGrid = shared_ptr<XdmfGridCollection>((XdmfGridCollection *) gridToUnPartition, XdmfNullDeleter());
+  return (XDMFUNSTRUCTUREDGRID *)((void *)(new XdmfUnstructuredGrid(*((((XdmfPartitioner *)partitioner)->unpartition(tempGrid)).get()))));
+}
+
+void
+XdmfPartitionerFree(XDMFPARTITIONER * partitioner)
+{
+  if (partitioner != NULL) {
+    delete ((XdmfPartitioner *)partitioner);
+    partitioner = NULL;
+  }
+}
 
 #else
 

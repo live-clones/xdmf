@@ -1,3 +1,5 @@
+print "Connect 2"
+
 from mpi4py.MPI import *
 from Xdmf import *
 import time
@@ -18,6 +20,7 @@ if __name__ == "__main__":
 
           # Initializing objects
 
+          '''
           testComm = XdmfDSMCommMPI()
           testComm.DupComm(comm)
           testComm.Init()
@@ -25,6 +28,15 @@ if __name__ == "__main__":
           testBuffer.SetIsServer(False)
           testBuffer.SetComm(testComm)
           testBuffer.SetIsConnected(True)
+          '''
+
+          exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, "Connect 2")
+
+          id = exampleWriter.getServerBuffer().GetComm().GetId()
+          size = exampleWriter.getServerBuffer().GetComm().GetIntraSize()
+
+          testBuffer = exampleWriter.getServerBuffer()
+          testComm = testBuffer.GetComm()
 
           readStartVector = UInt32Vector()
           readStrideVector = UInt32Vector()
@@ -60,7 +72,7 @@ if __name__ == "__main__":
 
           readController.getServerBuffer().GetComm().ReadDsmPortName();
 
-          readController.getServerManager().Connect();
+          readController.getServerBuffer().Connect();
 
           exampleWriter = XdmfHDF5WriterDSM.New(newPath, testBuffer);
 
@@ -145,4 +157,4 @@ if __name__ == "__main__":
 
           readController.getServerBuffer().GetComm().GetInterComm().Barrier()
 
-          readController.getServerManager().Disconnect()
+          readController.getServerBuffer().Disconnect()

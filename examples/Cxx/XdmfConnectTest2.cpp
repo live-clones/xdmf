@@ -12,6 +12,8 @@
 
 int main(int argc, char *argv[])
 {
+        //#initDSMWriterConnectRequired begin
+
         int size, id, dsmSize;
         dsmSize = 64;
         MPI_Status status;
@@ -28,15 +30,45 @@ int main(int argc, char *argv[])
 
         // Initializing objects
 
-        //since the start and end ids are larger than the size there are no buffers alloted
-        //thus, no blockage occurs
-        XdmfDSMCommMPI * testComm = new XdmfDSMCommMPI();
-        testComm->DupComm(comm);
-        testComm->Init();
-        XdmfDSMBuffer * testBuffer = new XdmfDSMBuffer();
-        testBuffer->SetIsServer(false);
-        testBuffer->SetComm(testComm);
-        testBuffer->SetIsConnected(true);
+        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm);
+
+        exampleWriter->getServerBuffer()->GetComm()->ReadDsmPortName();
+
+        exampleWriter->getServerBuffer()->Connect();
+
+        //#initDSMWriterConnectRequired end
+
+        //#notify begin
+
+        int notify = 0;
+
+        if (size > 1) {
+          if (id == 0) {
+            notify = exampleWriter->waitOn(newPath, "notify");
+          }
+          else if (id == size - 1) {
+            // The user will want to ensure that the waiton command is called first
+            exampleWriter->waitRelease(newPath, "notify", 3);
+          }
+        }
+
+        //#notify end
+
+        //#buffernotify begin
+
+        int notify = 0;
+
+        if (size > 1) {
+          if (id == 0) {
+            notify = exampleWriter->getServerBuffer()->WaitOn(newPath, "notify");
+          }
+          else if (id == size - 1) {
+            // The user will want to ensure that the waiton command is called first
+            exampleWriter->getServerBuffer()->WaitRelease(newPath, "notify", 3);
+          }
+        }
+
+        //#buffernotify end
 
         std::vector<unsigned int> readStartVector;
         std::vector<unsigned int> readStrideVector;
@@ -61,13 +93,7 @@ int main(int argc, char *argv[])
                 readStrideVector,
                 readCountVector,
                 readDataSizeVector,
-                testBuffer);
-
-        readController->getServerBuffer()->GetComm()->ReadDsmPortName();
-
-        readController->getServerManager()->Connect();
-
-        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, testBuffer);
+                exampleWriter->getServerBuffer());
 
         std::vector<unsigned int> writeStartVector;
         std::vector<unsigned int> writeStrideVector;

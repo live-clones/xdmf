@@ -89,5 +89,26 @@ int main(int, char **)
   assert(XdmfTestCompareFiles::compareFiles("TestXdmfRectilinearGrid1.xmf",
                                             "TestXdmfRectilinearGrid2.xmf"));
 
+  // Testing 1d meshes
+
+  shared_ptr<XdmfArray> dim1d = XdmfArray::New();
+  dim1d->pushBack(4);
+  dim1d->pushBack(5);
+  dim1d->pushBack(6);
+  dim1d->pushBack(7);
+
+  std::vector<shared_ptr<XdmfArray> > dimvector;
+  dimvector.push_back(dim1d);
+
+  shared_ptr<XdmfRectilinearGrid> grid3 = XdmfRectilinearGrid::New(dimvector);
+
+  shared_ptr<XdmfWriter> writer3 =
+    XdmfWriter::New("TestXdmfRectilinearGrid3.xmf");
+
+  grid3->accept(writer3);
+
+  shared_ptr<XdmfRectilinearGrid> readgrid =
+    shared_dynamic_cast<XdmfRectilinearGrid>(reader->read("TestXdmfRectilinearGrid3.xmf"));
+
   return 0;
 }

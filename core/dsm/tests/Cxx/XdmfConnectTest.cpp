@@ -27,12 +27,21 @@ int main(int argc, char *argv[])
         MPI_Comm_rank(comm, &id);
         MPI_Comm_size(comm, &size);
 
+        XdmfDSMCommMPI::SetUseEnvFileName(true);
 
         std::string newPath = "dsm";
         std::string newSetPath = "Data";
 
         // Initializing objects
 
+        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, "Connect 1");
+
+        MPI_Comm_rank(exampleWriter->getServerBuffer()->GetComm()->GetIntraComm(), &id);
+        MPI_Comm_size(exampleWriter->getServerBuffer()->GetComm()->GetIntraComm(), &size);
+
+//        exampleWriter->getServerBuffer()->GetComm()->SetApplicationName("Connect 1");
+
+/*
         XdmfDSMCommMPI * testComm = new XdmfDSMCommMPI();
         testComm->DupComm(comm);
         testComm->Init();
@@ -42,6 +51,7 @@ int main(int argc, char *argv[])
         testBuffer->SetIsConnected(true);
 
         shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, testBuffer);
+*/
 
         //#initMPI end
 
@@ -51,7 +61,7 @@ int main(int argc, char *argv[])
                 sleep(5);
         #endif
 
-	char * configFileName = strdup(testComm->GetDsmFileName().c_str());
+	char * configFileName = strdup(exampleWriter->getServerBuffer()->GetComm()->GetDsmFileName().c_str());
 
 	std::ifstream testStream;
         testStream.open(configFileName);
@@ -86,9 +96,11 @@ int main(int argc, char *argv[])
 
         //#Connect begin
 
-        exampleWriter->getServerManager()->Connect();
+        exampleWriter->getServerBuffer()->Connect();
 
         //#Connect end
+
+        exampleWriter->getServerBuffer()->SetIsConnected(true);
 
         /*
 
@@ -123,6 +135,33 @@ int main(int argc, char *argv[])
 
         */
 
+        MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetIntraComm());
+
+        // Testing the structure of the DSM
+        if (id == 0)
+        {
+          std::vector<unsigned int> structuresizes;
+          structuresizes.push_back(1);
+          structuresizes.push_back(1);
+          structuresizes.push_back(2);
+          structuresizes.push_back(2);
+          std::vector<std::string> structurenames;
+          structurenames.push_back("Accept");
+          structurenames.push_back("Server");
+          structurenames.push_back("Connect 1");
+          structurenames.push_back("Connect 2");
+          std::vector<std::pair<std::string, unsigned int> > teststructure = exampleWriter->getServerBuffer()->GetComm()->GetDsmProcessStructure();
+          printf("DSM Structure:\n");
+          assert(teststructure.size() == structurenames.size());
+          for (unsigned int i = 0; i < teststructure.size(); ++i)
+          {
+            std::cout << "(" << teststructure[i].first << ", " << teststructure[i].second << ")" << "=="
+            << "(" << structurenames[i] << ", " << structuresizes[i] << ")" << std::endl;
+            assert(teststructure[i].second == structuresizes[i]);
+            assert(teststructure[i].first.compare(structurenames[i]) == 0);
+          }
+        }
+        
         MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetIntraComm());
 
         shared_ptr<XdmfArray> writeArray = XdmfArray::New();
@@ -173,6 +212,13 @@ int main(int argc, char *argv[])
                 exampleWriter->getServerBuffer());
 
         exampleWriter->setMode(XdmfHeavyDataWriter::Hyperslab);
+
+        // Test Notify
+        int notify = exampleWriter->waitOn(newPath, "notify");
+
+        printf("notification value = %d\n", notify);
+
+        assert(notify == 3);
 
         // Done initializing
 
@@ -252,7 +298,7 @@ int main(int argc, char *argv[])
 
         //#Disconnectmanager begin
 
-        exampleWriter->getServerManager()->Disconnect();
+        exampleWriter->getServerBuffer()->Disconnect();
 
         //#Disconnectmanager end
 
