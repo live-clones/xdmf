@@ -24,6 +24,7 @@ ADD_TEST_CXX(TestXdmfGeometry)
 ADD_TEST_CXX(TestXdmfGraph)
 ADD_TEST_CXX(TestXdmfGridCollection)
 ADD_TEST_CXX(TestXdmfGridController)
+ADD_TEST_CXX(TestXdmfGridTemplate)
 ADD_TEST_CXX(TestXdmfHDF5Hyperslab)
 ADD_TEST_CXX(TestXdmfHDF5Visit)
 ADD_TEST_CXX(TestXdmfMap)
@@ -35,6 +36,7 @@ ADD_TEST_CXX(TestXdmfRectilinearGrid)
 ADD_TEST_CXX(XdmfPostFixCalc)
 ADD_TEST_CXX(TestXdmfSet)
 ADD_TEST_CXX(TestXdmfSubset)
+ADD_TEST_CXX(TestXdmfTemplate)
 ADD_TEST_CXX(TestXdmfTime)
 if (TIFF_FOUND)
   ADD_TEST_CXX(TestXdmfTIFFReadWriteCompressed)
@@ -82,6 +84,11 @@ CLEAN_TEST_CXX(TestXdmfGridCollection
   TestXdmfGridCollectionHDF1.h5
   TestXdmfGridCollectionHDF1.xmf
   TestXdmfGridCollectionHDF2.xmf)
+CLEAN_TEST_CXX(TestXdmfGridTemplate
+  gridtemplate.xmf
+  gridtemplate.h5
+  gridtemplate2.xmf
+  gridtemplate2.h5)
 CLEAN_TEST_CXX(TestXdmfHDF5Hyperslab
   TestXdmfHDF5Hyperslab.xmf
   TestXdmfHDF5Hyperslab.h5
@@ -116,6 +123,11 @@ CLEAN_TEST_CXX(TestXdmfSet)
 CLEAN_TEST_CXX(TestXdmfSubset
   subset.xmf
   subset.h5)
+CLEAN_TEST_CXX(TestXdmfTemplate
+  template.xmf
+  template.h5
+  template2.xmf
+  template2.h5)
 CLEAN_TEST_CXX(TestXdmfTime)
 if (TIFF_FOUND)
   CLEAN_TEST_CXX(TestXdmfTIFFReadWriteCompressed
