@@ -168,6 +168,12 @@ XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
   else {
     std::map<unsigned int ,shared_ptr<const XdmfArrayType>(*)()>::const_iterator returnPrecision = returnType->second.find(precisionVal);
 
+    // If only one precision is available, assume that if not specified.
+    if (returnType->second.size() == 1 && precisionVal == 0)
+    {
+      return (*((returnType->second.begin())->second))();
+    }
+
     if (returnPrecision == returnType->second.end()) {
       // Default to 32bit types if not specified otherwise
       returnPrecision = returnType->second.find(4);
