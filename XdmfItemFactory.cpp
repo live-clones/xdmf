@@ -32,6 +32,7 @@
 #include "XdmfGeometryType.hpp"
 #include "XdmfGraph.hpp"
 #include "XdmfGridCollection.hpp"
+#include "XdmfGridTemplate.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfItemFactory.hpp"
 #include "XdmfAggregate.hpp"
@@ -40,6 +41,7 @@
 #include "XdmfRegularGrid.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSparseMatrix.hpp"
+#include "XdmfTemplate.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfUnstructuredGrid.hpp"
@@ -229,6 +231,22 @@ XdmfItemFactory::createItem(const std::string & itemTag,
   }
   else if(itemTag.compare(XdmfSparseMatrix::ItemTag) == 0) {
     return XdmfSparseMatrix::New(0, 0);
+  }
+  else if (itemTag.compare(XdmfTemplate::ItemTag) == 0) {
+    std::map<std::string, std::string>::const_iterator type =
+      itemProperties.find("BaseType");
+    if(type == itemProperties.end()) {
+      return XdmfTemplate::New();
+    }
+    else {
+      if (type->second.compare("Grid") == 0) {
+        return XdmfGridTemplate::New();
+      }
+      else {
+        return XdmfTemplate::New();
+      }
+    }
+    return XdmfTemplate::New();
   }
   else if(itemTag.compare(XdmfTime::ItemTag) == 0) {
     return XdmfTime::New();

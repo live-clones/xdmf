@@ -306,6 +306,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     XdmfGridCollection
     XdmfGridCollectionType
     XdmfGridController
+    XdmfGridTemplate
     XdmfItemFactory
     XdmfMap
     XdmfReader
@@ -313,6 +314,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     XdmfRegularGrid
     XdmfSet
     XdmfSetType
+    XdmfTemplate
     XdmfTime
     XdmfTopology
     XdmfTopologyType
