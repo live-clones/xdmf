@@ -62,13 +62,13 @@
         integer XDMF_TOPOLOGY_TYPE_POLYVERTEX
         integer XDMF_TOPOLOGY_TYPE_POLYLINE
         integer XDMF_TOPOLOGY_TYPE_POLYGON
+        integer XDMF_TOPOLOGY_TYPE_POLYHEDRON
         integer XDMF_TOPOLOGY_TYPE_TRIANGLE
         integer XDMF_TOPOLOGY_TYPE_QUADRILATERAL
         integer XDMF_TOPOLOGY_TYPE_TETRAHEDRON
         integer XDMF_TOPOLOGY_TYPE_PYRAMID
         integer XDMF_TOPOLOGY_TYPE_WEDGE
         integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON
-        integer XDMF_TOPOLOGY_TYPE_POLYHEDRON
         integer XDMF_TOPOLOGY_TYPE_EDGE_3
         integer XDMF_TOPOLOGY_TYPE_TRIANGLE_6
         integer XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8
@@ -88,6 +88,14 @@
         integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729
         integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000
         integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331
+        integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_64
+        integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_125
+        integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_216
+        integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_343
+        integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_512
+        integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_729
+        integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1000
+        integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1331
         integer XDMF_TOPOLOGY_TYPE_MIXED
 
 ! Set Type
@@ -141,35 +149,44 @@
         parameter (XDMF_GRID_COLLECTION_TYPE_SPATIAL  = 400)
         parameter (XDMF_GRID_COLLECTION_TYPE_TEMPORAL = 401)
 
-        parameter (XDMF_TOPOLOGY_TYPE_POLYVERTEX       = 500)
-        parameter (XDMF_TOPOLOGY_TYPE_POLYLINE         = 501)
-        parameter (XDMF_TOPOLOGY_TYPE_POLYGON          = 502)
-        parameter (XDMF_TOPOLOGY_TYPE_TRIANGLE         = 503)
-        parameter (XDMF_TOPOLOGY_TYPE_QUADRILATERAL    = 504)
-        parameter (XDMF_TOPOLOGY_TYPE_TETRAHEDRON      = 505)
-        parameter (XDMF_TOPOLOGY_TYPE_PYRAMID          = 506)
-        parameter (XDMF_TOPOLOGY_TYPE_WEDGE            = 507)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON       = 508)
-        parameter (XDMF_TOPOLOGY_TYPE_EDGE_3           = 509)
-        parameter (XDMF_TOPOLOGY_TYPE_TRIANGLE_6       = 510)
-        parameter (XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8  = 511)
-        parameter (XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9  = 512)
-        parameter (XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10   = 513)
-        parameter (XDMF_TOPOLOGY_TYPE_PYRAMID_13       = 514)
-        parameter (XDMF_TOPOLOGY_TYPE_WEDGE_15         = 515)
-        parameter (XDMF_TOPOLOGY_TYPE_WEDGE_18         = 516)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20    = 517)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24    = 518)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27    = 519)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64    = 520)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125   = 521)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216   = 522)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343   = 523)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512   = 524)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729   = 525)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000  = 526)
-        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331  = 527)
-        parameter (XDMF_TOPOLOGY_TYPE_MIXED            = 528)
+        parameter (XDMF_TOPOLOGY_TYPE_POLYVERTEX               = 500)
+        parameter (XDMF_TOPOLOGY_TYPE_POLYLINE                 = 501)
+        parameter (XDMF_TOPOLOGY_TYPE_POLYGON                  = 502)
+        parameter (XDMF_TOPOLOGY_TYPE_POLYHEDRON               = 503)
+        parameter (XDMF_TOPOLOGY_TYPE_TRIANGLE                 = 504)
+        parameter (XDMF_TOPOLOGY_TYPE_QUADRILATERAL            = 505)
+        parameter (XDMF_TOPOLOGY_TYPE_TETRAHEDRON              = 506)
+        parameter (XDMF_TOPOLOGY_TYPE_PYRAMID                  = 507)
+        parameter (XDMF_TOPOLOGY_TYPE_WEDGE                    = 508)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON               = 509)
+        parameter (XDMF_TOPOLOGY_TYPE_EDGE_3                   = 510)
+        parameter (XDMF_TOPOLOGY_TYPE_TRIANGLE_6               = 511)
+        parameter (XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8          = 512)
+        parameter (XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9          = 513)
+        parameter (XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10           = 514)
+        parameter (XDMF_TOPOLOGY_TYPE_PYRAMID_13               = 515)
+        parameter (XDMF_TOPOLOGY_TYPE_WEDGE_15                 = 516)
+        parameter (XDMF_TOPOLOGY_TYPE_WEDGE_18                 = 517)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20            = 518)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24            = 519)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27            = 520)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64            = 521)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125           = 522)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216           = 523)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343           = 524)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512           = 525)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729           = 526)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000          = 527)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331          = 528)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_64   = 529)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_125  = 530)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_216  = 531)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_343  = 532)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_512  = 533)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_729  = 534)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1000 = 535)
+        parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1331 = 536)
+        parameter (XDMF_TOPOLOGY_TYPE_MIXED                    = 537)
 
         parameter (XDMF_SET_TYPE_NODE = 601)
         parameter (XDMF_SET_TYPE_CELL = 602)
