@@ -50,6 +50,20 @@ if __name__ == "__main__":
 
         #//getMode end
 
+
+        #//getRebuildXML begin
+
+        exampleRebuildStatus = exampleWriter.getRebuildXML()
+
+        #//getRebuildXML end
+
+        #//setRebuildXML begin
+
+        exampleNewRebuildStatus = True
+        exampleWriter.getRebuildXML(exampleNewRebuildStatus)
+
+        #//setRebuildXML end
+
         #//getWriteXPaths begin
 
         exampleTestPaths = exampleWriter.getWriteXPaths()

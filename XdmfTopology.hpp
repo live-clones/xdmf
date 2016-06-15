@@ -24,12 +24,12 @@
 #ifndef XDMFTOPOLOGY_HPP_
 #define XDMFTOPOLOGY_HPP_
 
-// Forward Declarations
-class XdmfTopologyType;
-
-// Includes
+// C Compatible Includes
 #include "Xdmf.hpp"
 #include "XdmfArray.hpp"
+#include "XdmfTopologyType.hpp"
+
+#ifdef __cplusplus
 
 /**
  * @brief Holds the connectivity information in an XdmfGrid.
@@ -85,6 +85,11 @@ public:
 
   LOKI_DEFINE_VISITABLE(XdmfTopology, XdmfArray)
   static const std::string ItemTag;
+
+  /**
+   * 
+   */
+  int getBaseOffset() const;
 
   std::map<std::string, std::string> getItemProperties() const;
 
@@ -145,6 +150,11 @@ public:
   shared_ptr<const XdmfTopologyType> getType() const;
 
   /**
+   *
+   */
+  void setBaseOffset(int offset);
+
+  /**
    * Set the XdmfTopologyType associated with this topology.
    *
    * Example of use:
@@ -169,6 +179,8 @@ public:
    */
   void setType(const shared_ptr<const XdmfTopologyType> type);
 
+  XdmfTopology(XdmfTopology &);
+
 protected:
 
   XdmfTopology();
@@ -180,10 +192,40 @@ protected:
 
 private:
 
-  XdmfTopology(const XdmfTopology &);  // Not implemented.
+  XdmfTopology(const XdmfTopology &);
   void operator=(const XdmfTopology &);  // Not implemented.
 
   shared_ptr<const XdmfTopologyType> mType;
+
+  int mBaseOffset;
 };
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// C wrappers go here
+
+struct XDMFTOPOLOGY; // Simply as a typedef to ensure correct typing
+typedef struct XDMFTOPOLOGY XDMFTOPOLOGY;
+
+XDMF_EXPORT XDMFTOPOLOGY * XdmfTopologyNew();
+
+XDMF_EXPORT unsigned int XdmfTopologyGetNumberElements(XDMFTOPOLOGY * topology, int * status);
+
+XDMF_EXPORT int XdmfTopologyGetType(XDMFTOPOLOGY * topology);
+
+XDMF_EXPORT void XdmfTopologySetType(XDMFTOPOLOGY * topology, int type, int * status);
+
+XDMF_EXPORT void XdmfTopologySetPolyType(XDMFTOPOLOGY * topology, int type, int nodes, int * status);
+
+XDMF_ITEM_C_CHILD_DECLARE(XdmfTopology, XDMFTOPOLOGY, XDMF)
+XDMF_ARRAY_C_CHILD_DECLARE(XdmfTopology, XDMFTOPOLOGY, XDMF)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* XDMFTOPOLOGY_HPP_ */

@@ -29,12 +29,6 @@ PROGRAM XdmfFortranExample
 
   filename = 'nested_output.xmf'//CHAR(0)
 
-  buffersize = 16/commsize
-
-  if (buffersize < 1) then
-    buffersize = 1
-  endif
-
   writeloopcontrol = 0
 
   CALL MPI_INIT (ierr)

@@ -29,5 +29,21 @@ int main(int, char **)
 
         //#getNumberPoints end
 
+        //#setOrigin begin
+
+        double newXval = 5.0;
+        double newYval = 10.0;
+        double newZval = 5.5;
+
+        exampleGeometry->setOrigin(newXval, newYval, newZval);
+
+        //#setOrigin end
+
+        //#getOrigin begin
+
+        std::vector<double> exampleGeometry->getOrigin();
+
+        //#getOrigin end
+
         return 0;
 }

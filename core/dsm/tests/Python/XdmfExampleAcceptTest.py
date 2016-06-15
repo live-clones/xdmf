@@ -1,3 +1,5 @@
+print "Accept"
+
 from mpi4py.MPI import *
 from Xdmf import *
 
@@ -17,7 +19,7 @@ if __name__ == "__main__":
           numServersCores = size - 1;
           numConnections = 2
 
-          exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
+          exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, dsmSize/numServersCores, 1, 1, "Accept");
 
           if id == 0:
                   #//initMPI end

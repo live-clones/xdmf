@@ -25,5 +25,33 @@ int main(int, char **)
 
         //#getChunkSize end
 
+        //#setUseDeflate
+
+        bool useDeflate = true;
+
+        exampleWriter->setUseDeflate(useDeflate);
+
+        //#setUseDeflate
+
+        //#getUseDeflate
+
+        bool isUsingDeflate = exampleWriter->getUseDeflate();
+
+        //#getUseDeflate
+
+        //#setDeflateFactor
+
+        int newDeflateFactor = 6;
+
+        exampleWriter->setDeflateFactor(newDeflateFactor);
+
+        //#setDeflateFactor
+
+        //#getDeflateFactor
+
+        int currentDeflateFactor = exampleWriter->getDeflateFactor();
+
+        //#getDeflateFactor
+
         return 0;
 }

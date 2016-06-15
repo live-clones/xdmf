@@ -28,6 +28,18 @@ int main(int argc, char *argv[])
         std::string newPath = "dsm";
         std::string newSetPath = "Data";
 
+        //#GetUseEnvFileName begin
+
+        bool fromEnv = XdmfDSMCommMPI::GetUseEnvFileName();
+
+        //#GetUseEnvFileName end
+
+        //#SetUseEnvFileName begin
+
+        XdmfDSMCommMPI::SetUseEnvFileName(fromEnv);
+
+        //#SetUseEnvFileName end
+
         // Initializing objects
 
         XdmfDSMCommMPI * testComm = new XdmfDSMCommMPI();
@@ -41,6 +53,12 @@ int main(int argc, char *argv[])
         shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, testBuffer);
 
         //#initMPI end
+
+        //#SetApplicationName begin
+
+        testComm->SetApplicationName("Connect 1");
+
+        //#SetApplicationName end
 
         //#ReadDsmPortName begin
 
@@ -62,9 +80,29 @@ int main(int argc, char *argv[])
 
         //#Connect begin
 
-        exampleWriter->getServerManager()->Connect();
+        exampleWriter->getServerBuffer()->Connect();
 
         //#Connect end
+
+        //#GetApplicationName begin
+
+        std::string appName = testComm->GetApplicationName();
+
+        //#GetApplicationName end
+
+        //#GetDsmProcessStructure begin
+
+        std::vector<std::pair<std::string, unsigned int> > structure = testComm->GetDsmProcessStructure();
+
+        for (unsigned int i = 0; i < structure.size(); ++i)
+        {
+          if (structure.first.compare(appName) == 0)
+          {
+            // This program is the "i"th program in the DSM structure
+          }
+        }
+
+        //#GetDsmProcessStructure end
 
         /*
 
@@ -226,11 +264,11 @@ int main(int argc, char *argv[])
 
         MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetInterComm());
 
-        //#Disconnectmanager begin
+        //#Disconnectbuffer begin
 
-        exampleWriter->getServerManager()->Disconnect();
+        exampleWriter->getServerBuffer()->Disconnect();
 
-        //#Disconnectmanager end
+        //#Disconnectbuffer end
 
         //#Disconnectcomm begin
 

@@ -2,10 +2,12 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfFunction.hpp"
 #include "XdmfAttribute.hpp"
+#include "XdmfSet.hpp"
 #include "XdmfWriter.hpp"
 #include "XdmfReader.hpp"
 #include <map>
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include "string.h"
 #include "stdio.h"
@@ -65,7 +67,6 @@ int main(int, char **)
 
 
 
-
 	functionHolder->readReference();
 
 	std::cout << functionHolder->getValuesString() << std::endl;
@@ -90,6 +91,71 @@ int main(int, char **)
 
 	assert(readFunctionHolder->getValuesString().compare(functionHolder->getValuesString()) == 0);
 
+
+        shared_ptr<XdmfSet> functionHolder2 = XdmfSet::New();
+
+        functionHolder2->setReference(testFunction);
+
+        functionHolder2->setReadMode(XdmfArray::Reference);
+
+        functionHolder2->accept(functionWriter);
+
+        functionHolder2->readReference();
+
+        std::cout << functionHolder2->getValuesString() << std::endl;
+
+        readItem = functionReader->read("function.xmf");
+
+        std::cout << readItem->getItemTag() << " ?= Set" << std::endl;
+
+        assert(readItem->getItemTag().compare("Set") == 0);
+
+        shared_ptr<XdmfSet> readFunctionHolder2 = shared_dynamic_cast<XdmfSet>(readItem);
+
+        readFunctionHolder2->release();
+
+        std::cout << "before reading: " << readFunctionHolder2->getValuesString() << std::endl;
+
+        readFunctionHolder2->readReference();
+
+        std::cout << "check: " << readFunctionHolder2->getValuesString() << " = " << functionHolder2->getValuesString() << std::endl;
+
+        assert(readFunctionHolder2->getValuesString().compare(functionHolder2->getValuesString()) == 0);
+
+
+
+        shared_ptr<XdmfArray> functionHolder3 = XdmfArray::New();
+
+        functionHolder3->setReference(testFunction);
+
+        functionHolder3->setReadMode(XdmfArray::Reference);
+
+        functionHolder3->accept(functionWriter);
+
+        functionHolder3->readReference();
+
+        std::cout << functionHolder3->getValuesString() << std::endl;
+
+        readItem = functionReader->read("function.xmf");
+
+        std::cout << readItem->getItemTag() << " ?= DataItem" << std::endl;
+
+        assert(readItem->getItemTag().compare("DataItem") == 0);
+
+        shared_ptr<XdmfArray> readFunctionHolder3 = shared_dynamic_cast<XdmfArray>(readItem);
+
+        readFunctionHolder3->release();
+
+        std::cout << "before reading: " << readFunctionHolder3->getValuesString() << std::endl;
+
+        readFunctionHolder3->readReference();
+
+        std::cout << "check: " << readFunctionHolder3->getValuesString() << " = " << functionHolder3->getValuesString() << std::endl;
+
+        assert(readFunctionHolder3->getValuesString().compare(functionHolder3->getValuesString()) == 0);
+
+
+
         // Testing individual Functions/Operations
 
         shared_ptr<XdmfArray> valArray1 = XdmfArray::New();
@@ -105,50 +171,125 @@ int main(int, char **)
         testVals["B"] = valArray2;
         testVals["C"] = valArray3;
 
+        shared_ptr<XdmfArray> functionResult;
+        double checkResult;
+        double compareResult;
+
+        // Trig functions have issues with being consistent to the degree of 10^-16
+        // Ensure that the functions are accurate to the degree of 10^-15
+
+        printf("Accepted Tolerance 10^15\n");
+
         printf("ABS(-0.5) = %lf\n", std::abs((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ABS(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("ABS(A)", testVals)->getValuesString().c_str(), "0.5") == 0);
+        checkResult = std::abs((double)-0.5);
+        functionResult = XdmfFunction::evaluateExpression("ABS(A)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("ARCCOS(-0.5) = %lf\n", std::acos((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ACOS(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("ACOS(A)", testVals)->getValuesString().c_str(), "2.0943951023931957") == 0);
+        checkResult = std::acos((double)-0.5);
+        functionResult = XdmfFunction::evaluateExpression("ACOS(A)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("ARCSIN(-0.5) = %lf\n", std::asin((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ASIN(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("ASIN(A)", testVals)->getValuesString().c_str(), "-0.52359877559829893") == 0);
+        checkResult = std::asin((double)-0.5);
+        functionResult = XdmfFunction::evaluateExpression("ASIN(A)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("ARCTAN(-0.5) = %lf\n", std::atan((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ATAN(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("ATAN(A)", testVals)->getValuesString().c_str(), "-0.46364760900080609") == 0);
+        checkResult = std::atan((double)-0.5);
+        functionResult = XdmfFunction::evaluateExpression("ATAN(A)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("EXP(-0.5, 2) = %lf\n", std::pow((double)-0.5, 2));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("EXP(A, C)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("EXP(A, C)", testVals)->getValuesString().c_str(), "0.25") == 0);
+        checkResult = std::pow((double)-0.5, 2);
+        functionResult = XdmfFunction::evaluateExpression("EXP(A, C)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("COS(-0.5) = %lf\n", std::cos((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("COS(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("COS(A)", testVals)->getValuesString().c_str(), "0.87758256189037276") == 0);
+        checkResult = std::cos((double)-0.5);
+        functionResult = XdmfFunction::evaluateExpression("COS(A)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("LOG(2) = %lf\n", std::log((double)2));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("LOG(C)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("LOG(C)", testVals)->getValuesString().c_str(), "0.69314718055994529") == 0);
+        checkResult = std::log((double)2);
+        functionResult = XdmfFunction::evaluateExpression("LOG(C)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
         printf("LOG(2, 4) = %lf\n", std::log((double)2)/std::log((double)4));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("LOG(C, 4)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("LOG(C, 4)", testVals)->getValuesString().c_str(), "0.5") == 0);
+        checkResult = std::log((double)2)/std::log((double)4);
+        functionResult = XdmfFunction::evaluateExpression("LOG(C, 4)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("SQRT(2) = %lf\n", std::sqrt((double)2));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("SQRT(C)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("SQRT(C)", testVals)->getValuesString().c_str(), "1.4142135623730951") == 0);
+        checkResult = std::sqrt((double)2);
+        functionResult = XdmfFunction::evaluateExpression("SQRT(C)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("SIN(-0.5) = %lf\n", std::sin((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("SIN(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("SIN(A)", testVals)->getValuesString().c_str(), "-0.47942553860420301") == 0);
+        checkResult = std::sin((double)-0.5);
+        functionResult = XdmfFunction::evaluateExpression("SIN(A)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
         printf("TAN(-0.5) = %lf\n", std::tan((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("TAN(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("TAN(A)", testVals)->getValuesString().c_str(), "-0.54630248984379048") == 0);
+        checkResult = std::tan((double)-0.5);
+        functionResult = XdmfFunction::evaluateExpression("TAN(A)", testVals);
+        compareResult = functionResult->getValue<double>(0);
+        checkResult = floor(checkResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        compareResult = floor(compareResult * pow((double)10, 15) + 0.5) / pow((double)10, 15);
+        printf("array contains: %s\n", functionResult->getValuesString().c_str());
+        printf("%.15lf ?= %.15lf\n", checkResult, compareResult);
+        assert(checkResult == compareResult);
 
-        printf("JOIN(A, B, C)");
+        printf("JOIN(A, B, C)\n");
         printf("array contains: %s\n", XdmfFunction::evaluateExpression("JOIN(A, B, C)", testVals)->getValuesString().c_str());
         assert(strcmp(XdmfFunction::evaluateExpression("JOIN(A, B, C)", testVals)->getValuesString().c_str(), "-0.5 -0.25 2") == 0);
 

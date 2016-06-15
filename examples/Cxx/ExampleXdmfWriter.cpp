@@ -78,6 +78,19 @@ int main(int, char **)
 
         //#getWriteXPaths end
 
+        //#getRebuildXML begin
+
+        bool exampleRebuildStatus = exampleWriter->getRebuildXML();
+
+        //#getRebuildXML end
+
+        //#setRebuildXML begin
+
+        bool exampleNewRebuildStatus = true;
+        exampleWriter->getRebuildXML(exampleNewRebuildStatus);
+
+        //#setRebuildXML end
+
         //#getXPathParse begin
 
         bool exampleXPathParse = exampleWriter->getXPathParse();

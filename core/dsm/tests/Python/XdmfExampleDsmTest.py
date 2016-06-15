@@ -1,5 +1,5 @@
-from Xdmf import *
 from mpi4py.MPI import *
+from Xdmf import *
 
 if __name__ == "__main__":
         #//initMPI begin
@@ -163,136 +163,6 @@ if __name__ == "__main__":
                 writeController.setServerMode(True)
                 exampleControllerServerMode = writeController.getServerMode()
 
-                #//getServerManagerwriter begin
-
-                exampleManager = exampleWriter.getServerManager()
-
-                #//getServerManagerwriter end
-
-                #//setServerManagerwriter begin
-
-                exampleWriter.setManager(exampleManager)
-
-                #//setServerManagerwriter end
-                
-                '''
-                #//getServerManagercontroller begin
-
-                exampleManager = exampleController.getServerManager()
-
-                #//getServerManagercontroller end
-
-                #//setServerManagercontroller begin
-
-                exampleController.setManager(exampleManager)
-
-                #//setServerManagercontroller end
-                '''
-
-                #//GetUpdatePiece begin
-
-                intraId = exampleManager.GetUpdatePiece()
-
-                #//GetUpdatePiece end
-
-                #//GetUpdateNumPieces begin
-
-                intraSize = exampleManager.GetUpdateNumPieces()
-
-                #//GetUpdateNumPieces end
-
-                #//GetMpiComm begin
-
-                exampleManagerComm = exampleManager.GetMpiComm()
-
-                #//GetMpiComm end
-
-                #//SetMpiComm begin
-
-                exampleManager.SetMpiComm(exampleManagerComm)
-
-                #//SetMpiComm end
-
-                #//GetlocalBufferSizeMBytes begin
-
-                exampleBufferSize = exampleManager.GetLocalBufferSizeMBytes()
-
-                #//GetLocalBufferSizeMBytes end
-
-                #//SetLocalBufferSizeMBytes begin
-
-                exampleManager.SetLocalBufferSizeMBytes(exampleBufferSize)
-
-                #//SetLocalBufferSizeMBytes end
-
-                #//GetIsServer begin
-
-                exampleIsServer = exampleManager.GetIsServer()
-
-                #//GetIsServer end
-
-                #//SetIsServer begin
-
-                exampleManager.SetIsServer(exampleIsServer)
-
-                #//SetIsServer end
-
-                #//GetDsmType begin
-
-                exampleType = exampleManager.GetDsmType()
-
-                #//GetDsmType end
-
-                #//SetDsmType begin
-
-                exampleManager.SetDsmType(XDMF_DSM_TYPE_UNIFORM)
-
-                #//SetDsmType end
-
-                #//GetBlockLength begin
-
-                exampleBlockLength = exampleManager.GetBlockLength()
-
-                #//GetBlockLength end
-
-                #//SetBlockLength begin
-
-                exampleManager.SetBlockLength(exampleBlockLength)
-
-                #//SetBlockLength end
-
-                #//GetInterCommType begin
-
-                exampleCommType = exampleManager.GetInterCommType()
-
-                #//GetInterCommType end
-
-                #//SetinterCommType begin
-
-                exampleManager.SetInterCommType(XDMF_DSM_COMM_MPI)
-
-                #//SetInterCommType end
-
-                #//GetIsConnected begin
-
-                exampleManagerConnectionStatus = exampleManager.GetIsConnected()
-
-                #//GetIsConnected end
-
-                '''
-                #//Create begin
-
-                exampleManager.Create(size - numServerCores, size - 1)
-
-                #//Create end
-
-                #//Destroy begin
-
-                exampleManager.Destroy()
-
-                #//Destroy end
-                '''
-
                 #//getServerBufferwriter begin
 
                 exampleBuffer = exampleWriter.getServerBuffer()
@@ -318,18 +188,6 @@ if __name__ == "__main__":
 
                 #//setBuffercontroller end
                 '''
-
-                #//GetDsmBuffer begin
-
-                exampleBuffer = exampleManager.GetDsmBuffer()
-
-                #//GetDsmBuffer end
-
-                #//SetDsmBuffer begin
-
-                exampleManager.SetDsmBuffer(exampleBuffer)
-
-                #//SetDsmBuffer end
 
                 #//GetIsConnectedbuffer begin
 
@@ -369,7 +227,7 @@ if __name__ == "__main__":
 
                 #//SetIsServerbuffer begin
 
-                exampleBuffer.SetIsServer(exampleIsServer)
+                exampleBuffer.SetIsServer(exampleBufferIsServer)
 
                 #//SetIsServerbuffer end
 
@@ -498,12 +356,6 @@ if __name__ == "__main__":
 
                 #//BufferServiceLoop end
 
-                #//AddressToId begin
-
-                correspondingId = exampleBuffer.AddressToId(500)
-
-                #//AddressToId end
-
                 #//GetComm begin
 
                 exampleDSMComm = exampleBuffer.GetComm()
@@ -595,13 +447,6 @@ if __name__ == "__main__":
                         exampleDSMComm.Connect()
                         // When done with connection
                         exampleDSMComm.Disconnect()
-
-                if (connectingGroup):
-                        // Recieve string from Master group
-                        exampleDSMComm.SetDsmPortName(portString);
-                        exampleManager.Connect();
-                        // When done with connection
-                        exampleManager.Disconnect();
 
                 '''
 
@@ -767,7 +612,7 @@ if __name__ == "__main__":
 
         #//finalizeMPI
 
-        exampleWriter.deleteManager()
+#        exampleWriter.deleteManager()
 
         #//finalizeMPI
 

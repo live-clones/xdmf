@@ -13,6 +13,18 @@ if __name__ == "__main__":
         newPath = "dsm"
         newSetPath = "Data"
 
+        #//GetUseEnvFileName begin
+
+        fromEnv = XdmfDSMCommMPI.GetUseEnvFileName()
+
+        #//GetUseEnvFileName end
+
+        #//SetUseEnvFileName begin
+
+        XdmfDSMCommMPI.SetUseEnvFileName(fromEnv)
+
+        #//SetUseEnvFileName end
+
         # Initializing objects
 
         testComm = XdmfDSMCommMPI()
@@ -26,6 +38,12 @@ if __name__ == "__main__":
         exampleWriter = XdmfHDF5WriterDSM.New(newPath, testBuffer)
 
         #//initMPI end
+
+        #//SetApplicationName begin
+
+        testComm.SetApplicationName("Connect 1")
+
+        #//SetApplicationName end
 
         #//ReadDsmPortName begin
 
@@ -50,6 +68,22 @@ if __name__ == "__main__":
         exampleWriter.getServerManager().Connect()
 
         #//Connect end
+
+        #//GetApplicationName begin
+
+        appName = testComm.GetApplicationName()
+
+        #//GetApplicationName end
+
+        #//GetDsmProcessStructure begin
+
+        structure = testComm.GetDsmProcessStructure()
+
+        for i in range(structure.size()):
+          if structure.first.compare(appName) == 0:
+            # This program is the "i"th program in the DSM structure
+
+        #//GetDsmProcessStructure end
 
         '''
 

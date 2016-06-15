@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
       std::cout << "# MPI_THREAD_MULTIPLE is OK" << std::endl;
     }
   }
-  
+
   // Create DSM
   H5FDdsmManager * dsmManager = new H5FDdsmManager();
   dsmManager->SetMpiComm(comm);
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
   assert(array->getValue<int>(1) == 3*rank + 1);
   std::cout << array->getValue<int>(2) << "?=" << ((3*rank) + 2) << std::endl;
   assert(array->getValue<int>(2) == 3*rank + 2);
-  
+
   MPI_Barrier(comm);
   
   // Adjust controller to read entire dataset onto each processor

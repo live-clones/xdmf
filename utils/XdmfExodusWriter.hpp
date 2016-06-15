@@ -24,6 +24,8 @@
 #ifndef XDMFEXODUSWRITER_HPP_
 #define XDMFEXODUSWRITER_HPP_
 
+#ifdef __cplusplus
+
 // Forward Declarations
 class XdmfGridCollection;
 class XdmfUnstructuredGrid;
@@ -81,5 +83,34 @@ private:
   void operator=(const XdmfExodusWriter &);  // Not implemented.
 
 };
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// C wrappers go here
+
+struct XDMFEXODUSWRITER; // Simply as a typedef to ensure correct typing
+typedef struct XDMFEXODUSWRITER XDMFEXODUSWRITER;
+
+XDMFUTILS_EXPORT XDMFEXODUSWRITER * XdmfExodusWriterNew();
+
+XDMFUTILS_EXPORT void XdmfExodusWriterWriteGrid(XDMFEXODUSWRITER * writer,
+                                                char * filePath,
+                                                XDMFUNSTRUCTUREDGRID * grid,
+                                                int * status);
+
+XDMFUTILS_EXPORT void XdmfExodusWriterWriteGridCollection(XDMFEXODUSWRITER * writer,
+                                                          char * filePath,
+                                                          XDMFGRIDCOLLECTION * grid,
+                                                          int * status);
+
+XDMFUTILS_EXPORT void XdmfExodusWriterFree(XDMFEXODUSWRITER * writer);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* XDMFEXODUSWRITER_HPP_ */

@@ -29,6 +29,14 @@ int main(int argc, char *argv[])
 
         shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
 
+        exampleWriter->stopDSM();
+
+        double resizefactor = exampleWriter->getServerBuffer()->GetResizeFactor();
+
+        exampleWriter->getServerBuffer()->SetResizeFactor(resizefactor);
+
+        exampleWriter->restartDSM();
+
         if (id == 0)
         {
                 //#initMPI end

@@ -17,6 +17,8 @@ include(AddTestsCxx)
 #       have extra arguments (id: ADD_TEST_CXX(testname inputfile))
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
+ADD_TEST_CXX(TestXdmfDiff)
+ADD_TEST_CXX(TestXdmfGeometryConverter)
 ADD_TEST_CXX(TestXdmfTopologyConverter)
 if(XDMF_BUILD_EXODUS_IO)
   ADD_TEST_CXX(TestXdmfExodusIO)
@@ -27,6 +29,8 @@ endif(XDMF_BUILD_EXODUS_IO)
 #       have multiple files (ie: CLEAN_TEST_CXX(testname outputfile1 ...))
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
+CLEAN_TEST_CXX(TestXdmfDiff)
+CLEAN_TEST_CXX(TestXdmfGeometryConverter)
 CLEAN_TEST_CXX(TestXdmfTopologyConverter)
 if(XDMF_BUILD_EXODUS_IO)
   CLEAN_TEST_CXX(TestXdmfExodusIO

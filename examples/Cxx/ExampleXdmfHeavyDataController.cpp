@@ -72,6 +72,12 @@ int main(int, char **)
 
         //#getSize end
 
+        //#getDataspaceSize begin
+
+        unsigned int exampleDataspaceSize = exampleController->getDataspaceSize();
+
+        //#getDataspaceSize end
+
         //#getType begin
 
         shared_ptr<const XdmfArrayType> exampleType = exampleController->getType();

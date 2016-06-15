@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
+#include <cmath>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5WriterDSM.hpp"
@@ -24,8 +26,12 @@ int main(int argc, char *argv[])
         shared_ptr<XdmfArray> testArray = XdmfArray::New();
         testArray->initialize<int>(0);
 
+        shared_ptr<XdmfArray> testArray2 = XdmfArray::New();
+        testArray2->initialize<int>(0);
+
         std::string newPath = "dsm";
-        std::string newSetPath = "data";
+        std::string newSetPath = "dataspace";
+        std::string secondSetPath = "data2";
 
         // Change this to determine the number of cores used as servers
         unsigned int numServersCores = 2;
@@ -47,9 +53,16 @@ int main(int argc, char *argv[])
         shared_ptr<XdmfArray> readArray = XdmfArray::New();
         readArray->initialize<int>(0);
 
+        shared_ptr<XdmfArray> readArray2 = XdmfArray::New();
+        readArray2->initialize<int>(0);
+
         shared_ptr<XdmfHDF5ControllerDSM> readController;
         shared_ptr<XdmfHDF5ControllerDSM> readOutputController;
         shared_ptr<XdmfHDF5ControllerDSM> writeController;
+
+        shared_ptr<XdmfHDF5ControllerDSM> readController2;
+        shared_ptr<XdmfHDF5ControllerDSM> readOutputController2;
+        shared_ptr<XdmfHDF5ControllerDSM> writeController2;
 
         MPI_Comm workerComm;
 
@@ -106,6 +119,12 @@ int main(int argc, char *argv[])
                         {
                                 testArray->pushBack(i*(id+1));
                         }
+
+                        for (unsigned int i = 1; i <= writeArraySize; ++i)
+                        {
+                                testArray2->pushBack(5*i*(id+1));
+                        }
+
                         writeStartVector.push_back(id*writeArraySize);
                         writeStrideVector.push_back(1);
                         writeCountVector.push_back(writeArraySize);
@@ -121,6 +140,18 @@ int main(int argc, char *argv[])
                                 exampleWriter->getServerBuffer());
 
                         testArray->insert(writeController);
+
+                        writeController2 = XdmfHDF5ControllerDSM::New(
+                                newPath,
+                                secondSetPath,
+                                XdmfArrayType::Int32(),
+                                writeStartVector,
+                                writeStrideVector,
+                                writeCountVector,
+                                writeDataSizeVector,
+                                exampleWriter->getServerBuffer());
+
+                        testArray2->insert(writeController2);
 
                         readStartVector.push_back(0);
                         readStrideVector.push_back(1);
@@ -146,6 +177,18 @@ int main(int argc, char *argv[])
                                         for(unsigned int i=0; i<testArray->getSize(); ++i)
                                         {
                                                 std::cout << "core #" << id <<" testArray[" << i << "] = " << testArray->getValue<int>(i) << std::endl;
+                                        }
+                                }
+                        }
+
+                        for (unsigned int i = 0; i<size-numServersCores; ++i)
+                        {
+                                MPI_Barrier(writeComm);
+                                if (i == (unsigned int)id)
+                                {
+                                        for(unsigned int i=0; i<testArray2->getSize(); ++i)
+                                        {
+                                                std::cout << "core #" << id <<" testArray2[" << i << "] = " << testArray2->getValue<int>(i) << std::endl;
                                         }
                                 }
                         }
@@ -196,10 +239,38 @@ int main(int argc, char *argv[])
                                 writeDataSizeVector,
                                 exampleWriter->getServerBuffer());
 
+                        writeController2 = XdmfHDF5ControllerDSM::New(
+                                newPath,
+                                secondSetPath,
+                                XdmfArrayType::Int32(),
+                                writeStartVector,
+                                writeStrideVector,
+                                writeCountVector,
+                                writeDataSizeVector,
+                                exampleWriter->getServerBuffer());
+
+                        testArray2->insert(writeController2);
+
                         testArray->insert(writeController);
                 }
 
                 testArray->accept(exampleWriter);
+                MPI_Barrier(workerComm);
+
+//                exampleWriter->openFile();
+///*
+                std::cout << "getting dataset size" << std::endl;
+                int checkedsize = exampleWriter->getDataSetSize(newPath, newSetPath);
+                std::cout << "polled size " << checkedsize << " from file should be " << writeArraySize*(int)((size-numServersCores) / 2) << std::endl;
+                assert(checkedsize == writeArraySize*(int)((size-numServersCores) / 2));
+                checkedsize = exampleWriter->getDataSetSize(newPath, "empty");
+                std::cout << "polled nonexistant set size =  " << checkedsize << std::endl;
+                assert(checkedsize == 0);
+//*/
+                MPI_Barrier(workerComm);
+//                exampleWriter->closeFile();
+
+                testArray2->accept(exampleWriter);
 
                 MPI_Barrier(workerComm);
 
@@ -213,8 +284,9 @@ int main(int argc, char *argv[])
                         {
                                 // Controllers are accessed like this since the writer removes them and creates its own.
                                 shared_dynamic_cast<XdmfHDF5ControllerDSM>(readArray->getHeavyDataController(0))->setWorkerComm(readComm);
-                                printf("read on core %d\n", id);
+
                                 readArray->read();
+
                                 MPI_Barrier(readComm);
 
                                 if (id == (int)((size - numServersCores) / 2))
@@ -264,6 +336,9 @@ int main(int argc, char *argv[])
                                                 for(unsigned int i=0; i<testArray->getSize(); ++i)
                                                 {
                                                         int tempVal = testArray->getValue<int>(i);
+                                                        unsigned int multiplier1 = std::pow(2, iteration+1);
+                                                        unsigned int multiplier2 = std::pow(3, iteration);
+                                                        assert(tempVal == (i+1)*(id+1) * multiplier1 * multiplier2);
                                                         tempVal = tempVal * 3;
                                                         testArray->insert(i, tempVal);
                                                         // Pull the value from the array in order to ensure the change has happened
@@ -271,15 +346,22 @@ int main(int argc, char *argv[])
                                                 }
                                         }
                                 }
+                                testArray2->read();
+                                for (unsigned int i = 1; i <= writeArraySize; ++i)
+                                {
+                                        unsigned int tempVal = testArray2->getValue<unsigned int>(i - 1);
+                                        unsigned int multiplier = std::pow(5, iteration);
+                                        assert(5*i*(id+1) * multiplier == tempVal);
+                                        testArray2->insert(i - 1, tempVal * 5);
+                                        std::cout << "core #" << id <<" testArray2[" << i-1 << "] = " << testArray2->getValue<int>(i-1) << std::endl;
+                                }
                         }
                         writeController->setWorkerComm(workerComm);
                         testArray->accept(exampleWriter);
+                        testArray2->accept(exampleWriter);
                 }
 
         }
-
-        
-
 
         if (id == 0)
         {
@@ -287,9 +369,6 @@ int main(int argc, char *argv[])
         }
 
         MPI_Barrier(comm);
-
-        //the dsmManager must be deleted or else there will be a segfault
-        exampleWriter->deleteManager();
 
         MPI_Finalize();
 

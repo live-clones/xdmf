@@ -27,6 +27,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfDiff.hpp"
+#include "XdmfError.hpp"
 #include "XdmfVisitor.hpp"
 
 //
@@ -125,6 +126,11 @@ XdmfDiff::XdmfDiff() :
 {
 }
 
+XdmfDiff::XdmfDiff(const XdmfDiff &diffRef) :
+  mAbsoluteTolerance(diffRef.mAbsoluteTolerance)
+{
+}
+
 XdmfDiff::~XdmfDiff()
 {
 }
@@ -177,6 +183,8 @@ XdmfDiff::compare(const shared_ptr<XdmfItem> item1,
       const std::map<std::string, std::string>::const_iterator iter2 =
         itemProperties2.find(key);
       if(iter2 == itemProperties2.end()) {
+        std::cout << "Error: Expected " << key << " and did not find corresponding key "
+                  << "files are not structured the same" << std::endl;
         assert(false);
       }
       const std::string & value1 = iter1->second;
@@ -266,7 +274,8 @@ XdmfDiff::compare(const shared_ptr<XdmfItem> item1,
                            returnValue);
       }
       else {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Array Types match, but type is not supported.");
       }
     }
   }
@@ -285,3 +294,40 @@ XdmfDiff::setAbsoluteTolerance(const double absoluteTolerance)
   mAbsoluteTolerance = absoluteTolerance;
 }
 
+// C Wrappers
+
+XDMFDIFF *
+XdmfDiffNew()
+{
+  shared_ptr<XdmfDiff> generatedDiff = XdmfDiff::New();
+  return (XDMFDIFF *)((void *)(new XdmfDiff(*generatedDiff.get())));
+}
+
+int
+XdmfDiffCompare(XDMFDIFF * diff, XDMFITEM * item1, XDMFITEM * item2)
+{
+  shared_ptr<XdmfItem> tempItem1 = shared_ptr<XdmfItem>((XdmfItem *)item1, XdmfNullDeleter());
+  shared_ptr<XdmfItem> tempItem2 = shared_ptr<XdmfItem>((XdmfItem *)item2, XdmfNullDeleter());
+  return ((XdmfDiff *)diff)->compare(tempItem1, tempItem2);
+}
+
+double
+XdmfDiffGetAbsoluteTolerance(XDMFDIFF * diff)
+{
+  return ((XdmfDiff *)diff)->getAbsoluteTolerance();
+}
+
+void
+XdmfDiffSetAbsoluteTolerance(XDMFDIFF * diff, double tolerance)
+{
+  ((XdmfDiff *)diff)->setAbsoluteTolerance(tolerance);
+}
+
+void
+XdmfDiffFree(XDMFDIFF * diff)
+{
+  if (diff != NULL) {
+    delete ((XdmfDiff *)diff);
+    diff = NULL;
+  }
+}

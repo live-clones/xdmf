@@ -92,5 +92,39 @@ int main(int, char **)
     assert(array->getValue<int>(i*2 + 1) == 3);
   }
 
+  //
+  // Using Deflate Compression
+  //
+  shared_ptr<XdmfHDF5Writer> compressedWriter = XdmfHDF5Writer::New("hdf5CompressionTestDeflate.h5");
+  compressedWriter->setMode(XdmfHDF5Writer::Default);
+  compressedWriter->setUseDeflate(true);
+  compressedWriter->setDeflateFactor(6);
+  shared_ptr<XdmfArray> compressedArray = XdmfArray::New();
+  for (unsigned int i = 0; i < 20000; ++i)
+  {
+    compressedArray->pushBack(i);
+  }
+
+  compressedArray->accept(compressedWriter);
+
+  compressedArray->release();
+
+  compressedArray->read();
+
+  for (unsigned int i = 0; i < 20000; ++i)
+  {
+    assert(compressedArray->getValue<unsigned int>(i) == i);
+  }
+
+  // For comparison
+  shared_ptr<XdmfHDF5Writer> compareWriter = XdmfHDF5Writer::New("hdf5CompressionTestComparison.h5");
+  shared_ptr<XdmfArray> compareArray = XdmfArray::New();
+  for (unsigned int i = 0; i < 20000; ++i)
+  {
+    compareArray->pushBack(i);
+  }
+
+  compareArray->accept(compareWriter);
+
   return 0;
 }

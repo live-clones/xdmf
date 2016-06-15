@@ -54,5 +54,32 @@ int main(int, char **)
 
         //#getTopology end
 
+        //#setGridController begin
+
+        shared_ptr<XdmfGridController> newGridController = XdmfGridController::New("gridFile.xmf", "/Xdmf/Domain/Grid[1]");
+
+        exampleGrid->setGridController(gridController);
+
+        //#setGridController end
+
+        //#getGridController begin
+
+        shared_ptr<XdmfGridController> exampleGridController = exampleGrid->getGridController();
+
+        //#getGridController end
+
+        //#read begin
+
+        exampleGrid->read();
+
+        //#read end
+
+        //#release begin
+
+        exampleGrid->release();
+
+        //#release end
+
+
         return 0;
 }
