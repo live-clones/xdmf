@@ -23,7 +23,9 @@ ADD_TEST_C(CTestXdmfAggregate)
 ADD_TEST_C(CTestXdmfAttribute)
 ADD_TEST_C(CTestXdmfBinaryController)
 ADD_TEST_C(CTestXdmfDomain)
-ADD_TEST_C(CTestXdmfTIFFReadWriteCompressed)
+if (TIFF_FOUND)
+  ADD_TEST_C(CTestXdmfTIFFReadWriteCompressed)
+endif ()
 ADD_TEST_C(CTestXdmfTopology)
 ADD_TEST_C(CTestXdmfGeometry)
 ADD_TEST_C(CTestXdmfGraph)
@@ -61,8 +63,10 @@ CLEAN_TEST_C(CTestXdmfBinaryController
 CLEAN_TEST_C(CTestXdmfDomain
   domainfile.xmf
   domainfile.h5)
-CLEAN_TEST_C(CTestXdmfTIFFReadWriteCompressed
-  compressedstripoutput.tif)
+if (TIFF_FOUND)
+  CLEAN_TEST_C(CTestXdmfTIFFReadWriteCompressed
+    compressedstripoutput.tif)
+endif ()
 CLEAN_TEST_C(CTestXdmfTopology
   topofile.xmf
   topofile.h5)
