@@ -56,6 +56,7 @@
 #include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfHDF5Controller.hpp"
 #include "string.h"
 
 #include <stdio.h>
