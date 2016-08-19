@@ -22,7 +22,6 @@
 /*****************************************************************************/
 
 #include <fstream>
-#include <libxml/tree.h>
 #include <sstream>
 #include <utility>
 #include "XdmfArray.hpp"
@@ -120,6 +119,9 @@ public:
                (xmlChar*)"Version",
                (xmlChar*)mVersionString.c_str());
     xmlDocSetRootElement(mXMLDocument, mXMLCurrentNode);
+    if(mHeavyDataWriter->getMode() == XdmfHeavyDataWriter::Default) {
+      mHeavyDataWriter->openFile();
+    }
   }
 
   int mDepth;
