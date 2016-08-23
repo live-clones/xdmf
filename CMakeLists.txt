@@ -39,12 +39,6 @@ if(XDMF_BUILD_TESTING)
 endif()
 
 if (XDMF_STATIC_AND_SHARED)
-  STRING(REGEX MATCH "-fPIC" IS_FPIC "${CMAKE_CXX_FLAGS}")
-  if ("${IS_FPIC}" STREQUAL "")
-    if(UNIX)
-    	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    endif(UNIX)
-  endif ("${IS_FPIC}" STREQUAL "")
   add_definitions(-DXDMFSTATIC)
 endif ()
 
