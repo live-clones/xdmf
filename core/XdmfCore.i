@@ -3,6 +3,7 @@ XdmfCorePython.cpp:
 swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 */
 
+#ifdef XDMF_BUILD_TIFF
 
 %module XdmfCore
 %{
@@ -32,6 +33,38 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     #include <ProjectVersion.hpp>
 %}
+
+#else
+
+%module XdmfCore
+%{
+    #include <XdmfArray.hpp>
+    #include <XdmfArrayReference.hpp>
+    #include <XdmfArrayType.hpp>
+    #include <XdmfCore.hpp>
+    #include <XdmfCoreItemFactory.hpp>
+    #include <XdmfCoreReader.hpp>
+    #include <XdmfError.hpp>
+    #include <XdmfFunction.hpp>
+    #include <XdmfHeavyDataController.hpp>
+    #include <XdmfHeavyDataWriter.hpp>
+    #include <XdmfHDF5Controller.hpp>
+    #include <XdmfHDF5Writer.hpp>
+    #include <XdmfInformation.hpp>
+    #include <XdmfItem.hpp>
+    #include <XdmfItemProperty.hpp>
+    #include <XdmfSharedPtr.hpp>
+    #include <XdmfSparseMatrix.hpp>
+    #include <XdmfSubset.hpp>
+    #include <XdmfSystemUtils.hpp>
+    #include <XdmfVersion.hpp>
+    #include <XdmfVisitor.hpp>
+    #include <XdmfWriter.hpp>
+
+    #include <ProjectVersion.hpp>
+%}
+
+#endif
 
 // Ignoring C Wrappers
 
@@ -1263,7 +1296,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfItemProperty)
 %shared_ptr(XdmfSparseMatrix)
 %shared_ptr(XdmfSubset)
-%shared_ptr(XdmfTIFFController)
+#ifdef XDMF_BUILD_TIFF
+  %shared_ptr(XdmfTIFFController)
+#endif
 %shared_ptr(XdmfVisitor)
 %shared_ptr(XdmfWriter)
 
@@ -1292,7 +1327,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfInformation.hpp
 %include XdmfHDF5Controller.hpp
 %include XdmfHDF5Writer.hpp
-%include XdmfTIFFController.hpp
+#ifdef XDMF_BUILD_TIFF
+  %include XdmfTIFFController.hpp
+#endif
 %include XdmfWriter.hpp
 
 %include CMake/VersionSuite/ProjectVersion.hpp
