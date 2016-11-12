@@ -166,7 +166,13 @@ if(XDMF_WRAP_PYTHON)
     set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
     swig_add_module(${python_name}Python python ${python_name}.i)
-    swig_link_libraries(${python_name}Python ${python_name} ${PYTHON_LIBRARIES})
+
+    if (NOT APPLE)
+      swig_link_libraries(${python_name}Python ${python_name} ${PYTHON_LIBRARIES})
+    else ()
+      swig_link_libraries(${python_name}Python ${python_name})
+    endif ()
+
     set_property(DIRECTORY APPEND PROPERTY
       ADDITIONAL_MAKE_CLEAN_FILES
       ${CMAKE_CURRENT_BINARY_DIR}/${python_name}.pyc
@@ -186,6 +192,12 @@ if(XDMF_WRAP_PYTHON)
           LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
       endif()
+    endif()
+
+    if(APPLE)
+      set_target_properties(${SWIG_MODULE_${python_name}Python_REAL_NAME}
+        PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup")
     endif()
 
     set_target_properties(${SWIG_MODULE_${python_name}Python_REAL_NAME}
