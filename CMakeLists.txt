@@ -13,7 +13,7 @@ if(MSVC10)
 endif()
 
 set(XDMF_LIBNAME "Xdmf" CACHE STRING "Name for this xdmf library to avoid collision")
-option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
+
 if(BUILD_SHARED_LIBS)
   set(LIBTYPE SHARED)
   set(BUILD_SHARED 1)
