@@ -114,6 +114,8 @@ TEST_BIG_ENDIAN(XDMF_BIG_ENDIAN)
 
 unset(HAVE_BOOST_SHARED_DYNAMIC_CAST CACHE)
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
+unset(HAVE_CXX11_SHARED_PTR CACHE)
+
 check_cxx_source_compiles("
 #include <boost/shared_ptr.hpp>
 
@@ -127,6 +129,26 @@ int main(int ac, char * av[])
 }
 "
 HAVE_BOOST_SHARED_DYNAMIC_CAST)
+
+check_cxx_source_compiles("
+#include <memory>
+using namespace std;
+
+struct Base { virtual ~Base(){} };
+
+int main(int ac, char * av[])
+{
+  shared_ptr<Base> ptr(new Base());
+}
+"
+HAVE_CXX11_SHARED_PTR)
+
+if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
+    set(HAVE_CXX11_SHARED_PTR ${HAVE_CXX11_SHARED_PTR} PARENT_SCOPE)
+    add_definitions(-DHAVE_CXX11_SHARED_PTR)
+endif ()
+
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XdmfCoreConfig.hpp.in
                ${CMAKE_CURRENT_BINARY_DIR}/XdmfCoreConfig.hpp)
 

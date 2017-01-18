@@ -38,8 +38,6 @@
 
 #include "XdmfSystemUtils.hpp"
 
-#include <boost/tokenizer.hpp>
-
 #include <stdio.h>
 
 std::vector<shared_ptr<XdmfHeavyDataController> >
@@ -1114,6 +1112,26 @@ XdmfTemplate::setStep(unsigned int stepId)
             mTrackedArrays[i]->initialize(mTrackedArrayTypes[i], mTrackedArrayDims[i]);
 
             unsigned int index = 0;
+#ifdef HAVE_CXX11_SHARED_PTR
+            char * trackedString = strdup(content);
+            char * token = std::strtok(trackedString, " \t\n");
+            if(mTrackedArrayTypes[i] == XdmfArrayType::String()) {
+              while (token != NULL)
+              {
+                mTrackedArrays[i]->insert(index, std::string(token));
+                token = std::strtok(NULL, " \t\n");
+              }
+            }
+            else {
+              while (token != NULL)
+              { 
+                mTrackedArrays[i]->insert(index, atof(token));
+                token = std::strtok(NULL, " \t\n");
+              }
+            }
+            free(trackedString);
+            trackedString = NULL;
+#else
             boost::char_separator<char> sep(" \t\n");
             boost::tokenizer<boost::char_separator<char> > valtokens(content, sep);
             if(mTrackedArrayTypes[i] == XdmfArrayType::String()) {
@@ -1132,6 +1150,7 @@ XdmfTemplate::setStep(unsigned int stepId)
                 mTrackedArrays[i]->insert(index, atof((*iter).c_str()));
               }
             }
+#endif
           }
         }
       }

@@ -21,8 +21,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/tokenizer.hpp>
 #include <cstring>
 #include <map>
 #include <sstream>
@@ -228,7 +226,20 @@ public:
               }
               if(!whitespace) {
                 std::string contentString(content);
-                boost::algorithm::trim(contentString);
+                // find first nonwhitespace
+                unsigned int start = 0;
+                int check = contentString.find_first_not_of(" \t\n\r\f\v");
+                if (check >= 0)
+                {
+                  start = check;
+                }
+                unsigned int end = contentString.size();
+                check = contentString.find_last_not_of(" \t\n\r\f\v");
+                if (check >= 0)
+                {
+                  end = check;
+                }
+                contentString = contentString.substr(start, end - start + 1);
                 itemProperties.insert(std::make_pair("Content", contentString));
                 itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
                 break;

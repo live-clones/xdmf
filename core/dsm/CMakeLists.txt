@@ -11,6 +11,28 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 option(XDMF_BUILD_DSM_THREADS ON)
 
+# Test for Cxx11
+unset(HAVE_CXX11_SHARED_PTR CACHE)
+
+check_cxx_source_compiles("
+#include <memory>
+using namespace std;
+
+struct Base { virtual ~Base(){} };
+
+int main(int ac, char * av[])
+{
+  shared_ptr<Base> ptr(new Base());
+}
+"
+HAVE_CXX11_SHARED_PTR)
+
+# Cxx11 does not work with swig due to an issue with swig
+if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
+    set(HAVE_CXX11_SHARED_PTR ${HAVE_CXX11_SHARED_PTR} PARENT_SCOPE)
+    add_definitions(-DHAVE_CXX11_SHARED_PTR)
+endif ()
+
 mark_as_advanced(Boost_INCLUDE_DIR)
 include_directories(${Boost_INCLUDE_DIRS})
 mark_as_advanced(FORCE Boost_INCLUDE_DIR)

@@ -259,7 +259,7 @@ XdmfUnstructuredGrid::copyGrid(shared_ptr<XdmfGrid> sourceGrid)
 shared_ptr<XdmfGeometry>
 XdmfUnstructuredGrid::getGeometry()
 {
-  return boost::const_pointer_cast<XdmfGeometry>
+  return const_pointer_cast<XdmfGeometry>
     (static_cast<const XdmfGrid &>(*this).getGeometry());
 }
 
@@ -272,7 +272,7 @@ XdmfUnstructuredGrid::getItemTag() const
 shared_ptr<XdmfTopology>
 XdmfUnstructuredGrid::getTopology()
 {
-  return boost::const_pointer_cast<XdmfTopology>
+  return const_pointer_cast<XdmfTopology>
     (static_cast<const XdmfGrid &>(*this).getTopology());
 }
 

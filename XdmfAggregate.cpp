@@ -23,7 +23,6 @@
 
 #include <numeric>
 #include <functional>
-#include <boost/tokenizer.hpp>
 #include "XdmfArray.hpp"
 #include "XdmfError.hpp"
 #include "XdmfAggregate.hpp"

@@ -12,6 +12,8 @@ if(MSVC10)
 	SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 endif()
 
+include(CheckCXXSourceCompiles)
+
 set(XDMF_LIBNAME "Xdmf" CACHE STRING "Name for this xdmf library to avoid collision")
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 if(BUILD_SHARED_LIBS)
@@ -93,6 +95,29 @@ endif (TIFF_FOUND)
 # Test for DSM
 option(XDMF_BUILD_DSM OFF)
 mark_as_advanced(XDMF_BUILD_DSM)
+
+# Test for Cxx11
+unset(HAVE_CXX11_SHARED_PTR CACHE)
+
+check_cxx_source_compiles("
+#include <memory>
+using namespace std;
+
+struct Base { virtual ~Base(){} };
+
+int main(int ac, char * av[])
+{
+  shared_ptr<Base> ptr(new Base());
+}
+"
+HAVE_CXX11_SHARED_PTR)
+
+# Cxx11 does not work with swig due to an issue with swig
+if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
+    set(HAVE_CXX11_SHARED_PTR ${HAVE_CXX11_SHARED_PTR} PARENT_SCOPE)
+    add_definitions(-DHAVE_CXX11_SHARED_PTR)
+endif ()
+
 
 if(XDMF_BUILD_DSM)
   find_package(MPI REQUIRED)
