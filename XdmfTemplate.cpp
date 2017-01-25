@@ -1113,7 +1113,7 @@ XdmfTemplate::setStep(unsigned int stepId)
 
             unsigned int index = 0;
 #ifdef HAVE_CXX11_SHARED_PTR
-            char * trackedString = strdup(content);
+            char * trackedString = strdup(content.c_str());
             char * token = std::strtok(trackedString, " \t\n");
             if(mTrackedArrayTypes[i] == XdmfArrayType::String()) {
               while (token != NULL)

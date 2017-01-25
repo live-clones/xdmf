@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <algorithm>
 #include <cctype>
 #include "XdmfAttribute.hpp"
 #include "XdmfCurvilinearGrid.hpp"
@@ -277,11 +278,11 @@ XdmfItemFactory::createItem(const std::string & itemTag,
           dimensionsString = dimensions->second;
         }
 #ifdef HAVE_CXX11_SHARED_PTR
-        char * dimString = strdup(dimensionsString);
+        char * dimString = strdup(dimensionsString.c_str());
         char * token = std::strtok(dimString, " ");
         while (token != NULL)
         {
-          dimensionsArray.push_back(atoi(token));
+          dimensionsArray->pushBack(atoi(token));
           token = std::strtok(NULL, " ");
         }
 

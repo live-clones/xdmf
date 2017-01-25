@@ -44,6 +44,7 @@ XDMF_CHILDREN_IMPLEMENTATION(XdmfArray,
                              Name)
 
 template<>
+XDMFCORE_EXPORT
 std::string
 XdmfArray::GetValuesString<std::string>::getValuesString<void, void>(const void * const array,
                                                                      const int numValues) const
@@ -64,6 +65,7 @@ XdmfArray::GetValuesString<std::string>::getValuesString<void, void>(const void 
 }
 
 template <>
+XDMFCORE_EXPORT
 std::string
 XdmfArray::getValue<std::string>(const unsigned int index) const
 {
@@ -75,7 +77,16 @@ XdmfArray::getValue<std::string>(const unsigned int index) const
                       internalRef);
 }
 
+template <>
+XDMFCORE_EXPORT
+void *
+XdmfArray::initialize<void>(const unsigned int size)
+{
+  return this->initialize<char>(size);
+}
+
 template<>
+XDMFCORE_EXPORT
 void
 XdmfArray::Insert<std::string>::operator()<void>(void * array) const
 {
@@ -91,6 +102,7 @@ XdmfArray::Insert<std::string>::operator()<void>(void * array) const
 }
 
 template<>
+XDMFCORE_EXPORT
 void
 XdmfArray::GetValues<std::string>::operator()<void>(const void * array) const
 {
@@ -379,7 +391,7 @@ XdmfArray::getValuesString() const
 shared_ptr<XdmfHeavyDataController>
 XdmfArray::getHeavyDataController()
 {
-  return boost::const_pointer_cast<XdmfHeavyDataController>
+  return const_pointer_cast<XdmfHeavyDataController>
     (static_cast<const XdmfArray &>(*this).getHeavyDataController(0));
 }
 
@@ -844,7 +856,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
         for (contentIndex = 0; contentIndex < contentVals.size(); ++contentIndex)
         {
 #ifdef HAVE_CXX11_SHARED_PTR
-          char * valuesString = strdup(contentVals[contentIndex]);
+          char * valuesString = strdup(contentVals[contentIndex].c_str());
           char * token = std::strtok(valuesString, " \t\n");
           if(arrayType == XdmfArrayType::String()) {
             while (token != NULL)
@@ -1048,6 +1060,7 @@ printf("invalid array type\n");
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<unsigned char>()
 {
@@ -1055,6 +1068,7 @@ XdmfArray::setArrayType<unsigned char>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<unsigned short>()
 {
@@ -1062,6 +1076,7 @@ XdmfArray::setArrayType<unsigned short>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<unsigned int>()
 {
@@ -1069,6 +1084,7 @@ XdmfArray::setArrayType<unsigned int>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<char>()
 {
@@ -1076,6 +1092,7 @@ XdmfArray::setArrayType<char>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<short>()
 {
@@ -1083,6 +1100,7 @@ XdmfArray::setArrayType<short>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<int>()
 {
@@ -1090,13 +1108,25 @@ XdmfArray::setArrayType<int>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<long>()
 {
   mArrayType = XdmfArrayType::Int64();
 }
 
+#ifdef WIN32
 template <>
+XDMFCORE_EXPORT
+void
+XdmfArray::setArrayType<__int64>()
+{
+  mArrayType = XdmfArrayType::Int64();
+}
+#endif
+
+template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<float>()
 {
@@ -1104,6 +1134,7 @@ XdmfArray::setArrayType<float>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<double>()
 {
@@ -1111,6 +1142,7 @@ XdmfArray::setArrayType<double>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<std::string>()
 {
@@ -1118,6 +1150,7 @@ XdmfArray::setArrayType<std::string>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<std::string const* const>()
 {
@@ -1125,6 +1158,7 @@ XdmfArray::setArrayType<std::string const* const>()
 }
 
 template <>
+XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<std::string const*>()
 {

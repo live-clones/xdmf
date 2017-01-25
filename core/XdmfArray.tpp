@@ -55,16 +55,60 @@ class XdmfArray::XdmfVisitor
     {
     }
 
+    XdmfVisitor& operator=(const XdmfVisitor &orig)
+    {
+      mName = orig.mName;
+    }
+
     template <typename U>
     T
+    operator()(U * array)
+    {
+      printf("blank operator\n");
+      return NULL;
+    }
+
+    virtual
+    T
+    operator()() 
+    {
+      printf("blank operator\n");
+      return NULL;
+    }
+
+  std::string mName;
+};
+
+template <>
+class XdmfArray::XdmfVisitor<void>
+{
+  public:
+    // Parameters other than the array pointer will be passed via the constructor
+    // This includes output parameters
+    XdmfVisitor()
+    {
+      mName = "none";
+    }
+
+    XdmfVisitor(const XdmfVisitor<void> & orig)
+    {
+      mName = orig.mName;
+    }
+
+    ~XdmfVisitor()
+    {
+    }
+
+    template <typename U>
+    void
     operator()(U * array)
     {
       printf("blank operator\n");
     }
 
     virtual
-    T
-    operator()() 
+    void
+    operator()()
     {
       printf("blank operator\n");
     }
@@ -738,6 +782,28 @@ public:
   T
   operator()(U * array)
   {
+    return NULL;
+  }
+
+private:
+
+  const unsigned int mArrayPointerNumValues;
+};
+
+template<>
+class XdmfArray::GetValuesString<void> : public XdmfArray::XdmfVisitor<void> {
+public:
+
+  GetValuesString(const int arrayPointerNumValues) :
+    mArrayPointerNumValues(arrayPointerNumValues)
+  {
+    mName = "GetValuesString";
+  }
+
+  template<typename U>
+  void
+  operator()(U * array)
+  {
   }
 
 private:
@@ -1095,6 +1161,8 @@ public:
   void
   operator()(std::string * array) const
   {
+    mArray->insert(mArray->getSize(), array, 1);
+/*
 //resize if outside capacity
     std::stringstream value;
     value << mVal;
@@ -1104,18 +1172,22 @@ public:
     array[endpoint + 1] = value.str();
     mArray->mDimensions.clear();
     mArray->mDimensions.push_back(endpoint + 1);
+*/
   }
 
   template<typename U>
   void
   operator()(U * array) const
   {
+    mArray->insert(mArray->getSize(), array, 1);
+/*
     unsigned int endpoint = mArray->getSize();// TODO
     mArray->resize<T>(endpoint + 1);
     array = (U *) mArray->mArray;
     array[endpoint]=(U)mVal;
     mArray->mDimensions.clear();
     mArray->mDimensions.push_back(endpoint + 1);
+*/
   }
 
 private:
@@ -1507,6 +1579,10 @@ XdmfArray::getValuesInternal()
     return shared_ptr<std::vector<T> >();
   }
 }
+
+template <>
+void *
+XdmfArray::initialize<void>(const unsigned int size);
 
 template <typename T>
 T *

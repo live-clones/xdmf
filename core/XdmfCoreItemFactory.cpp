@@ -685,7 +685,7 @@ XdmfCoreItemFactory::generateHeavyDataControllers(const std::map<std::string, st
           token = std::strtok(dimsString, " ");
           while (token != NULL)
           {
-            contentDataspace.push_back(atoi(token));
+            contentDataspaces.push_back(atoi(token));
             token = std::strtok(NULL, " ");
           }
 
