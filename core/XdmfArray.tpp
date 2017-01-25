@@ -1161,7 +1161,7 @@ public:
   void
   operator()(std::string * array) const
   {
-    mArray->insert(mArray->getSize(), array, 1);
+    mArray->insert(mArray->getSize(), mVal);
 /*
 //resize if outside capacity
     std::stringstream value;
@@ -1179,7 +1179,8 @@ public:
   void
   operator()(U * array) const
   {
-    mArray->insert(mArray->getSize(), array, 1);
+printf("pushback to index %d\n", mArray->getSize());
+    mArray->insert(mArray->getSize(), mVal);
 /*
     unsigned int endpoint = mArray->getSize();// TODO
     mArray->resize<T>(endpoint + 1);
