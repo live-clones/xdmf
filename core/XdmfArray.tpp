@@ -1179,7 +1179,6 @@ public:
   void
   operator()(U * array) const
   {
-printf("pushback to index %d\n", mArray->getSize());
     mArray->insert(mArray->getSize(), mVal);
 /*
     unsigned int endpoint = mArray->getSize();// TODO
