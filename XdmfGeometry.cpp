@@ -25,6 +25,7 @@
 #include "XdmfGeometryType.hpp"
 #include "XdmfError.hpp"
 #include "XdmfFunction.hpp"
+#include <cstring>
 
 shared_ptr<XdmfGeometry> XdmfGeometry::New()
 {

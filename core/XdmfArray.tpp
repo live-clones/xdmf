@@ -429,10 +429,6 @@ public:
         U copyValue = array[mStartIndex + i*mArrayStride];
         T setValue = (T)copyValue;
         mValuesPointer[i*mValuesStride] = setValue;
-/*
-        mValuesPointer[i*mValuesStride] =
-          (T)array[mStartIndex + i*mArrayStride];
-*/
       }
     }
   }
@@ -595,15 +591,12 @@ public:
   {
     // TODO STRING
     unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
-// TODO resize pointer
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();
     }
     for(unsigned int i=0; i<mNumValues; ++i) {
       std::stringstream value;
-// TODO
-//      value << mValuesPointer[i*mValuesStride];
       array[mStartIndex + i*mArrayStride] = value.str();
     }
   }
@@ -613,7 +606,6 @@ public:
   operator()(U * array) const
   {
     unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
-// TODO resize pointer
     if(mArray->getSize() < size) {
       T resizeValue = 0;
       mArray->resize(size, resizeValue);
@@ -622,10 +614,6 @@ public:
     for(unsigned int i=0; i<mNumValues; ++i) {
       T copyValue = mValuesPointer[i*mValuesStride];
       array[mStartIndex + i*mArrayStride] = (U)copyValue;
-/*
-      array[mStartIndex + i*mArrayStride] =
-        ((U *)mValuesPointer)[i*mValuesStride];
-*/
     }
   }
 
@@ -677,7 +665,6 @@ public:
   operator()(std::string * array) const
   {
     unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
-// TODO resize pointer
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();
@@ -693,10 +680,7 @@ public:
   operator()(U * array) const
   {
     unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
-// TODO resize pointer
     if(mArray->getSize() < size) {
-// TODO resize for std::string needs to be fixed
-//      mArray->resize(size, std::string(""));
       mDimensions.clear();
     }
     for(unsigned int i=0; i<mNumValues; ++i) {
@@ -960,118 +944,10 @@ template<>
 std::string
 XdmfArray::GetValuesString<std::string>::getValuesString<void, void>(const void * const array,
                                                                      const int numValues) const;
-/*
-{
-  const int lastIndex = numValues - 1;
-
-  if(lastIndex < 0) {
-    return "";
-  }
-
-  std::stringstream toReturn;
-  toReturn.precision(std::numeric_limits<char>::digits10 + 2);
-  for(int i=0; i<lastIndex; ++i) {
-    toReturn << (char)((char *)array)[i] << " ";
-  }
-  toReturn << (char)((char *)array)[lastIndex];
-  return toReturn.str();
-}
-*/
-
-
-/*
-template <>
-class XdmfArray::Insert<std::string> : public XdmfArray::XdmfVisitor<void> {
-public:
-
-  Insert(XdmfArray * const array,
-         const unsigned int startIndex,
-         const std::string * const valuesPointer,
-         const unsigned int numValues,
-         const unsigned int arrayStride,
-         const unsigned int valuesStride,
-         std::vector<unsigned int> & dimensions) :
-    mArray(array),
-    mStartIndex(startIndex),
-    mValuesPointer(valuesPointer),
-    mNumValues(numValues),
-    mArrayStride(arrayStride),
-    mValuesStride(valuesStride),
-    mDimensions(dimensions)
-  {
-      mName = "Insert";
-  }
-
-  void
-  operator()(void * array) const
-  {
-    mArray->initialize<std::string>();
-    ApplyVisitor(mArray,
-                 this),
-                 mArray->mArray,
-                 (std::string *) array);
-  }
-
-  void
-  operator()(std::string * array) const
-  {
-    unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
-// TODO resize pointer
-    if(array->size() < size) {
-      array->resize(size);
-      mDimensions.clear();
-    }
-    for(unsigned int i=0; i<mNumValues; ++i) {
-      array[mStartIndex + i*mArrayStride] =
-        mValuesPointer[i*mValuesStride].c_str();
-    }
-  }
-
-  template<typename U>
-  void
-  operator()(U * array) const
-  {
-    unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
-// TODO resize pointer
-    if(mArray->getSize() < size) {
-      mArray->resize(size, std::string(""));
-      mDimensions.clear();
-    }
-    for(unsigned int i=0; i<mNumValues; ++i) {
-      array[mStartIndex + i*mArrayStride] =
-        (U)atof(mValuesPointer[i*mValuesStride].c_str());
-    }
-  }
-
-private:
-
-  XdmfArray * const mArray;
-  const unsigned int mStartIndex;
-  const std::string * const mValuesPointer;
-  const unsigned int mNumValues;
-  const unsigned int mArrayStride;
-  const unsigned int mValuesStride;
-  std::vector<unsigned int> & mDimensions;
-};
-*/
 
 template<>
 void
 XdmfArray::Insert<std::string>::operator()<void>(void * array) const;
-/*
-{
-  unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
-// TODO resize pointer
-  if(mArray->getSize() < size) {
-    mArray->resize(size, std::string(""));
-    mDimensions.clear();
-  }
-  for(unsigned int i=0; i<mNumValues; ++i) {
-    ((char *)array)[mStartIndex + i*mArrayStride] =
-      (char)atof(mValuesPointer[i*mValuesStride].c_str());
-  }
-}
-*/
 
 class XdmfArray::InsertArray : public XdmfArray::XdmfVisitor<void> {
 public:
@@ -1162,17 +1038,6 @@ public:
   operator()(std::string * array) const
   {
     mArray->insert(mArray->getSize(), mVal);
-/*
-//resize if outside capacity
-    std::stringstream value;
-    value << mVal;
-    unsigned int endpoint = mArray->getSize();// TODO
-    mArray->resize<T>(endpoint + 1);
-    array = (std::string *) mArray->mArray;
-    array[endpoint + 1] = value.str();
-    mArray->mDimensions.clear();
-    mArray->mDimensions.push_back(endpoint + 1);
-*/
   }
 
   template<typename U>
@@ -1180,14 +1045,6 @@ public:
   operator()(U * array) const
   {
     mArray->insert(mArray->getSize(), mVal);
-/*
-    unsigned int endpoint = mArray->getSize();// TODO
-    mArray->resize<T>(endpoint + 1);
-    array = (U *) mArray->mArray;
-    array[endpoint]=(U)mVal;
-    mArray->mDimensions.clear();
-    mArray->mDimensions.push_back(endpoint + 1);
-*/
   }
 
 private:
@@ -1476,14 +1333,14 @@ public:
   }
 
   void
-  operator()(const void * array) const
+  operator()(void * array) const
   {
     mArray->mTmpReserveSize = mSize;
   }
 
   template<typename T>
   void
-  operator()(T * & array) const
+  operator()(T * array) const
   {
     mArray->initialize<T>(mSize);
   }
@@ -1764,13 +1621,9 @@ XdmfArray::setValuesInternal(T * const arrayPointer,
 {
   // Remove contents of internal array.
 // Free old internal array if required
-  if(transferOwnership) {
-// In this case Xdmf will free the pointer when done with it
-    mArray = arrayPointer;
-  }
-  else {
-// The user has to free the pointer
-    mArray = arrayPointer;
+  mArray = arrayPointer;
+  if(!transferOwnership) {
+    mHasArrayOwnership = false;
   }
   mArrayPointerNumValues = numValues;
   mDimensions.clear();
@@ -1784,13 +1637,9 @@ void
 XdmfArray::setValuesInternal(std::vector<T> & array,
                              const bool transferOwnership)
 {
-  if(transferOwnership) {
-// Extract the vector's internal pointer, but leave control to original source
-    mArray = *(array[0]);
-  }
-  else {
-// Completely extract the internal pointer
-    mArray = *(array[0]);
+  mArray = *(array[0]);
+  if(!transferOwnership) {
+    mHasArrayOwnership = false;
   }
   mDimensions.clear();
   mDimensions.push_back(array.size());

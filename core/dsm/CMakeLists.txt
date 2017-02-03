@@ -33,9 +33,11 @@ if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
     add_definitions(-DHAVE_CXX11_SHARED_PTR)
 endif ()
 
-mark_as_advanced(Boost_INCLUDE_DIR)
-include_directories(${Boost_INCLUDE_DIRS})
-mark_as_advanced(FORCE Boost_INCLUDE_DIR)
+if (Boost_FOUND)
+  mark_as_advanced(Boost_INCLUDE_DIR)
+  include_directories(${Boost_INCLUDE_DIRS})
+  mark_as_advanced(FORCE Boost_INCLUDE_DIR)
+endif()
 
 #mark_as_advanced(CLEAR HDF5_C_INCLUDE_DIR)
 #mark_as_advanced(CLEAR HDF5_hdf5_LIBRARY_DEBUG)
@@ -214,7 +216,6 @@ endif (BUILD_SHARED_LIBS)
 
 if(XDMF_BUILD_DSM_THREADS)
 set(XdmfDSM_INCLUDE_DIRS
-  ${Boost_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${HDF5_INCLUDE_DIR}
   ${H5FDdsm_INCLUDE_DIR}
@@ -223,13 +224,18 @@ set(XdmfDSM_INCLUDE_DIRS
   CACHE INTERNAL "")
 else()
 set(XdmfDSM_INCLUDE_DIRS
-  ${Boost_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${HDF5_INCLUDE_DIR}
   ${LIBXML2_INCLUDE_DIR}
   ${PYTHON_INCLUDE_DIRS}
   CACHE INTERNAL "")
 endif()
+
+if (Boost_FOUND)
+  set(XdmfDSM_INCLUDE_DIRS
+    ${XdmfDSM_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS})
+endif ()
 
 include_directories(${XdmfCore_INCLUDE_DIRS} ${XdmfDSM_INCLUDE_DIRS})
 

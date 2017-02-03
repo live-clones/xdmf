@@ -24,6 +24,7 @@
 #include <sstream>
 #include <utility>
 #include <climits>
+#include <cstring>
 #include <set>
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"

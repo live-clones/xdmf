@@ -32,7 +32,7 @@
 #include "XdmfTIFFController.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfSparseMatrix.hpp"
-#include <string.h>
+#include <cstring>
 
 std::string
 XdmfCoreItemFactory::getFullHeavyDataPath(const std::string & filePath,

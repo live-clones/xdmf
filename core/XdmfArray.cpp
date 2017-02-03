@@ -26,7 +26,7 @@
 #include <utility>
 #include <stack>
 #include <math.h>
-#include <string.h>
+#include <cstring>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfArrayReference.hpp"
@@ -133,6 +133,7 @@ XdmfArray::XdmfArray() :
   mName(""),
   mTmpReserveSize(256),
   mReadMode(XdmfArray::Controller),
+  mHasArrayOwnership(true),
   mArray(NULL)
 {
   // Most intances use at most 3 dimensions
@@ -146,6 +147,8 @@ XdmfArray::XdmfArray(XdmfArray & refArray):
   mDimensions(refArray.getDimensions()),
   mName(refArray.getName()),
   mReadMode(refArray.getReadMode()),
+  mHasArrayOwnership(true),
+  mArray(NULL),
   mArrayType(refArray.mArrayType)
 {
   if (refArray.getArrayType() != XdmfArrayType::Uninitialized()) {
@@ -167,6 +170,7 @@ XdmfArray::XdmfArray(XdmfArray & refArray):
 
 XdmfArray::~XdmfArray()
 {
+  this->release();
 }
 
 const std::string XdmfArray::ItemTag = "DataItem";
@@ -1022,7 +1026,7 @@ XdmfArray::readReference()
 void
 XdmfArray::release()
 {
-  if (mArray)
+  if (mArray && mHasArrayOwnership)
   {
     free(mArray);
     mArray = NULL;
@@ -1111,6 +1115,14 @@ template <>
 XDMFCORE_EXPORT
 void
 XdmfArray::setArrayType<long>()
+{
+  mArrayType = XdmfArrayType::Int64();
+}
+
+template <>
+XDMFCORE_EXPORT
+void
+XdmfArray::setArrayType<long long>()
 {
   mArrayType = XdmfArrayType::Int64();
 }

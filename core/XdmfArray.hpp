@@ -1537,6 +1537,7 @@ private:
   shared_ptr<const XdmfArrayType> mArrayType;
   std::vector<unsigned int> mCapacity;
   std::vector<unsigned long> mAllocation;
+  bool mHasArrayOwnership;
   void * mArray;  
 };
 

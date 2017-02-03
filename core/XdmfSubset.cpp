@@ -23,7 +23,7 @@
 
 #include <numeric>
 #include <functional>
-#include "string.h"
+#include <cstring>
 #include "XdmfArray.hpp"
 #include "XdmfError.hpp"
 #include "XdmfSubset.hpp"

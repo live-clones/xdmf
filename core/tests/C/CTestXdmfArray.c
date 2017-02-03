@@ -123,12 +123,16 @@ int main()
   printf("%d ?= %d\n", XdmfArrayGetNumberDimensions(array), 2);
   printf("%d ?= %d\n", XdmfArrayGetSize(array), 20);
 
+  int capacity = XdmfArrayGetCapacity(array);
+
+  printf("Capacity Prior to Reserve = %d\n", capacity);
+
   assert(XdmfArrayGetNumberDimensions(array) == 2);
   assert(XdmfArrayGetSize(array) == 20);
 
   XdmfArrayReserve(array, 50);
 
-  int capacity = XdmfArrayGetCapacity(array);
+  capacity = XdmfArrayGetCapacity(array);
 
   printf("%d ?>= %d\n", capacity, 50);
 

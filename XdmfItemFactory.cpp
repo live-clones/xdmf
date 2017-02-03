@@ -23,6 +23,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstring>
 #include "XdmfAttribute.hpp"
 #include "XdmfCurvilinearGrid.hpp"
 #include "XdmfDomain.hpp"

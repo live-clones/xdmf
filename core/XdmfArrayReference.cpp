@@ -27,7 +27,6 @@
 #include "XdmfArrayReference.hpp"
 #include <stack>
 #include <math.h>
-#include <boost/assign.hpp>
 #include "XdmfError.hpp"
 
 XdmfArrayReference::XdmfArrayReference():

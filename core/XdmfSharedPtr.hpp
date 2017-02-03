@@ -24,7 +24,7 @@
 #ifndef XDMFSHAREDPTR_HPP_
 #define XDMFSHAREDPTR_HPP_
 
-#include "XdmfConfig.hpp"
+#include "XdmfCoreConfig.hpp"
 
 #ifdef HAVE_CXX11_SHARED_PTR
 
@@ -42,17 +42,6 @@ using boost::const_pointer_cast;
 
 #endif /*  */
 
-/*
-#ifdef HAVE_CXX11_VARIANT
-
-using std::variant;
-
-#else
-*/
-//#include <boost/variant.hpp>
-//using boost::variant;
-
-//#endif
 
 // Tokenizer
 // http://en.cppreference.com/w/cpp/string/byte/strtok
@@ -72,31 +61,6 @@ shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r)
 }
 
 #endif /* HAVE_BOOST_SHARED_DYNAMIC_CAST */
-
-#ifdef HAVE_CXX11_ENABLE_IF
-
-#include <type_traits>
-using std::is_floating_point;
-using std::is_signed;
-using std::is_unsigned;
-using std::is_same;
-#define enable_if_c std::enable_if
-
-using std::remove_const;
-
-#else
-
-#include "boost/utility.hpp"
-#include "boost/type_traits.hpp"
-using boost::enable_if_c;
-using boost::is_floating_point;
-using boost::is_signed;
-using boost::is_unsigned;
-using boost::is_same;
-
-using boost::remove_const;
-
-#endif /* HAVE_CXX11_ENABLE_IF */
 
 // Used by C wrappers to prevent shared pointers from prematurely deleting objects
 // Normally this would be completely against the point of shared pointers,
