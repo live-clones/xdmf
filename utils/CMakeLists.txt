@@ -94,6 +94,11 @@ endif(XDMF_BUILD_PARTITIONER)
 
 if (XDMF_STATIC_AND_SHARED)
   add_library(XdmfUtilsObjects OBJECT ${XdmfUtilsSources})
+  SET_TARGET_PROPERTIES(
+    XdmfUtilsObjects PROPERTIES
+    VERSION ${XDMF_VERSION}
+    SOVERSION ${XDMF_MAJOR_VERSION}
+    )
   set_target_properties(XdmfUtilsObjects PROPERTIES
     POSITION_INDEPENDENT_CODE True)
   add_library(XdmfUtils $<TARGET_OBJECTS:XdmfUtilsObjects>)
@@ -107,6 +112,11 @@ if (XDMF_STATIC_AND_SHARED)
 else ()
   add_library(XdmfUtils ${XdmfUtilsSources})
 endif ()
+SET_TARGET_PROPERTIES(
+  XdmfUtils PROPERTIES
+  VERSION ${XDMF_VERSION}
+  SOVERSION ${XDMF_MAJOR_VERSION}
+  )
 
 target_link_libraries(XdmfUtils ${XdmfUtilsLinkLibraries})
 if (BUILD_SHARED_LIBS)
@@ -169,7 +179,7 @@ if(XDMF_BUILD_FORTRAN)
 endif(XDMF_BUILD_FORTRAN)
 
 install(FILES ${XdmfUtilsHeaders} DESTINATION include)
-install(TARGETS XdmfUtils 
+install(TARGETS XdmfUtils
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
@@ -179,7 +189,7 @@ install(TARGETS XdmfUtils_Static
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
 endif (BUILD_SHARED_LIBS)
-install(TARGETS ${XdmfUtilsExecutables} 
+install(TARGETS ${XdmfUtilsExecutables}
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)

@@ -14,6 +14,10 @@ endif()
 
 set(XDMF_LIBNAME "Xdmf" CACHE STRING "Name for this xdmf library to avoid collision")
 
+set(XDMF_MAJOR_VERSION 3)
+set(XDMF_MINOR_VERSION 0)
+set(XDMF_VERSION "${XDMF_MAJOR_VERSION}.${XDMF_MINOR_VERSION}")
+
 if(BUILD_SHARED_LIBS)
   set(LIBTYPE SHARED)
   set(BUILD_SHARED 1)
@@ -332,17 +336,29 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 
   if(XDMF_STATIC_AND_SHARED)
     add_library(XdmfObjects OBJECT ${XdmfSources})
+    SET_TARGET_PROPERTIES(
+      XdmfObjects PROPERTIES
+      VERSION ${XDMF_VERSION}
+      SOVERSION ${XDMF_MAJOR_VERSION}
+      )
     set_target_properties(XdmfObjects PROPERTIES
       POSITION_INDEPENDENT_CODE True)
     add_library(${XDMF_LIBNAME} $<TARGET_OBJECTS:XdmfObjects>)
     if (BUILD_SHARED_LIBS)
       add_library(Xdmf_Static STATIC $<TARGET_OBJECTS:XdmfObjects>)
-      set_target_properties(Xdmf_Static PROPERTIES
-          OUTPUT_NAME "Xdmf")
+      set_target_properties(
+        Xdmf_Static PROPERTIES
+        OUTPUT_NAME "Xdmf"
+        )
     endif (BUILD_SHARED_LIBS)
   else()
     add_library(${XDMF_LIBNAME} ${LIBTYPE} ${XdmfSources})
   endif()
+  SET_TARGET_PROPERTIES(
+    ${XDMF_LIBNAME} PROPERTIES
+    VERSION ${XDMF_VERSION}
+    SOVERSION ${XDMF_MAJOR_VERSION}
+    )
   if(XDMF_BUILD_DSM)
     target_link_libraries(${XDMF_LIBNAME} XdmfCore XdmfDSM)
     if(XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
@@ -414,7 +430,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   if(WIN32)
     set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/${XDMF_LIBNAME}.lib)
   endif()
-  
+
   if(UNIX)
     if (BUILD_SHARED_LIBS)
       set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/lib${XDMF_LIBNAME}.so)
@@ -426,11 +442,11 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   if(APPLE)
     set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/lib${XDMF_LIBNAME}.dylib)
   endif()
-  
-  file(GLOB XdmfHeaders 
-    "*.hpp" 
-    "*.tpp" 
-    "*.i" 
+
+  file(GLOB XdmfHeaders
+    "*.hpp"
+    "*.tpp"
+    "*.i"
     "CMake/VersionSuite/*.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/*.hpp"
   )

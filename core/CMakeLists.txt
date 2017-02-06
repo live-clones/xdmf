@@ -163,17 +163,31 @@ endif()
 
 if (XDMF_STATIC_AND_SHARED)
   add_library(XdmfCoreObjects OBJECT ${XdmfCoreSources})
-  set_target_properties(XdmfCoreObjects PROPERTIES
-    POSITION_INDEPENDENT_CODE True)
+  SET_TARGET_PROPERTIES(
+    XdmfCoreObjects PROPERTIES
+    VERSION ${XDMF_VERSION}
+    SOVERSION ${XDMF_MAJOR_VERSION}
+    )
+  set_target_properties(
+    XdmfCoreObjects PROPERTIES
+    POSITION_INDEPENDENT_CODE True
+    )
   add_library(XdmfCore ${LIBTYPE} $<TARGET_OBJECTS:XdmfCoreObjects>)
   if (BUILD_SHARED_LIBS)
     add_library(XdmfCore_Static STATIC $<TARGET_OBJECTS:XdmfCoreObjects>)
-    set_target_properties(XdmfCore_Static PROPERTIES
-      OUTPUT_NAME "XdmfCore")
+    set_target_properties(
+      XdmfCore_Static PROPERTIES
+      OUTPUT_NAME "XdmfCore"
+      )
   endif (BUILD_SHARED_LIBS)
 else()
   add_library(XdmfCore ${LIBTYPE} ${XdmfCoreSources})
 endif()
+SET_TARGET_PROPERTIES(
+  XdmfCore PROPERTIES
+  VERSION ${XDMF_VERSION}
+  SOVERSION ${XDMF_MAJOR_VERSION}
+  )
 
 link_directories(${XDMF_LIBRARY_DIRS})
 
