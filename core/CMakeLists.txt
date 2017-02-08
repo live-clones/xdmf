@@ -10,7 +10,12 @@ include(TestBigEndian)
 
 if(VERSION_CONTROL_AUTOUPDATE OR
     NOT EXISTS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion.hpp)
-  VersionCreate("Xdmf" "3" "3" "0" "XDMFCORE_EXPORT" "XdmfCore.hpp")
+  VersionCreate(
+    "Xdmf"
+    "${XDMF_MAJOR_VERSION}"
+    "${XDMF_MAJOR_VERSION}" "${XDMF_MINOR_VERSION}"
+    "XDMFCORE_EXPORT" "XdmfCore.hpp"
+    )
 endif()
 
 if(BUILD_SHARED_LIBS)
