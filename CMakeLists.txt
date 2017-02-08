@@ -414,7 +414,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   if(WIN32)
     set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/${XDMF_LIBNAME}.lib)
   endif()
-  
+
   if(UNIX)
     if (BUILD_SHARED_LIBS)
       set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/lib${XDMF_LIBNAME}.so)
@@ -426,11 +426,11 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   if(APPLE)
     set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/lib${XDMF_LIBNAME}.dylib)
   endif()
-  
-  file(GLOB XdmfHeaders 
-    "*.hpp" 
-    "*.tpp" 
-    "*.i" 
+
+  file(GLOB XdmfHeaders
+    "*.hpp"
+    "*.tpp"
+    "*.i"
     "CMake/VersionSuite/*.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/*.hpp"
   )
