@@ -1,5 +1,5 @@
 project(Xdmf)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.5)
 
 #Needed to build DSM because relative paths are used to add its libraries
 if (POLICY CMP0015)
@@ -192,9 +192,14 @@ if(XDMF_WRAP_PYTHON)
       PROPERTIES
       OUTPUT_NAME "_${python_name}")
 
+    set(
+      PYTHON_INSTALL_DIR
+      ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/xdmf
+      )
+
     string(TOUPPER ${python_name} python_name_upper)
     set(${python_name_upper}_PYTHON
-      ${CMAKE_INSTALL_PREFIX}/lib/python/${python_name}.py)
+      ${PYTHON_INSTALL_DIR}/${python_name}.py)
     get_directory_property(${python_name}Parent PARENT_DIRECTORY)
     if(NOT "${${python_name}Parent}" STREQUAL "")
       set(${python_name_upper}_PYTHON ${${python_name_upper}_PYTHON}
@@ -202,9 +207,9 @@ if(XDMF_WRAP_PYTHON)
     endif()
 
     install(FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${python_name}.py
-      DESTINATION lib/python)
+      DESTINATION ${PYTHON_INSTALL_DIR})
     install(TARGETS ${SWIG_MODULE_${python_name}Python_REAL_NAME}
-      DESTINATION lib/python)
+      DESTINATION ${PYTHON_INSTALL_DIR})
   endmacro()
 endif()
 
@@ -299,6 +304,8 @@ add_subdirectory(core)
 include_directories(${XdmfCore_INCLUDE_DIRS} ${XdmfDSM_INCLUDE_DIRS})
 link_directories(${XDMF_LIBRARY_DIRS})
 
+include(GNUInstallDirs)
+
 option(XDMF_BUILD_CORE_ONLY OFF)
 mark_as_advanced(XDMF_BUILD_CORE_ONLY)
 if(NOT XDMF_BUILD_CORE_ONLY)
@@ -371,16 +378,16 @@ if(NOT XDMF_BUILD_CORE_ONLY)
       set_target_properties(${XDMF_LIBNAME} PROPERTIES
         PREFIX ../
         IMPORT_PREFIX ../
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/)
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_BINDIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/${CMAKE_CFG_INTDIR}/
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/${CMAKE_CFG_INTDIR}/)
       if(XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
         set_target_properties(Xdmf_Static PROPERTIES
           PREFIX ../
           IMPORT_PREFIX ../
-          RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/
-          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/
-          ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/)
+          RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_BINDIR}
+          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/${CMAKE_CFG_INTDIR}/
+          ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/${CMAKE_CFG_INTDIR}/)
       endif ()
     endif()
   endif()
@@ -399,7 +406,10 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     else()
       XDMF_SWIG_PYTHON(${XDMF_LIBNAME} XdmfCore)
     endif()
-    set(XDMF_PYTHON_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/python/)
+    set(
+      XDMF_PYTHON_INSTALL_DIR
+      ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/xdmf
+      )
   endif()
 
   if(XDMF_BUILD_TESTING)
@@ -414,39 +424,45 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   if(WIN32)
     set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/${XDMF_LIBNAME}.lib)
   endif()
-  
+
   if(UNIX)
     if (BUILD_SHARED_LIBS)
-      set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/lib${XDMF_LIBNAME}.so)
+      set(XDMF_LIBRARY ${CMAKE_INSTALL_LIBDIR}/lib${XDMF_LIBNAME}.so)
     else (BUILD_SHARED_LIBS)
-      set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/lib${XDMF_LIBNAME}.a)
+      set(XDMF_LIBRARY ${CMAKE_INSTALL_LIBDIR}/lib${XDMF_LIBNAME}.a)
     endif (BUILD_SHARED_LIBS)
   endif(UNIX)
 
   if(APPLE)
-    set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/lib${XDMF_LIBNAME}.dylib)
+    set(XDMF_LIBRARY ${CMAKE_INSTALL_LIBDIR}/lib${XDMF_LIBNAME}.dylib)
   endif()
-  
-  file(GLOB XdmfHeaders 
-    "*.hpp" 
-    "*.tpp" 
-    "*.i" 
+
+  file(GLOB XdmfHeaders
+    "*.hpp"
+    "*.tpp"
+    "*.i"
     "CMake/VersionSuite/*.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/*.hpp"
   )
   install(FILES ${XdmfHeaders} DESTINATION include)
   install(TARGETS ${XDMF_LIBNAME}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
   if (XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
     install(TARGETS Xdmf_Static
-      RUNTIME DESTINATION bin
-      LIBRARY DESTINATION lib
-      ARCHIVE DESTINATION lib)
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
   endif()
 endif()
 
+if(WIN32 AND NOT CYGWIN)
+  set(DEF_INSTALL_CMAKE_DIR CMake)
+else()
+  set(DEF_INSTALL_CMAKE_DIR
+    "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+endif()
 xdmf_create_config_file(${PROJECT_NAME})
 install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-  DESTINATION ${CMAKE_INSTALL_PREFIX})
+  DESTINATION ${DEF_INSTALL_CMAKE_DIR})
