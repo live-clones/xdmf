@@ -889,7 +889,7 @@ XdmfTemplate::preallocateSteps(unsigned int numSteps)
 //printf("initializing base array\n");
           std::vector<unsigned int> preallocatedSizeVector;
           preallocatedSizeVector.push_back(preallocatedSize);
-          tempArray->initialize(mTrackedArrays[i]->getArrayType(), preallocatedSize);
+          tempArray->initialize(mTrackedArrays[i]->getArrayType(), preallocatedSizeVector);
 //printf("writing subsection");
           tempArray->accept(mHeavyWriter);
 //printf("subsection written\n");
