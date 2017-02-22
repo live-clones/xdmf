@@ -304,44 +304,5 @@ int main()
 
   free(valueString);
 
-  int * swapArray = valArray;
-
-  XdmfArraySwapWithArray(secondaryArray, ((void **)&(swapArray)), 3, XDMF_ARRAY_TYPE_INT32, &status);
-
-  valueString = XdmfArrayGetValuesString(secondaryArray);
-
-  printf("%s ?= %s\n", "5 6 7", valueString);
-
-  assert(strcmp("5 6 7", valueString) == 0);
-
-  for (i = 0; i < 10; ++i)
-  {
-    printf("swapArray[%d] = %d\n", i, swapArray[i]);
-  }
-
-  assert(swapArray[0] == 0);
-  assert(swapArray[1] == 1);
-  assert(swapArray[2] == 2);
-  assert(swapArray[3] == 4);
-  assert(swapArray[4] == 5);
-  assert(swapArray[5] == 6);
-  assert(swapArray[6] == 7);
-  assert(swapArray[7] == 8);
-  assert(swapArray[8] == 9);
-  assert(swapArray[9] == 90);
-
-  free(valueString);
-
-  int *returnArray = (int *)XdmfArrayGetValues(secondaryArray, 0, XDMF_ARRAY_TYPE_INT32, 3, 1, 1, &status);
-
-  for (i = 0; i < 3; ++i)
-  {
-    printf("returnArray[%d] = %d\n", i, returnArray[i]);
-  }
-
-  assert(returnArray[0] == 5);
-  assert(returnArray[1] == 6);
-  assert(returnArray[2] == 7);
-
   return 0;
 }

@@ -285,7 +285,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
   }
   else if(mType == XdmfArrayType::String()) {
     datatype = H5Tcopy(H5T_C_S1);
-    H5Tset_size(datatype, H5T_VARIABLE);
+    H5Tset_size(datatype, array->mStringSize);
     closeDatatype = true;
   }
   else {
@@ -304,7 +304,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
                        errOut.str());
   }
   if(closeDatatype) {
-    char ** data = new char*[numVals];
+    char * data = new char[numVals * array->mStringSize];
     status = H5Dread(dataset,
                      datatype,
                      memspace,
@@ -312,7 +312,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
                      H5P_DEFAULT,
                      data);
     for(hssize_t i=0; i<numVals; ++i) {
-      array->insert<std::string>(i, data[i]);
+      array->insert<std::string>(i, std::string(&(data[i * array->mStringSize])));
     }
     status = H5Dvlen_reclaim(datatype,
                              dataspace,

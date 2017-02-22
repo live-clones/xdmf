@@ -246,34 +246,6 @@ int main(int, char **)
   assert(array6->getArrayType() == XdmfArrayType::Int8());
   assert(array6->getValuesString().compare("-2 -1 0 1 2") == 0);
   // Assert we have the same values!
-  shared_ptr<std::vector<char> > storedValues2 =
-    array6->getValuesInternal<char>();
-  int i = 0;
-  for(std::vector<char>::const_iterator iter = storedValues2->begin();
-      iter != storedValues2->end();
-      ++iter, ++i) {
-    std::cout << *iter << " ?= " << values2->operator[](i) << std::endl;
-    assert(*iter == values2->operator[](i));
-  }
-  // Now modify original array
-  values2->push_back(8);
-  std::cout << array6->getSize() << " ?= " << 6 << std::endl;
-  std::cout << array6->getValuesString() << " ?= " << "-2 -1 0 1 2 8" << std::endl;
-  assert(array6->getSize() == 6);
-  assert(array6->getValuesString().compare("-2 -1 0 1 2 8") == 0);
-  // Assert we have the same values!
-  i = 0;
-  for(std::vector<char>::const_iterator iter = storedValues2->begin();
-      iter != storedValues2->end();
-      ++iter, ++i) {
-    std::cout << *iter << " ?= " << values2->operator[](i) << std::endl;
-    assert(*iter == values2->operator[](i));
-  }
-  // Assert we can't get an int vector out of our array.
-  shared_ptr<std::vector<int> > storedValues2Int =
-    array6->getValuesInternal<int>();
-  std::cout << storedValues2Int << " ?= " << "NULL" << std::endl;
-  assert(storedValues2Int == NULL);
 
   //
   // SWAPS
@@ -282,38 +254,7 @@ int main(int, char **)
   /**
    * Swap values from a vector
    */
-  std::vector<short> values3;
-  values3.push_back(-1);
-  values3.push_back(0);
-  values3.push_back(1);
   shared_ptr<XdmfArray> array7 = XdmfArray::New();
-  array7->swap(values3);
-  std::cout << values3.size() << " ?= " << 0 << std::endl;
-  std::cout << array7->getSize() << " ?= " << 3 << std::endl;
-  std::cout << array7->getArrayType() << " ?= " << XdmfArrayType::Int16() << std::endl;
-  assert(values3.size() == 0);
-  assert(array7->getSize() == 3);
-  assert(array7->getArrayType() == XdmfArrayType::Int16());
-  shared_ptr<std::vector<short> > storedValues3 =
-    array7->getValuesInternal<short>();
-  std::cout << (*storedValues3)[0] << " ?= " << -1 << std::endl;
-  std::cout << (*storedValues3)[1] << " ?= " << 0 << std::endl;
-  std::cout << (*storedValues3)[2] << " ?= " << 1 << std::endl;
-  assert((*storedValues3)[0] == -1);
-  assert((*storedValues3)[1] == 0);
-  assert((*storedValues3)[2] == 1);
-
-  /**
-   * Swap values from a shared vector
-   */
-  array7->release();
-  array7->swap(values2);
-  std::cout << storedValues2->size() << " ?= " << 0 << std::endl;
-  std::cout << array7->getSize() << " ?= " << 6 << std::endl;
-  std::cout << array7->getArrayType() << " ?= " << XdmfArrayType::Int8() << std::endl;
-  assert(storedValues2->size() == 0);
-  assert(array7->getSize() == 6);
-  assert(array7->getArrayType() == XdmfArrayType::Int8());
 
   /**
    * Swap values from an XdmfArray (with copy)

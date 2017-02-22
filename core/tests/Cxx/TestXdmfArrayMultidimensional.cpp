@@ -10,7 +10,7 @@ int main(int, char **)
   // Create 1D arrays
   //
   shared_ptr<XdmfArray> array = XdmfArray::New();
-  array->initialize(XdmfArrayType::UInt32(), 2);
+  array->resize<unsigned int>(2);
   std::cout << array->getArrayType() << " ?= " << XdmfArrayType::UInt32() << std::endl;
   assert(array->getArrayType() == XdmfArrayType::UInt32());
   std::cout << array->getSize() << " ?= " << 2 << std::endl;
