@@ -33,6 +33,8 @@
 #endif
 
 #cmakedefine XDMF_NO_REALPATH
+#ifndef HAVE_CXX11_SHARED_PTR
 #cmakedefine HAVE_CXX11_SHARED_PTR
+#endif
 
 #endif /* XDMFCORECONFIG_HPP_ */

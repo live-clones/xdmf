@@ -2,6 +2,7 @@
 #include "XdmfVisitor.hpp"
 #include "XdmfGrid.hpp"
 #include <iostream>
+#include <assert.h>
 
 // Make a new XdmfVisitor that simply counts number of values
 class XdmfVisitorValueCounter : public XdmfVisitor,

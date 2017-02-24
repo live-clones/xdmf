@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include <assert.h>
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSystemUtils.hpp"

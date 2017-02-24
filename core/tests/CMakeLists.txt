@@ -1,3 +1,5 @@
+set(XDMF_SUBSECTION "Core")
+
 add_subdirectory(C)
 add_subdirectory(Cxx)
 

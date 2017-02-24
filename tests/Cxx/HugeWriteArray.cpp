@@ -6,6 +6,7 @@
 #include <XdmfHDF5Writer.hpp>
 #include <XdmfHDF5Controller.hpp>
 #include <sys/timeb.h>
+#include <assert.h>
 
 int main(int, char **)
 {

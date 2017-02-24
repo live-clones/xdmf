@@ -3,6 +3,7 @@
 #include "XdmfWriter.hpp"
 
 #include <iostream>
+#include <assert.h>
 
 #include "XdmfTestCompareFiles.hpp"
 #include "XdmfTestDataGenerator.hpp"

@@ -4,6 +4,7 @@
 #include <string>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 #include <XdmfArray.hpp>
 #include <XdmfArrayType.hpp>
 #include <XdmfFunction.hpp>
