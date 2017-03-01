@@ -180,6 +180,58 @@ if (TIFF_FOUND)
   set(XdmfCoreSources
       ${XdmfCoreSources}
       XdmfTIFFController)
+  set(XdmfCoreSources
+    core/XdmfArray
+    core/XdmfArrayReference
+    core/XdmfArrayType
+    core/XdmfBinaryController
+    core/XdmfCoreItemFactory
+    core/XdmfCoreReader
+    core/XdmfError
+    core/XdmfFunction
+    core/XdmfHDF5Controller
+    core/XdmfHDF5Writer
+    core/XdmfHeavyDataController
+    core/XdmfHeavyDataDescription
+    core/XdmfHeavyDataWriter
+    core/XdmfInformation
+    core/XdmfItem
+    core/XdmfItemProperty
+    core/XdmfPlaceholder
+    core/XdmfSparseMatrix
+    core/XdmfSubset
+    core/XdmfSystemUtils
+    core/XdmfTIFFController
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
+    core/XdmfVisitor
+    core/XdmfWriter
+    PARENT_SCOPE)
+else ()
+  set(XdmfCoreSources
+    core/XdmfArray
+    core/XdmfArrayReference
+    core/XdmfArrayType
+    core/XdmfBinaryController
+    core/XdmfCoreItemFactory
+    core/XdmfCoreReader
+    core/XdmfError
+    core/XdmfFunction
+    core/XdmfHDF5Controller
+    core/XdmfHDF5Writer
+    core/XdmfHeavyDataController
+    core/XdmfHeavyDataDescription
+    core/XdmfHeavyDataWriter
+    core/XdmfInformation
+    core/XdmfItem
+    core/XdmfItemProperty
+    core/XdmfPlaceholder
+    core/XdmfSparseMatrix
+    core/XdmfSubset
+    core/XdmfSystemUtils
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
+    core/XdmfVisitor
+    core/XdmfWriter
+    PARENT_SCOPE)
 endif()
 
 if (XDMF_STATIC_AND_SHARED)
@@ -195,6 +247,9 @@ if (XDMF_STATIC_AND_SHARED)
 else()
   add_library(XdmfCore ${LIBTYPE} ${XdmfCoreSources})
 endif()
+
+set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} PARENT_SCOPE)
+set(XDMF_LIBRARIES ${XDMF_LIBRARIES} PARENT_SCOPE)
 
 link_directories(${XDMF_LIBRARY_DIRS})
 
@@ -310,7 +365,6 @@ else ()
 endif ()
 
 set(XDMF_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include PARENT_SCOPE)
-set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${CMAKE_INSTALL_PREFIX}/lib)
 set(XDMF_DIR ${CMAKE_INSTALL_PREFIX} PARENT_SCOPE)
 set(XDMF_BINARIES ${XDMF_BINARIES} ${CMAKE_INSTALL_PREFIX}/bin)
 

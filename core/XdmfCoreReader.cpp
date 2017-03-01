@@ -265,7 +265,7 @@ public:
                                    itemProperties,
                                    childItems);
 
-        if(newItem == NULL) {
+        if(newItem.get() == NULL) {
           XdmfError::message(XdmfError::FATAL,
                              "mItemFactory failed to createItem in "
                              "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
@@ -351,7 +351,7 @@ XdmfCoreReader::parse(const std::string & lightData) const
   std::vector<shared_ptr<XdmfItem> > toReturn;
   if(mImpl->mItemFactory->createItem((const char*)currNode->name,
                                      std::map<std::string, std::string>(),
-                                     std::vector<shared_ptr<XdmfItem> >()) == NULL) {
+                                     std::vector<shared_ptr<XdmfItem> >()).get() == NULL) {
     toReturn = mImpl->read(currNode->children);
   }
   else {

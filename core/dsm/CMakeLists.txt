@@ -86,6 +86,16 @@ set(XdmfDSMSources
   XdmfDSMItemFactory
   XdmfDSMDriver)
 
+set(XdmfDSMSources
+  XdmfHDF5ControllerDSM
+  XdmfHDF5WriterDSM
+  XdmfDSMCommMPI
+  XdmfDSMBuffer
+  XdmfDSMDescription
+  XdmfDSMItemFactory
+  XdmfDSMDriver
+  PARENT_SCOPE)
+
 if (XDMF_BUILD_DSM_THREADS)
   add_definitions(-DXDMF_BUILD_DSM_THREADS)
 endif ()
@@ -132,6 +142,8 @@ endif (BUILD_SHARED_LIBS)
 #      OUTPUT_NAME "XdmfDSM")
 #  endif (UNIX)
 #endif (BUILD_SHARED_LIBS)
+set(XdmfDSMLinkLibraryDir ${XdmfDSMLinkLibraryDir} PARENT_SCOPE)
+set(XdmfDSMLinkLibraries ${XdmfDSMLinkLibraries} PARENT_SCOPE)
 link_directories(${XDMF_LIBRARY_DIRS} ${XdmfDSMLinkLibraryDir})
 target_link_libraries(XdmfDSM ${XdmfDSMLinkLibraries})
 if (BUILD_SHARED_LIBS)
