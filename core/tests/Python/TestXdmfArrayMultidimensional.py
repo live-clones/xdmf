@@ -6,7 +6,7 @@ if __name__ == "__main__":
     # Create 1D arrays
     #
     array1 = XdmfArray.New()
-    array1.initialize(XdmfArrayType.UInt32(), 2)
+    array1.resizeAsUInt32(2)
     print str(array1.getArrayType()) + " ?= " + str(XdmfArrayType.UInt32())
     print str(array1.getSize()) + " ?= " + str(2)
     assert array1.getArrayType() == XdmfArrayType.UInt32()

@@ -7,6 +7,7 @@
 #include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
 #include <iostream>
+#include <assert.h>
 
 #include "XdmfTestCompareFiles.hpp"
 

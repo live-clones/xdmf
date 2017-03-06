@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <assert.h>
 
 int main(int ac, char * av[]) 
 {

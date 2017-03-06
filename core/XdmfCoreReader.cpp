@@ -21,8 +21,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/tokenizer.hpp>
 #include <cstring>
 #include <map>
 #include <sstream>
@@ -228,7 +226,20 @@ public:
               }
               if(!whitespace) {
                 std::string contentString(content);
-                boost::algorithm::trim(contentString);
+                // find first nonwhitespace
+                unsigned int start = 0;
+                int check = contentString.find_first_not_of(" \t\n\r\f\v");
+                if (check >= 0)
+                {
+                  start = check;
+                }
+                unsigned int end = contentString.size();
+                check = contentString.find_last_not_of(" \t\n\r\f\v");
+                if (check >= 0)
+                {
+                  end = check;
+                }
+                contentString = contentString.substr(start, end - start + 1);
                 itemProperties.insert(std::make_pair("Content", contentString));
                 itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
                 break;
@@ -254,7 +265,7 @@ public:
                                    itemProperties,
                                    childItems);
 
-        if(newItem == NULL) {
+        if(newItem.get() == NULL) {
           XdmfError::message(XdmfError::FATAL,
                              "mItemFactory failed to createItem in "
                              "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
@@ -340,7 +351,7 @@ XdmfCoreReader::parse(const std::string & lightData) const
   std::vector<shared_ptr<XdmfItem> > toReturn;
   if(mImpl->mItemFactory->createItem((const char*)currNode->name,
                                      std::map<std::string, std::string>(),
-                                     std::vector<shared_ptr<XdmfItem> >()) == NULL) {
+                                     std::vector<shared_ptr<XdmfItem> >()).get() == NULL) {
     toReturn = mImpl->read(currNode->children);
   }
   else {

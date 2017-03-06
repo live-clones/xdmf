@@ -158,11 +158,7 @@ XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProper
       iter != childItems.end();
       ++iter) {
     if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
-      this->swap(array);
-      if (array->getReference()) {
-        this->setReference(array->getReference());
-        this->setReadMode(XdmfArray::Reference);
-      }
+      this->populateArray(array);
       break;
     }
   }

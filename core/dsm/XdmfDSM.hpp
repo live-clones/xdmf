@@ -27,17 +27,20 @@
 /* Keep all our Win32 Conversions here */
 #ifdef _WIN32
 /* Used to export/import from the dlls */
-#undef XDMFCORE_EXPORT
-#define XDMFCORE_EXPORT __declspec(dllimport)
-#undef XDMFCORE_TEMPLATE
-#define XDMFCORE_TEMPLATE extern
-
 #ifdef XdmfDSM_EXPORTS
-#define XDMFDSM_EXPORT __declspec(dllexport)
-#define XDMFDSM_TEMPLATE
+#  define XDMFDSM_EXPORT __declspec(dllexport)
+#  define XDMFDSM_TEMPLATE
+#  undef XDMFCORE_EXPORT
+#  define XDMFCORE_EXPORT __declspec(dllexport)
+#  undef XDMFCORE_TEMPLATE
+#  define XDMFCORE_TEMPLATE
 #else /* Xdmf_EXPORTS */
-#define XDMFDSM_EXPORT __declspec(dllimport)
-#define XDMFDSM_TEMPLATE extern
+#  define XDMFDSM_EXPORT __declspec(dllimport)
+#  define XDMFDSM_TEMPLATE extern
+#  undef XDMFCORE_EXPORT
+#  define XDMFCORE_EXPORT __declspec(dllimport)
+#  undef XDMFCORE_TEMPLATE
+#  define XDMFCORE_TEMPLATE extern
 #endif /* Xdmf_EXPORTS */
 
 /* Compiler Warnings */

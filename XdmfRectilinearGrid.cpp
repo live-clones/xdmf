@@ -333,7 +333,7 @@ XdmfRectilinearGrid::copyGrid(shared_ptr<XdmfGrid> sourceGrid)
 shared_ptr<XdmfArray>
 XdmfRectilinearGrid::getCoordinates(const unsigned int axisIndex)
 {
-  return boost::const_pointer_cast<XdmfArray>
+  return const_pointer_cast<XdmfArray>
     (static_cast<const XdmfRectilinearGrid &>
      (*this).getCoordinates(axisIndex));
 }
@@ -362,7 +362,7 @@ XdmfRectilinearGrid::getCoordinates() const
 shared_ptr<XdmfArray>
 XdmfRectilinearGrid::getDimensions()
 {
-  return boost::const_pointer_cast<XdmfArray>
+  return const_pointer_cast<XdmfArray>
     (static_cast<const XdmfRectilinearGrid &>(*this).getDimensions());
 }
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <assert.h>
 #include <XdmfDomain.hpp>
 #include <XdmfGridCollection.hpp>
 #include <XdmfWriter.hpp>

@@ -2,6 +2,7 @@
 #include "XdmfSystemUtils.hpp"
 #include "XdmfWriter.hpp"
 #include <iostream>
+#include <assert.h>
 
 #include "XdmfTestDataGenerator.hpp"
 

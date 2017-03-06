@@ -21,8 +21,9 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <algorithm>
 #include <cctype>
-#include <boost/tokenizer.hpp>
+#include <cstring>
 #include "XdmfAttribute.hpp"
 #include "XdmfCurvilinearGrid.hpp"
 #include "XdmfDomain.hpp"
@@ -277,12 +278,25 @@ XdmfItemFactory::createItem(const std::string & itemTag,
         if(dimensions != itemProperties.end()) {
           dimensionsString = dimensions->second;
         }
+#ifdef HAVE_CXX11_SHARED_PTR
+        char * dimString = strdup(dimensionsString.c_str());
+        char * token = std::strtok(dimString, " ");
+        while (token != NULL)
+        {
+          dimensionsArray->pushBack(atoi(token));
+          token = std::strtok(NULL, " ");
+        }
+
+        free(dimString);
+        dimString = NULL;
+#else
         boost::tokenizer<> tokens(dimensionsString);
         for(boost::tokenizer<>::const_iterator iter = tokens.begin();
             iter != tokens.end();
             ++iter) {
           dimensionsArray->pushBack<unsigned int>(atoi((*iter).c_str()));
         }
+#endif
         if(typeVal.compare("2DCORECTMESH") == 0 ||
            typeVal.compare("3DCORECTMESH") == 0 ||
            typeVal.compare("CORECTMESH") == 0) {

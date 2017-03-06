@@ -6,6 +6,7 @@
 #include "XdmfWriter.hpp"
 #include "XdmfReader.hpp"
 #include "stdio.h"
+#include <assert.h>
 
 int main(int, char **)
 {

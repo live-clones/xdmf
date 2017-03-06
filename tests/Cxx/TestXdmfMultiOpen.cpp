@@ -13,6 +13,7 @@
 #include "XdmfReader.hpp"
 #include "stdio.h"
 #include <sstream>
+#include <assert.h>
 
 int main(int, char **)
 {

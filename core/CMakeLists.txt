@@ -35,7 +35,7 @@ if(XDMF_BUILD_DSM)
 endif()
 
 mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
-find_package(Boost REQUIRED)
+find_package(Boost)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   mark_as_advanced(FORCE Boost_INCLUDE_DIR)
@@ -113,7 +113,8 @@ endif()
 TEST_BIG_ENDIAN(XDMF_BIG_ENDIAN)
 
 unset(HAVE_BOOST_SHARED_DYNAMIC_CAST CACHE)
-set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
+unset(HAVE_CXX11_SHARED_PTR CACHE)
+
 check_cxx_source_compiles("
 #include <boost/shared_ptr.hpp>
 
@@ -127,6 +128,26 @@ int main(int ac, char * av[])
 }
 "
 HAVE_BOOST_SHARED_DYNAMIC_CAST)
+
+check_cxx_source_compiles("
+#include <memory>
+using namespace std;
+
+struct Base { virtual ~Base(){} };
+
+int main(int ac, char * av[])
+{
+  shared_ptr<Base> ptr(new Base());
+}
+"
+HAVE_CXX11_SHARED_PTR)
+
+if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
+    set(HAVE_CXX11_SHARED_PTR ${HAVE_CXX11_SHARED_PTR} PARENT_SCOPE)
+    add_definitions(-DHAVE_CXX11_SHARED_PTR)
+endif ()
+
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XdmfCoreConfig.hpp.in
                ${CMAKE_CURRENT_BINARY_DIR}/XdmfCoreConfig.hpp)
 
@@ -159,6 +180,58 @@ if (TIFF_FOUND)
   set(XdmfCoreSources
       ${XdmfCoreSources}
       XdmfTIFFController)
+  set(XdmfCoreSources
+    core/XdmfArray
+    core/XdmfArrayReference
+    core/XdmfArrayType
+    core/XdmfBinaryController
+    core/XdmfCoreItemFactory
+    core/XdmfCoreReader
+    core/XdmfError
+    core/XdmfFunction
+    core/XdmfHDF5Controller
+    core/XdmfHDF5Writer
+    core/XdmfHeavyDataController
+    core/XdmfHeavyDataDescription
+    core/XdmfHeavyDataWriter
+    core/XdmfInformation
+    core/XdmfItem
+    core/XdmfItemProperty
+    core/XdmfPlaceholder
+    core/XdmfSparseMatrix
+    core/XdmfSubset
+    core/XdmfSystemUtils
+    core/XdmfTIFFController
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
+    core/XdmfVisitor
+    core/XdmfWriter
+    PARENT_SCOPE)
+else ()
+  set(XdmfCoreSources
+    core/XdmfArray
+    core/XdmfArrayReference
+    core/XdmfArrayType
+    core/XdmfBinaryController
+    core/XdmfCoreItemFactory
+    core/XdmfCoreReader
+    core/XdmfError
+    core/XdmfFunction
+    core/XdmfHDF5Controller
+    core/XdmfHDF5Writer
+    core/XdmfHeavyDataController
+    core/XdmfHeavyDataDescription
+    core/XdmfHeavyDataWriter
+    core/XdmfInformation
+    core/XdmfItem
+    core/XdmfItemProperty
+    core/XdmfPlaceholder
+    core/XdmfSparseMatrix
+    core/XdmfSubset
+    core/XdmfSystemUtils
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
+    core/XdmfVisitor
+    core/XdmfWriter
+    PARENT_SCOPE)
 endif()
 
 if (XDMF_STATIC_AND_SHARED)
@@ -174,6 +247,9 @@ if (XDMF_STATIC_AND_SHARED)
 else()
   add_library(XdmfCore ${LIBTYPE} ${XdmfCoreSources})
 endif()
+
+set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} PARENT_SCOPE)
+set(XDMF_LIBRARIES ${XDMF_LIBRARIES} PARENT_SCOPE)
 
 link_directories(${XDMF_LIBRARY_DIRS})
 
@@ -269,17 +345,26 @@ if (XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
     ARCHIVE DESTINATION lib)
 endif ()
 
-set(XdmfCore_INCLUDE_DIRS
-  ${Boost_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${HDF5_INCLUDE_DIR}
-  ${LIBXML2_INCLUDE_DIR}
-  ${PYTHON_INCLUDE_DIRS}
-  CACHE INTERNAL "")
+if (Boost_FOUND)
+  set(XdmfCore_INCLUDE_DIRS
+    ${Boost_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${HDF5_INCLUDE_DIR}
+    ${LIBXML2_INCLUDE_DIR}
+    ${PYTHON_INCLUDE_DIRS}
+    CACHE INTERNAL "")
+else ()
+  set(XdmfCore_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${HDF5_INCLUDE_DIR}
+    ${LIBXML2_INCLUDE_DIR}
+    ${PYTHON_INCLUDE_DIRS}
+    CACHE INTERNAL "")
+endif ()
 
 set(XDMF_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include PARENT_SCOPE)
-set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${CMAKE_INSTALL_PREFIX}/lib)
 set(XDMF_DIR ${CMAKE_INSTALL_PREFIX} PARENT_SCOPE)
 set(XDMF_BINARIES ${XDMF_BINARIES} ${CMAKE_INSTALL_PREFIX}/bin)
 

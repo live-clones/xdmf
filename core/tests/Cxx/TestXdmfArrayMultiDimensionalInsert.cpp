@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <assert.h>
 #include <XdmfArray.hpp>
 #include <XdmfArrayType.hpp>
 #include <XdmfWriter.hpp>
