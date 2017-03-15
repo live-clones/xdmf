@@ -10,7 +10,11 @@ include(TestBigEndian)
 
 if(VERSION_CONTROL_AUTOUPDATE OR
     NOT EXISTS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion.hpp)
-  VersionCreate("Xdmf" "3" "3" "0" "XDMFCORE_EXPORT" "XdmfCore.hpp")
+  VersionCreate(
+    "Xdmf"
+    "${XDMF_MAJOR_VERSION}" "${XDMF_MINOR_VERSION}" "${XDMF_PATCH_VERSION}"
+    "XDMFCORE_EXPORT" "XdmfCore.hpp"
+    )
 endif()
 
 if(BUILD_SHARED_LIBS)
@@ -236,17 +240,31 @@ endif()
 
 if (XDMF_STATIC_AND_SHARED)
   add_library(XdmfCoreObjects OBJECT ${XdmfCoreSources})
-  set_target_properties(XdmfCoreObjects PROPERTIES
-    POSITION_INDEPENDENT_CODE True)
+  SET_TARGET_PROPERTIES(
+    XdmfCoreObjects PROPERTIES
+    VERSION ${XDMF_VERSION}
+    SOVERSION ${XDMF_MAJOR_VERSION}
+    )
+  set_target_properties(
+    XdmfCoreObjects PROPERTIES
+    POSITION_INDEPENDENT_CODE True
+    )
   add_library(XdmfCore ${LIBTYPE} $<TARGET_OBJECTS:XdmfCoreObjects>)
   if (BUILD_SHARED_LIBS)
     add_library(XdmfCore_Static STATIC $<TARGET_OBJECTS:XdmfCoreObjects>)
-    set_target_properties(XdmfCore_Static PROPERTIES
-      OUTPUT_NAME "XdmfCore")
+    set_target_properties(
+      XdmfCore_Static PROPERTIES
+      OUTPUT_NAME "XdmfCore"
+      )
   endif (BUILD_SHARED_LIBS)
 else()
   add_library(XdmfCore ${LIBTYPE} ${XdmfCoreSources})
 endif()
+SET_TARGET_PROPERTIES(
+  XdmfCore PROPERTIES
+  VERSION ${XDMF_VERSION}
+  SOVERSION ${XDMF_MAJOR_VERSION}
+  )
 
 set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} PARENT_SCOPE)
 set(XDMF_LIBRARIES ${XDMF_LIBRARIES} PARENT_SCOPE)

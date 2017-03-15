@@ -16,6 +16,11 @@ include(CheckCXXSourceCompiles)
 
 set(XDMF_LIBNAME "Xdmf" CACHE STRING "Name for this xdmf library to avoid collision")
 
+set(XDMF_MAJOR_VERSION 3)
+set(XDMF_MINOR_VERSION 0)
+set(XDMF_PATCH_VERSION 0)
+set(XDMF_VERSION "${XDMF_MAJOR_VERSION}.${XDMF_MINOR_VERSION}.${XDMF_PATCH_VERSION}")
+
 if(BUILD_SHARED_LIBS)
   set(LIBTYPE SHARED)
   set(BUILD_SHARED 1)
@@ -365,13 +370,20 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 
   if(XDMF_STATIC_AND_SHARED)
     add_library(XdmfObjects OBJECT ${XdmfSources})
+    SET_TARGET_PROPERTIES(
+      XdmfObjects PROPERTIES
+      VERSION ${XDMF_VERSION}
+      SOVERSION ${XDMF_MAJOR_VERSION}
+      )
     set_target_properties(XdmfObjects PROPERTIES
       POSITION_INDEPENDENT_CODE True)
     add_library(${XDMF_LIBNAME} $<TARGET_OBJECTS:XdmfObjects>)
     if (BUILD_SHARED_LIBS)
       add_library(Xdmf_Static STATIC $<TARGET_OBJECTS:XdmfObjects>)
-      set_target_properties(Xdmf_Static PROPERTIES
-          OUTPUT_NAME "Xdmf")
+      set_target_properties(
+        Xdmf_Static PROPERTIES
+        OUTPUT_NAME "Xdmf"
+        )
     endif (BUILD_SHARED_LIBS)
   else()
     if (WIN32)
@@ -384,6 +396,11 @@ if(NOT XDMF_BUILD_CORE_ONLY)
       add_library(${XDMF_LIBNAME} ${LIBTYPE} ${XdmfSources})
     endif ()
   endif()
+  SET_TARGET_PROPERTIES(
+    ${XDMF_LIBNAME} PROPERTIES
+    VERSION ${XDMF_VERSION}
+    SOVERSION ${XDMF_MAJOR_VERSION}
+    )
   if(XDMF_BUILD_DSM)
     if (NOT WIN32)
       target_link_libraries(${XDMF_LIBNAME} XdmfCore XdmfDSM)
