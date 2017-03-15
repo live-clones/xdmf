@@ -184,59 +184,37 @@ if (TIFF_FOUND)
   set(XdmfCoreSources
       ${XdmfCoreSources}
       XdmfTIFFController)
-  set(XdmfCoreSources
-    core/XdmfArray
-    core/XdmfArrayReference
-    core/XdmfArrayType
-    core/XdmfBinaryController
-    core/XdmfCoreItemFactory
-    core/XdmfCoreReader
-    core/XdmfError
-    core/XdmfFunction
-    core/XdmfHDF5Controller
-    core/XdmfHDF5Writer
-    core/XdmfHeavyDataController
-    core/XdmfHeavyDataDescription
-    core/XdmfHeavyDataWriter
-    core/XdmfInformation
-    core/XdmfItem
-    core/XdmfItemProperty
-    core/XdmfPlaceholder
-    core/XdmfSparseMatrix
-    core/XdmfSubset
-    core/XdmfSystemUtils
-    core/XdmfTIFFController
-    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
-    core/XdmfVisitor
-    core/XdmfWriter
-    PARENT_SCOPE)
+  set(FOUND_TIFF_LOCATION core/XdmfTIFFController)
 else ()
-  set(XdmfCoreSources
-    core/XdmfArray
-    core/XdmfArrayReference
-    core/XdmfArrayType
-    core/XdmfBinaryController
-    core/XdmfCoreItemFactory
-    core/XdmfCoreReader
-    core/XdmfError
-    core/XdmfFunction
-    core/XdmfHDF5Controller
-    core/XdmfHDF5Writer
-    core/XdmfHeavyDataController
-    core/XdmfHeavyDataDescription
-    core/XdmfHeavyDataWriter
-    core/XdmfInformation
-    core/XdmfItem
-    core/XdmfItemProperty
-    core/XdmfPlaceholder
-    core/XdmfSparseMatrix
-    core/XdmfSubset
-    core/XdmfSystemUtils
-    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
-    core/XdmfVisitor
-    core/XdmfWriter
-    PARENT_SCOPE)
+  set(FOUND_TIFF_LOCATION "")
 endif()
+
+set(XdmfCoreSources
+  core/XdmfArray
+  core/XdmfArrayReference
+  core/XdmfArrayType
+  core/XdmfBinaryController
+  core/XdmfCoreItemFactory
+  core/XdmfCoreReader
+  core/XdmfError
+  core/XdmfFunction
+  core/XdmfHDF5Controller
+  core/XdmfHDF5Writer
+  core/XdmfHeavyDataController
+  core/XdmfHeavyDataDescription
+  core/XdmfHeavyDataWriter
+  core/XdmfInformation
+  core/XdmfItem
+  core/XdmfItemProperty
+  core/XdmfPlaceholder
+  core/XdmfSparseMatrix
+  core/XdmfSubset
+  core/XdmfSystemUtils
+  ${FOUND_TIFF_LOCATION}
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
+  core/XdmfVisitor
+  core/XdmfWriter
+  PARENT_SCOPE)
 
 if (XDMF_STATIC_AND_SHARED)
   add_library(XdmfCoreObjects OBJECT ${XdmfCoreSources})
@@ -364,6 +342,7 @@ if (XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
 endif ()
 
 if (Boost_FOUND)
+  set(FOUND_BOOST_INCLUDES ${Boost_INCLUDE_DIRS})
   set(XdmfCore_INCLUDE_DIRS
     ${Boost_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -373,14 +352,16 @@ if (Boost_FOUND)
     ${PYTHON_INCLUDE_DIRS}
     CACHE INTERNAL "")
 else ()
-  set(XdmfCore_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${HDF5_INCLUDE_DIR}
-    ${LIBXML2_INCLUDE_DIR}
-    ${PYTHON_INCLUDE_DIRS}
-    CACHE INTERNAL "")
+  set(FOUND_BOOST_INCLUDES "")
 endif ()
+set(XdmfCore_INCLUDE_DIRS
+  ${FOUND_BOOST_INCLUDES}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${HDF5_INCLUDE_DIR}
+  ${LIBXML2_INCLUDE_DIR}
+  ${PYTHON_INCLUDE_DIRS}
+  CACHE INTERNAL "")
 
 set(XDMF_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include PARENT_SCOPE)
 set(XDMF_DIR ${CMAKE_INSTALL_PREFIX} PARENT_SCOPE)
