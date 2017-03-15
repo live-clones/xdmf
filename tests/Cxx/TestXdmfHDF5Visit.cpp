@@ -82,7 +82,7 @@ int main(int, char **)
     array2->pushBack(i + 5);
   }
 
-  shared_ptr<XdmfHDF5Controller> controller1 =
+  shared_ptr<XdmfHeavyDataController> controller1 =
     XdmfHDF5Controller::New("TestXdmfHDF5Visit.h5",
                             "Test Dataset1",
                             array1->getArrayType(),
@@ -91,7 +91,7 @@ int main(int, char **)
                             std::vector<unsigned int>(1, 10),
                             std::vector<unsigned int>(1, 10));
 
-  shared_ptr<XdmfHDF5Controller> controller2 =
+  shared_ptr<XdmfHeavyDataController> controller2 =
     XdmfHDF5Controller::New("TestXdmfHDF5Visit.h5",
                             "Test Dataset2",
                             array2->getArrayType(),

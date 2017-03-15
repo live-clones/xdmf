@@ -1622,7 +1622,7 @@ XdmfHDF5Writer::write(XdmfArray & array)
 
         newDataController->setArrayOffset(curArrayOffset);
 
-        array.insert(newDataController);
+        array.insert(shared_dynamic_cast<XdmfHeavyDataController>(newDataController));
 
         fileNameWalker++;
         datasetWalker++;

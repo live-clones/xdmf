@@ -53,9 +53,9 @@ int main(int, char **)
 
   TIFFClose(tif);
 
-  shared_ptr<XdmfTIFFController> controller = XdmfTIFFController::New("compressedstripoutput.tif",
-                                                                      XdmfArrayType::UInt32(),
-                                                                      std::vector<unsigned int>(1, 1000 * 1000));
+  shared_ptr<XdmfHeavyDataController> controller = XdmfTIFFController::New("compressedstripoutput.tif",
+                                                                           XdmfArrayType::UInt32(),
+                                                                           std::vector<unsigned int>(1, 1000 * 1000));
 
   shared_ptr<XdmfArray> checkarray = XdmfArray::New();
 
@@ -74,7 +74,7 @@ int main(int, char **)
 //    printf("\n");
   }
 
-  shared_ptr<XdmfTIFFController> hyperslabcontroller = XdmfTIFFController::New("compressedstripoutput.tif",
+  shared_ptr<XdmfHeavyDataController> hyperslabcontroller = XdmfTIFFController::New("compressedstripoutput.tif",
                                                                                XdmfArrayType::UInt32(),
                                                                                std::vector<unsigned int>(2, 0),
                                                                                std::vector<unsigned int>(2, 2),
@@ -97,7 +97,7 @@ int main(int, char **)
 //    printf("\n");
   }
 
-  shared_ptr<XdmfTIFFController> hyperslabcontroller2 = XdmfTIFFController::New("compressedstripoutput.tif",
+  shared_ptr<XdmfHeavyDataController> hyperslabcontroller2 = XdmfTIFFController::New("compressedstripoutput.tif",
                                                                                 XdmfArrayType::UInt32(),
                                                                                 std::vector<unsigned int>(1, 0),
                                                                                 std::vector<unsigned int>(1, 2),
@@ -202,7 +202,7 @@ int main(int, char **)
   dirdataspace.push_back(1000);
   dirdataspace.push_back(10);
 
-  shared_ptr<XdmfTIFFController> dircontroller = XdmfTIFFController::New("compresseddirectories.tif",
+  shared_ptr<XdmfHeavyDataController> dircontroller = XdmfTIFFController::New("compresseddirectories.tif",
                                                                          XdmfArrayType::UInt32(),
                                                                          dirstarts,
                                                                          dirstrides,
@@ -233,7 +233,7 @@ int main(int, char **)
 
   dirdims[2] = 5;
 
-  shared_ptr<XdmfTIFFController> dircontroller2 = XdmfTIFFController::New("compresseddirectories.tif",
+  shared_ptr<XdmfHeavyDataController> dircontroller2 = XdmfTIFFController::New("compresseddirectories.tif",
                                                                           XdmfArrayType::UInt32(),
                                                                           dirstarts,
                                                                           dirstrides,
@@ -260,7 +260,7 @@ int main(int, char **)
 //    printf("\n\n");
   }
 
-  shared_ptr<XdmfTIFFController> dircontroller3 = XdmfTIFFController::New("compresseddirectories.tif",
+  shared_ptr<XdmfHeavyDataController> dircontroller3 = XdmfTIFFController::New("compresseddirectories.tif",
                                                                           XdmfArrayType::UInt32(),
                                                                           std::vector<unsigned int>(1, 0),
                                                                           std::vector<unsigned int>(1, 1),
@@ -287,7 +287,7 @@ int main(int, char **)
 //    printf("\n\n");
   }
 
-  shared_ptr<XdmfTIFFController> dircontroller4 = XdmfTIFFController::New("compresseddirectories.tif",
+  shared_ptr<XdmfHeavyDataController> dircontroller4 = XdmfTIFFController::New("compresseddirectories.tif",
                                                                           XdmfArrayType::UInt32(),
                                                                           std::vector<unsigned int>(1, 2),
                                                                           std::vector<unsigned int>(1, 6),
