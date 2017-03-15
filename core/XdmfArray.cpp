@@ -26,7 +26,7 @@
 #include <utility>
 #include <stack>
 #include <math.h>
-#include <string.h>
+#include <cstring>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfArrayReference.hpp"
