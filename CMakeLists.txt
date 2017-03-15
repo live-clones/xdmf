@@ -120,7 +120,6 @@ HAVE_CXX11_SHARED_PTR)
 
 # Cxx11 does not work with swig due to an issue with swig
 if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
-    set(HAVE_CXX11_SHARED_PTR ${HAVE_CXX11_SHARED_PTR} PARENT_SCOPE)
     add_definitions(-DHAVE_CXX11_SHARED_PTR)
 endif ()
 

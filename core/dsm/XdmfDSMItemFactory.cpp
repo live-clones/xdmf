@@ -31,6 +31,7 @@
 #include "XdmfHDF5ControllerDSM.hpp"
 #include "XdmfHDF5WriterDSM.hpp"
 #include "XdmfError.hpp"
+#include "cstring"
 
 #include "stdio.h"
 
