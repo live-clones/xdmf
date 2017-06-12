@@ -931,6 +931,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
             {
               this->insert(index, std::string(token));
               token = std::strtok(NULL, " \t\n");
+              ++index;
             }
           }
           else {
@@ -938,6 +939,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
             {
               this->insert(index, atof(token));
               token = std::strtok(NULL, " \t\n");
+              ++index;
             }
           }
 #else

@@ -196,7 +196,7 @@ XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProper
     char * token = std::strtok(originString, " ");
     while (token != NULL)
     {
-      mOrigin.push_back(atoi(token));
+      mOrigin.push_back(atof(token));
       token = std::strtok(NULL, " ");
     }
 

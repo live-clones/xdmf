@@ -1123,6 +1123,7 @@ XdmfTemplate::setStep(unsigned int stepId)
               {
                 mTrackedArrays[i]->insert(index, std::string(token));
                 token = std::strtok(NULL, " \t\n");
+                ++index;
               }
             }
             else {
@@ -1130,6 +1131,7 @@ XdmfTemplate::setStep(unsigned int stepId)
               { 
                 mTrackedArrays[i]->insert(index, atof(token));
                 token = std::strtok(NULL, " \t\n");
+                ++index;
               }
             }
             free(trackedString);
