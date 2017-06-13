@@ -310,9 +310,10 @@ file(GLOB LokiHeaders loki/*.h)
 set(XdmfCoreHeaders
       ${XdmfCoreHeaders}
       ${CMAKE_CURRENT_BINARY_DIR}/XdmfCoreConfig.hpp)
-
-install(FILES ${XdmfCoreHeaders} DESTINATION include)
-install(FILES ${LokiHeaders} DESTINATION include/loki)
+if (NOT XDMF_INSTALL_NO_DEVELOPMENT)
+  install(FILES ${XdmfCoreHeaders} DESTINATION include)
+  install(FILES ${LokiHeaders} DESTINATION include/loki)
+endif()
 install(TARGETS XdmfCore
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib

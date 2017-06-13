@@ -63,6 +63,8 @@ endif()
 
 include(XdmfFunctions)
 
+option(XDMF_INSTALL_NO_DEVELOPMENT "Prevent install from writing out developement files." OFF)
+mark_as_advanced(XDMF_INSTALL_NO_DEVELOPMENT)
 # Converting Install Prefix to an absolute path
 get_filename_component(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" ABSOLUTE)
 
@@ -478,7 +480,9 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     "CMake/VersionSuite/*.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/*.hpp"
   )
-  install(FILES ${XdmfHeaders} DESTINATION include)
+  if (NOT XDMF_INSTALL_NO_DEVELOPMENT) 
+    install(FILES ${XdmfHeaders} DESTINATION include)
+  endif()
   install(TARGETS ${XDMF_LIBNAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
