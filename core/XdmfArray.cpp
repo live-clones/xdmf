@@ -1201,16 +1201,6 @@ XdmfArray::setArrayType<long long>()
   mArrayType = XdmfArrayType::Int64();
 }
 
-#ifdef WIN32
-template <>
-XDMFCORE_EXPORT
-void
-XdmfArray::setArrayType<__int64>()
-{
-  mArrayType = XdmfArrayType::Int64();
-}
-#endif
-
 template <>
 XDMFCORE_EXPORT
 void

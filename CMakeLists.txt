@@ -63,6 +63,8 @@ endif()
 
 include(XdmfFunctions)
 
+option(XDMF_INSTALL_NO_DEVELOPMENT "Prevent install from writing out developement files." OFF)
+mark_as_advanced(XDMF_INSTALL_NO_DEVELOPMENT)
 # Converting Install Prefix to an absolute path
 get_filename_component(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" ABSOLUTE)
 
@@ -413,20 +415,12 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     SOVERSION ${XDMF_MAJOR_VERSION}
     )
   if(XDMF_BUILD_DSM)
-    if (NOT WIN32)
-      target_link_libraries(${XDMF_LIBNAME} XdmfCore XdmfDSM)
-    else ()
-      target_link_libraries(${XDMF_LIBNAME} ${XdmfLibraries} ${XdmfDSMLinkLibraries})
-    endif ()
+    target_link_libraries(${XDMF_LIBNAME} XdmfCore XdmfDSM)
     if(XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
         target_link_libraries(Xdmf_Static XdmfCore_Static XdmfDSM_Static)
     endif()
   else(XDMF_BUILD_DSM)
-    if (NOT WIN32)
-      target_link_libraries(${XDMF_LIBNAME} XdmfCore)
-    else ()
-      target_link_libraries(${XDMF_LIBNAME} ${XdmfLibraries})
-    endif ()
+    target_link_libraries(${XDMF_LIBNAME} XdmfCore)
     if(XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
       target_link_libraries(Xdmf_Static XdmfCore_Static)
     endif ()
@@ -444,22 +438,6 @@ if(NOT XDMF_BUILD_CORE_ONLY)
           DEFINE_SYMBOL Xdmf_EXPORTS)
       endif()
     endif ()
-    if(NOT MSVC10)
-      set_target_properties(${XDMF_LIBNAME} PROPERTIES
-        PREFIX ../
-        IMPORT_PREFIX ../
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_BINDIR}
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/${CMAKE_CFG_INTDIR}/
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/${CMAKE_CFG_INTDIR}/)
-      if(XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
-        set_target_properties(Xdmf_Static PROPERTIES
-          PREFIX ../
-          IMPORT_PREFIX ../
-          RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_BINDIR}
-          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/${CMAKE_CFG_INTDIR}/
-          ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/${CMAKE_CFG_INTDIR}/)
-      endif ()
-    endif()
   endif()
 
   if(XDMF_WRAP_JAVA)
@@ -514,7 +492,9 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     "CMake/VersionSuite/*.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/*.hpp"
   )
-  install(FILES ${XdmfHeaders} DESTINATION include)
+  if (NOT XDMF_INSTALL_NO_DEVELOPMENT) 
+    install(FILES ${XdmfHeaders} DESTINATION include)
+  endif()
   install(TARGETS ${XDMF_LIBNAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

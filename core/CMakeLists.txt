@@ -267,22 +267,6 @@ if(WIN32)
         DEFINE_SYMBOL XdmfCore_EXPORTS)
     endif()
   endif()
-  if(NOT MSVC10)
-    set_target_properties(XdmfCore PROPERTIES
-      PREFIX ../
-      IMPORT_PREFIX ../
-      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/
-      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/
-      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/)
-    if (XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
-      set_target_properties(XdmfCore_Static PROPERTIES
-        PREFIX ../
-        IMPORT_PREFIX ../
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/)
-    endif ()
-  endif()
 endif()
 
 if(XDMF_WRAP_JAVA)
@@ -326,9 +310,10 @@ file(GLOB LokiHeaders loki/*.h)
 set(XdmfCoreHeaders
       ${XdmfCoreHeaders}
       ${CMAKE_CURRENT_BINARY_DIR}/XdmfCoreConfig.hpp)
-
-install(FILES ${XdmfCoreHeaders} DESTINATION include)
-install(FILES ${LokiHeaders} DESTINATION include/loki)
+if (NOT XDMF_INSTALL_NO_DEVELOPMENT)
+  install(FILES ${XdmfCoreHeaders} DESTINATION include)
+  install(FILES ${LokiHeaders} DESTINATION include/loki)
+endif()
 install(TARGETS XdmfCore
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
