@@ -133,18 +133,20 @@ int main(int ac, char * av[])
 "
 HAVE_BOOST_SHARED_DYNAMIC_CAST)
 
-check_cxx_source_compiles("
-#include <memory>
-using namespace std;
+if (XDMF_TRY_NOBOOST)
+  check_cxx_source_compiles("
+  #include <memory>
+  using namespace std;
 
-struct Base { virtual ~Base(){} };
+  struct Base { virtual ~Base(){} };
 
-int main(int ac, char * av[])
-{
-  shared_ptr<Base> ptr(new Base());
-}
-"
-HAVE_CXX11_SHARED_PTR)
+  int main(int ac, char * av[])
+  {
+    shared_ptr<Base> ptr(new Base());
+  }
+  "
+  HAVE_CXX11_SHARED_PTR)
+endif ()
 
 if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
     add_definitions(-DHAVE_CXX11_SHARED_PTR)
