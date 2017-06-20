@@ -432,7 +432,7 @@ XdmfFortran::setAttributeHDF5(const int index,
 {
   if (index < mAttributes.size()) {
     // create HDF5 link
-    shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
                                                                            std::string(hdf5Dataset),
                                                                            mAttributes[index]->getArrayType(),
                                                                            std::vector<unsigned int>(1, start),
@@ -477,7 +477,7 @@ XdmfFortran::setAttributeBinary(const int index,
       default:
         break;
     }
-    shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                                mAttributes[index]->getArrayType(),
                                                                                newEndian,
                                                                                seek,
@@ -912,7 +912,7 @@ XdmfFortran::setGeometryHDF5(const char * hdf5File,
   }
 
   // create HDF5 link
-  shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+  shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
                                                                          std::string(hdf5Dataset),
                                                                          mGeometry->getArrayType(),
                                                                          std::vector<unsigned int>(1, start),
@@ -958,7 +958,7 @@ XdmfFortran::setGeometryBinary(const char * binFile,
   }
 
   // create Binary link
-  shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+  shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                              mGeometry->getArrayType(),
                                                                              newEndian,
                                                                              seek,
@@ -1157,7 +1157,7 @@ XdmfFortran::setTopologyHDF5(const char * hdf5File,
                          "Error: Topology needs to be set before hdf5 linkage can be established.");
   }
 
-  shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+  shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
                                                                          std::string(hdf5Dataset),
                                                                          mTopology->getArrayType(),
                                                                          std::vector<unsigned int>(1, start),
@@ -1202,7 +1202,7 @@ XdmfFortran::setTopologyBinary(const char * binFile,
       break;
   }
 
-  shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+  shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                              mTopology->getArrayType(),
                                                                              newEndian,
                                                                              seek,
@@ -5051,7 +5051,7 @@ XdmfFortran::setDimensionsHDF5(const char * hdf5File,
                                const unsigned int dataspace)
 {
   if (mDimensions) {
-    shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
                                                                          std::string(hdf5Dataset),
                                                                          mDimensions->getArrayType(),
                                                                          std::vector<unsigned int>(1, start),
@@ -5102,7 +5102,7 @@ XdmfFortran::setDimensionsBinary(const char * binFile,
       default:
         break;
     }
-    shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                                mDimensions->getArrayType(),
                                                                                newEndian,
                                                                                seek,
@@ -5454,7 +5454,7 @@ XdmfFortran::setOriginHDF5(const char * hdf5File,
                            const unsigned int dataspace)
 {
   if (mOrigin) {
-    shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
                                                                          std::string(hdf5Dataset),
                                                                          mOrigin->getArrayType(),
                                                                          std::vector<unsigned int>(1, start),
@@ -5504,7 +5504,7 @@ XdmfFortran::setOriginBinary(const char * binFile,
       default:
         break;
     }
-    shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                                mOrigin->getArrayType(),
                                                                                newEndian,
                                                                                seek,
@@ -5851,7 +5851,7 @@ XdmfFortran::setBrickHDF5(const char * hdf5File,
                           const unsigned int dataspace)
 {
   if (mBrick) {
-    shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
                                                                            std::string(hdf5Dataset),
                                                                            mBrick->getArrayType(),
                                                                            std::vector<unsigned int>(1, start),
@@ -5902,7 +5902,7 @@ XdmfFortran::setBrickBinary(const char * binFile,
       default:
         break;
     }
-    shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                                mBrick->getArrayType(),
                                                                                newEndian,
                                                                                seek,
@@ -7063,7 +7063,7 @@ XdmfFortran::setCoordinateHDF5(const int index,
                                const unsigned int dataspace)
 {
   if (index < (int)mCoordinates.size()) {
-    shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
                                                                          std::string(hdf5Dataset),
                                                                          mCoordinates[index]->getArrayType(),
                                                                          std::vector<unsigned int>(1, start),
@@ -7114,7 +7114,7 @@ XdmfFortran::setCoordinateBinary(const int index,
       default:
         break;
     }
-    shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                                mCoordinates[index]->getArrayType(),
                                                                                newEndian,
                                                                                seek,
@@ -7601,7 +7601,7 @@ XdmfFortran::setSetHDF5(const int index,
                         const unsigned int dataspace)
 {
   if (index < (int)mSets.size()) {
-    shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+    shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
                                                                          std::string(hdf5Dataset),
                                                                          mSets[index]->getArrayType(),
                                                                          std::vector<unsigned int>(1, start),
@@ -7652,7 +7652,7 @@ XdmfFortran::setSetBinary(const int index,
       default:
         break;
     }
-    shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+    shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                                mSets[index]->getArrayType(),
                                                                                newEndian,
                                                                                seek,
@@ -8550,13 +8550,13 @@ XdmfFortran::setInformationArrayHDF5(const int index,
     if (arrayIndex < (int)mInformations[index]->getNumberArrays()) {
       shared_ptr<XdmfArray> modifiedArray =
         mInformations[index]->getArray(arrayIndex);
-      shared_ptr<XdmfHeavyDataController> newController = XdmfHDF5Controller::New(std::string(hdf5File),
-                                                                                  std::string(hdf5Dataset),
-                                                                                  modifiedArray->getArrayType(),
-                                                                                  std::vector<unsigned int>(1, start),
-                                                                                  std::vector<unsigned int>(1, stride),
-                                                                                  std::vector<unsigned int>(1, numValues),
-                                                                                  std::vector<unsigned int>(1, dataspace));
+      shared_ptr<XdmfHDF5Controller> newController = XdmfHDF5Controller::New(std::string(hdf5File),
+                                                                             std::string(hdf5Dataset),
+                                                                             modifiedArray->getArrayType(),
+                                                                             std::vector<unsigned int>(1, start),
+                                                                             std::vector<unsigned int>(1, stride),
+                                                                             std::vector<unsigned int>(1, numValues),
+                                                                             std::vector<unsigned int>(1, dataspace));
       while (modifiedArray->getNumberHeavyDataControllers() > 0)
       {
         modifiedArray->removeHeavyDataController(0);
@@ -8614,7 +8614,7 @@ XdmfFortran::setInformationArrayBinary(const int index,
         default:
           break;
       }
-      shared_ptr<XdmfHeavyDataController> newController = XdmfBinaryController::New(std::string(binFile),
+      shared_ptr<XdmfBinaryController> newController = XdmfBinaryController::New(std::string(binFile),
                                                                                  mDimensions->getArrayType(),
                                                                                  newEndian,
                                                                                  seek,
@@ -10035,7 +10035,7 @@ XdmfFortran::readFromDSM(const char * const dsmDataSetPath,
     std::vector<unsigned int> dataVector;
     dataVector.push_back(dataspace);
     std::string writtenPath(dsmDataSetPath);
-    shared_ptr<XdmfHeavyDataController> writerController =
+    shared_ptr<XdmfHDF5ControllerDSM> writerController =
       XdmfHDF5ControllerDSM::New(mDSMWriter->getFilePath(),
                                  writtenPath,
                                  writtenArrayType,
@@ -10126,7 +10126,7 @@ XdmfFortran::writeToDSM(const char * const dsmDataSetPath,
     std::vector<unsigned int> dataVector;
     dataVector.push_back(dataspace);
     std::string writtenPath(dsmDataSetPath);
-    shared_ptr<XdmfHeavyDataController> writerController =
+    shared_ptr<XdmfHDF5ControllerDSM> writerController =
       XdmfHDF5ControllerDSM::New(mDSMWriter->getFilePath(),
                                  writtenPath,
                                  writtenArrayType,

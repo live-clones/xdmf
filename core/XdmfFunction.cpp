@@ -28,6 +28,7 @@
 #include "XdmfWriter.hpp"
 #include <stack>
 #include <cmath>
+#include <boost/assign.hpp>
 #include "XdmfError.hpp"
 
 class XdmfFunctionInternalImpl : public XdmfFunction::XdmfFunctionInternal {
@@ -91,20 +92,6 @@ const std::string XdmfFunction::mValidDigitChars = "1234567890.";
 // List the priorities for the operations, based on the order of operations
 // The index of the corresponding operation in validOperationChars
 // is the same as the index of its priority in this array
-#ifdef HAVE_CXX11_SHARED_PTR
-std::map<char, int> XdmfFunction::mOperationPriority =
-  {
-    {'-', 4},
-    {'+', 4},
-    {'/', 3},
-    {'*', 3},
-    {'|', 2},
-    {'#', 1},
-    {'(', 0},
-    {')', 0}
-  };
-#else
-#include <boost/assign.hpp>
 std::map<char, int> XdmfFunction::mOperationPriority = 
 	boost::assign::map_list_of ('-', 4)
                                    ('+', 4)
@@ -114,7 +101,6 @@ std::map<char, int> XdmfFunction::mOperationPriority =
                                    ('#', 1)
                                    ('(', 0)
                                    (')', 0);
-#endif
 // The higher the value, the earlier the operation is
 // evaluated in the order of operations
 // With the exception of parenthesis which are evaluated
@@ -122,40 +108,6 @@ std::map<char, int> XdmfFunction::mOperationPriority =
 
 // Note, it doesn't handle overloaded functions well.
 // Will generate errors unless overload methods are typecast.
-#ifdef HAVE_CXX11_SHARED_PTR
-std::map<std::string, shared_ptr<XdmfFunction::XdmfFunctionInternal> >
-  XdmfFunction::arrayFunctions =
-    {
-      {"ABS", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::abs)},
-      {"ABS_TOKEN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::abs)},
-      {"ACOS", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::arccos)},
-      {"ASIN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::arcsin)},
-      {"ATAN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::arctan)},
-      {"AVE", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::average)},
-      {"COS", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::cos)},
-      {"EXP", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::exponent)},
-      {"JOIN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::join)},
-      {"LOG", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::log)},
-      {"SIN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::sin)},
-      {"SQRT", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::sqrt)},
-      {"SUM", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::sum)},
-      {"TAN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
-                                            XdmfFunction::tan)}
-   };
-#else
 std::map<std::string, shared_ptr<XdmfFunction::XdmfFunctionInternal> >
   XdmfFunction::arrayFunctions =
     boost::assign::map_list_of
@@ -187,20 +139,7 @@ std::map<std::string, shared_ptr<XdmfFunction::XdmfFunctionInternal> >
                                             XdmfFunction::sum))
       ("TAN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
                                             XdmfFunction::tan));
-#endif
 
-#ifdef HAVE_CXX11_SHARED_PTR
-std::map<char, shared_ptr<XdmfFunction::XdmfOperationInternal> >
-  XdmfFunction::operations =
-    {
-      {'-', XdmfOperationInternalImpl::New(XdmfFunction::subtraction)},
-      {'+', XdmfOperationInternalImpl::New(XdmfFunction::addition)},
-      {'*', XdmfOperationInternalImpl::New(XdmfFunction::multiplication)},
-      {'/', XdmfOperationInternalImpl::New(XdmfFunction::division)},
-      {'|', XdmfOperationInternalImpl::New(XdmfFunction::chunk)},
-      {'#', XdmfOperationInternalImpl::New(XdmfFunction::interlace)}
-   };
-#else
 std::map<char, shared_ptr<XdmfFunction::XdmfOperationInternal> >
   XdmfFunction::operations =
     boost::assign::map_list_of
@@ -210,7 +149,6 @@ std::map<char, shared_ptr<XdmfFunction::XdmfOperationInternal> >
       ('/', XdmfOperationInternalImpl::New(XdmfFunction::division))
       ('|', XdmfOperationInternalImpl::New(XdmfFunction::chunk))
       ('#', XdmfOperationInternalImpl::New(XdmfFunction::interlace));
-#endif
 
 shared_ptr<XdmfFunction>
 XdmfFunction::New()

@@ -25,7 +25,7 @@
 #include "XdmfGeometryType.hpp"
 #include "XdmfError.hpp"
 #include "XdmfFunction.hpp"
-#include <cstring>
+#include <boost/tokenizer.hpp>
 
 shared_ptr<XdmfGeometry> XdmfGeometry::New()
 {
@@ -176,7 +176,11 @@ XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProper
           iter != childItems.end();
           ++iter) {
         if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
-          this->populateArray(array);
+          this->swap(array);
+          if (array->getReference()) {
+            this->setReference(array->getReference());
+            this->setReadMode(XdmfArray::Reference);
+          }
           break;
         }
       }
@@ -191,25 +195,12 @@ XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProper
   std::map<std::string, std::string>::const_iterator origin =
     itemProperties.find("Origin");
   if (origin != itemProperties.end()) {
-#ifdef HAVE_CXX11_SHARED_PTR
-    char * originString = strdup(origin->second.c_str());
-    char * token = std::strtok(originString, " ");
-    while (token != NULL)
-    {
-      mOrigin.push_back(atof(token));
-      token = std::strtok(NULL, " ");
-    }
-
-    free(originString);
-    originString = NULL;
-#else
     boost::tokenizer<> tokens(origin->second);
     for(boost::tokenizer<>::const_iterator iter = tokens.begin();
         iter != tokens.end();
         ++iter) {
       mOrigin.push_back(atof((*iter).c_str()));
     }
-#endif
   }
 }
 

@@ -24,7 +24,6 @@
 #include <sstream>
 #include <utility>
 #include <climits>
-#include <cstring>
 #include <set>
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"
@@ -38,6 +37,8 @@
 #include "XdmfWriter.hpp"
 
 #include "XdmfSystemUtils.hpp"
+
+#include <boost/tokenizer.hpp>
 
 #include <stdio.h>
 
@@ -887,9 +888,7 @@ XdmfTemplate::preallocateSteps(unsigned int numSteps)
 //printf("allocating subsection %u\n", allocateIteration);
 //*/
 //printf("initializing base array\n");
-          std::vector<unsigned int> preallocatedSizeVector;
-          preallocatedSizeVector.push_back(preallocatedSize);
-          tempArray->initialize(mTrackedArrays[i]->getArrayType(), preallocatedSizeVector);
+          tempArray->initialize(mTrackedArrays[i]->getArrayType(), preallocatedSize);
 //printf("writing subsection");
           tempArray->accept(mHeavyWriter);
 //printf("subsection written\n");
@@ -1115,28 +1114,6 @@ XdmfTemplate::setStep(unsigned int stepId)
             mTrackedArrays[i]->initialize(mTrackedArrayTypes[i], mTrackedArrayDims[i]);
 
             unsigned int index = 0;
-#ifdef HAVE_CXX11_SHARED_PTR
-            char * trackedString = strdup(content.c_str());
-            char * token = std::strtok(trackedString, " \t\n");
-            if(mTrackedArrayTypes[i] == XdmfArrayType::String()) {
-              while (token != NULL)
-              {
-                mTrackedArrays[i]->insert(index, std::string(token));
-                token = std::strtok(NULL, " \t\n");
-                ++index;
-              }
-            }
-            else {
-              while (token != NULL)
-              { 
-                mTrackedArrays[i]->insert(index, atof(token));
-                token = std::strtok(NULL, " \t\n");
-                ++index;
-              }
-            }
-            free(trackedString);
-            trackedString = NULL;
-#else
             boost::char_separator<char> sep(" \t\n");
             boost::tokenizer<boost::char_separator<char> > valtokens(content, sep);
             if(mTrackedArrayTypes[i] == XdmfArrayType::String()) {
@@ -1155,7 +1132,6 @@ XdmfTemplate::setStep(unsigned int stepId)
                 mTrackedArrays[i]->insert(index, atof((*iter).c_str()));
               }
             }
-#endif
           }
         }
       }

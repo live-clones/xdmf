@@ -1,6 +1,5 @@
 #include <math.h>
 #include <iostream>
-#include <assert.h>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfAttribute.hpp"

@@ -39,7 +39,7 @@ if(XDMF_BUILD_DSM)
 endif()
 
 mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
-find_package(Boost)
+find_package(Boost REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   mark_as_advanced(FORCE Boost_INCLUDE_DIR)
@@ -117,8 +117,7 @@ endif()
 TEST_BIG_ENDIAN(XDMF_BIG_ENDIAN)
 
 unset(HAVE_BOOST_SHARED_DYNAMIC_CAST CACHE)
-unset(HAVE_CXX11_SHARED_PTR CACHE)
-
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
 check_cxx_source_compiles("
 #include <boost/shared_ptr.hpp>
 
@@ -132,26 +131,6 @@ int main(int ac, char * av[])
 }
 "
 HAVE_BOOST_SHARED_DYNAMIC_CAST)
-
-if (XDMF_TRY_NOBOOST)
-  check_cxx_source_compiles("
-  #include <memory>
-  using namespace std;
-
-  struct Base { virtual ~Base(){} };
-
-  int main(int ac, char * av[])
-  {
-    shared_ptr<Base> ptr(new Base());
-  }
-  "
-  HAVE_CXX11_SHARED_PTR)
-endif ()
-
-if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
-    add_definitions(-DHAVE_CXX11_SHARED_PTR)
-endif ()
-
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XdmfCoreConfig.hpp.in
                ${CMAKE_CURRENT_BINARY_DIR}/XdmfCoreConfig.hpp)
@@ -244,9 +223,6 @@ SET_TARGET_PROPERTIES(
   VERSION ${XDMF_VERSION}
   SOVERSION ${XDMF_MAJOR_VERSION}
   )
-
-set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} PARENT_SCOPE)
-set(XDMF_LIBRARIES ${XDMF_LIBRARIES} PARENT_SCOPE)
 
 link_directories(${XDMF_LIBRARY_DIRS})
 
@@ -350,6 +326,7 @@ set(XdmfCore_INCLUDE_DIRS
   CACHE INTERNAL "")
 
 set(XDMF_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include PARENT_SCOPE)
+set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${CMAKE_INSTALL_PREFIX}/lib)
 set(XDMF_DIR ${CMAKE_INSTALL_PREFIX} PARENT_SCOPE)
 set(XDMF_BINARIES ${XDMF_BINARIES} ${CMAKE_INSTALL_PREFIX}/bin)
 

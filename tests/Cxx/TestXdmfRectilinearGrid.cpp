@@ -8,27 +8,26 @@
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfWriter.hpp"
 #include <iostream>
-#include <assert.h>
 
 #include "XdmfTestCompareFiles.hpp"
 
 int main(int, char **)
 {
   shared_ptr<XdmfArray> vx = XdmfArray::New();
-  vx->initialize<unsigned int>(4);
+  vx->resize<unsigned int>(4);
   vx->insert(0, 0);
   vx->insert(1, 1);
   vx->insert(2, 2);
   vx->insert(3, 4);
 
   shared_ptr<XdmfArray> vy = XdmfArray::New();
-  vy->initialize<unsigned int>(3);
+  vy->resize<unsigned int>(3);
   vy->insert(0, 0);
   vy->insert(1, 1);
   vy->insert(2, 3);
 
   shared_ptr<XdmfArray> vz = XdmfArray::New();
-  vz->initialize<unsigned int>(3);
+  vz->resize<unsigned int>(3);
   vz->insert(0, 0);
   vz->insert(1, 1);
   vz->insert(2, 3);

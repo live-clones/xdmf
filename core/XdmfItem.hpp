@@ -210,7 +210,7 @@ public :
   shared_ptr<ChildClass>                                                      \
   ParentClass::get##ChildName(const unsigned int index)                       \
   {                                                                           \
-    return const_pointer_cast<ChildClass>                                     \
+    return boost::const_pointer_cast<ChildClass>                              \
       (static_cast<const ParentClass &>(*this).get##ChildName(index));        \
   }                                                                           \
                                                                               \
@@ -226,7 +226,7 @@ public :
   shared_ptr<ChildClass>                                                      \
   ParentClass::get##ChildName(const std::string & SearchName)                 \
   {                                                                           \
-    return const_pointer_cast<ChildClass>                                     \
+    return boost::const_pointer_cast<ChildClass>                              \
       (static_cast<const ParentClass &>(*this).get##ChildName(SearchName));   \
   }                                                                           \
                                                                               \

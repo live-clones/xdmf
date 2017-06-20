@@ -2,7 +2,6 @@
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include <iostream>
-#include <assert.h>
 
 int main(int, char **)
 {
@@ -62,7 +61,7 @@ int main(int, char **)
   dimensions[0] = 2;
   dimensions[1] = 3;
   dimensions[2] = 4;
-  dimensionsArray->initialize<double>(dimensions);
+  dimensionsArray->resize<double>(dimensions);
   double data[24] = {0.0, 1.0, 2.0, 3.0, 4.0,
                      5.0, 6.0, 7.0, 8.0, 9.0,
                      10.0, 11.0, 12.0, 13.0, 14.0,
@@ -95,11 +94,7 @@ int main(int, char **)
   std::vector<unsigned int> largeDimensions(2);
   largeDimensions[0] = 1000;
   largeDimensions[1] = 3;
-  largeArray->initialize<double>(largeDimensions);
-  for (unsigned int i = 0; i < 3000; ++i)
-  {
-    largeArray->insert(i, 0);
-  }
+  largeArray->resize<double>(largeDimensions);
   largeArray->accept(largeArrayWriter);
 
 }

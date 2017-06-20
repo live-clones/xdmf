@@ -42,6 +42,8 @@
 
 #include "XdmfSystemUtils.hpp"
 
+#include <boost/tokenizer.hpp>
+
 #include <stdio.h>
 
 shared_ptr<XdmfGridTemplate>

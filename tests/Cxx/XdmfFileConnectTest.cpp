@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <assert.h>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfDomain.hpp"

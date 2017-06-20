@@ -1,5 +1,3 @@
-set(XDMF_SUBSECTION "")
-
 add_subdirectory(C)
 add_subdirectory(Cxx)
 

@@ -24,7 +24,6 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
-#include <assert.h>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfDiff.hpp"

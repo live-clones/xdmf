@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include <cctype>
+#include <boost/tokenizer.hpp>
 #include "XdmfInformation.hpp"
 #include "XdmfDSMDescription.hpp"
 #include "XdmfDSMDriver.hpp"
@@ -31,7 +32,6 @@
 #include "XdmfHDF5ControllerDSM.hpp"
 #include "XdmfHDF5WriterDSM.hpp"
 #include "XdmfError.hpp"
-#include "cstring"
 
 #include "stdio.h"
 
@@ -176,25 +176,12 @@ XdmfDSMItemFactory::generateHeavyDataControllers(const std::map<std::string, std
                          "'Dimensions' not found in generateHeavyControllers in "
                          "XdmfCoreItemFactory");
     }
-#ifdef HAVE_CXX11_SHARED_PTR
-    char * dimString = strdup(dimensions->second.c_str());
-    char * token = std::strtok(dimString, " ");
-    while (token != NULL)
-    {
-      dimVector.push_back(atoi(token));
-      token = std::strtok(NULL, " ");
-    }
-
-    free(dimString);
-    dimString = NULL;
-#else
     boost::tokenizer<> tokens(dimensions->second);
     for(boost::tokenizer<>::const_iterator iter = tokens.begin();
         iter != tokens.end();
         ++iter) {
       dimVector.push_back(atoi((*iter).c_str()));
     }
-#endif
   }
 
   shared_ptr<const XdmfArrayType> arrayType;
@@ -258,60 +245,6 @@ XdmfDSMItemFactory::generateHeavyDataControllers(const std::map<std::string, std
         }
 
         // split the description based on tokens
-#ifdef HAVE_CXX11_SHARED_PTR
-        char * dimString;// = strdup(origin->second.c_str());
-        if (dataspaceVector.size() == 1) {
-          dimString = strdup(dataspaceDescription.c_str());
-        }
-        else if (dataspaceVector.size() == 4) {
-          dimString = strdup(dataspaceVector[2].c_str());
-        }
-        char * token = std::strtok(dimString, " ");
-        while (token != NULL)
-        {
-          contentDims.push_back(atoi(token));
-          token = std::strtok(NULL, " ");
-        }
-
-        free(dimString);
-        dimString = NULL;
-
-        if (dataspaceVector.size() == 4) {
-          dimString = strdup(dataspaceVector[0].c_str());
-          token = std::strtok(dimString, " ");
-          while (token != NULL)
-          {
-            contentStarts.push_back(atoi(token));
-            token = std::strtok(NULL, " ");
-          }
-
-          free(dimString);
-          dimString = NULL;
-
-
-          dimString = strdup(dataspaceVector[1].c_str());
-          token = std::strtok(dimString, " ");
-          while (token != NULL)
-          { 
-            contentStrides.push_back(atoi(token));
-            token = std::strtok(NULL, " ");
-          }
-          
-          free(dimString);
-          dimString = NULL;
-
-          dimString = strdup(dataspaceVector[3].c_str());
-          token = std::strtok(dimString, " ");
-          while (token != NULL)
-          {
-            contentDataspaces.push_back(atoi(token));
-            token = std::strtok(NULL, " ");
-          }
-
-          free(dimString);
-          dimString = NULL;
-        }
-#else
         boost::tokenizer<> dimtokens(std::string(""));
         if (dataspaceVector.size() == 1) {
           dimtokens = boost::tokenizer<>(dataspaceDescription);
@@ -345,7 +278,6 @@ XdmfDSMItemFactory::generateHeavyDataControllers(const std::map<std::string, std
             contentDataspaces.push_back(atoi((*iter).c_str()));
           }
         }
-#endif
         contentStep = 2;
         // If this works then the dimension content should be skipped over
       }

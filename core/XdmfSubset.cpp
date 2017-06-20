@@ -23,7 +23,8 @@
 
 #include <numeric>
 #include <functional>
-#include <cstring>
+#include <boost/tokenizer.hpp>
+#include "string.h"
 #include "XdmfArray.hpp"
 #include "XdmfError.hpp"
 #include "XdmfSubset.hpp"
@@ -174,49 +175,6 @@ XdmfSubset::populateItem(const std::map<std::string, std::string> & itemProperti
              const std::vector<shared_ptr<XdmfItem> > & childItems,
              const XdmfCoreReader * const reader)
 {
-#ifdef HAVE_CXX11_SHARED_PTR
-  std::map<std::string, std::string>::const_iterator starts =
-    itemProperties.find("SubsetStarts");
-
-  char * startsString = strdup(starts->second.c_str());
-  char * token = std::strtok(startsString, " ");
-  while (token != NULL)
-  {
-    mStart.push_back(atoi(token));
-    token = std::strtok(NULL, " ");
-  }
-
-  free(startsString);
-  startsString = NULL;
-
-  std::map<std::string, std::string>::const_iterator strides =
-    itemProperties.find("SubsetStrides");
-
-  char * stridesString = strdup(strides->second.c_str());
-  token = std::strtok(stridesString, " ");
-  while (token != NULL)
-  {
-    mStride.push_back(atoi(token));
-    token = std::strtok(NULL, " ");
-  }
-
-  free(stridesString);
-  stridesString = NULL;
-
-  std::map<std::string, std::string>::const_iterator dimensions =
-    itemProperties.find("SubsetDimensions");
-
-  char * dimsString = strdup(dimensions->second.c_str());
-  token = std::strtok(dimsString, " ");
-  while (token != NULL)
-  {
-    mDimensions.push_back(atoi(token));
-    token = std::strtok(NULL, " ");
-  }
-
-  free(dimsString);
-  dimsString = NULL;
-#else
   std::map<std::string, std::string>::const_iterator starts =
     itemProperties.find("SubsetStarts");
 
@@ -246,7 +204,6 @@ XdmfSubset::populateItem(const std::map<std::string, std::string> & itemProperti
       ++iter) {
     mDimensions.push_back(atoi((*iter).c_str()));
   }
-#endif
 
   mParent = shared_dynamic_cast<XdmfArray>(childItems[0]);
 }
@@ -262,11 +219,8 @@ XdmfSubset::read() const
                        "one value contained within");
   }
 
-  bool releaseRequired = false;
-
   if (!mParent->isInitialized()) {
     mParent->read();
-    releaseRequired = true;
   }
 
   shared_ptr<XdmfArray> tempArray = XdmfArray::New();
@@ -286,11 +240,6 @@ XdmfSubset::read() const
                     writeDimensions,
                     writeStrides,
                     mStride);
-
-  if (releaseRequired) {
-    mParent->release();
-  }
-
   return tempArray;
 }
 

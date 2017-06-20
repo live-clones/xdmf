@@ -9,7 +9,6 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
-#include <assert.h>
 #include "string.h"
 #include "stdio.h"
 

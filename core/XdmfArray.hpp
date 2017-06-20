@@ -37,6 +37,8 @@ class XdmfArrayType;
 class XdmfHeavyDataController;
 
 // Includes
+#include <boost/shared_array.hpp>
+#include <boost/variant.hpp>
 
 /**
  * @brief Provides storage for data values that are read in or will be
@@ -107,11 +109,6 @@ public:
     Controller,
     Reference
   };
-
-  friend class XdmfHeavyDataWriter;
-  friend class XdmfHDF5Writer;
-  friend class XdmfHeavyDataController;
-  friend class XdmfHDF5Controller;
 
   /**
    * Create a new XdmfArray.
@@ -603,7 +600,7 @@ public:
    *                    initialized in this array.
    */
   template <typename T>
-  T * initialize(const unsigned int size = 0);
+  shared_ptr<std::vector<T> > initialize(const unsigned int size = 0);
 
   /**
    * Initialize the array to specific dimensions.
@@ -628,7 +625,8 @@ public:
    *                            initialized in this array.
    */
   template <typename T>
-  T * initialize(const std::vector<unsigned int> & dimensions);
+  shared_ptr<std::vector<T> >
+  initialize(const std::vector<unsigned int> & dimensions);
 
   /**
    * Initialize the array to contain a specified amount of a particular type.
@@ -1322,7 +1320,7 @@ public:
    *                                    deletion of the array to XdmfArray.
    */
   template<typename T>
-  void setValuesInternal(T * const arrayPointer,
+  void setValuesInternal(const T * const arrayPointer,
                          const unsigned int numValues,
                          const bool transferOwnership = 0);
 
@@ -1381,6 +1379,56 @@ public:
   void setValuesInternal(const shared_ptr<std::vector<T> > array);
 
   /**
+   * Exchange the contents of the vector with the contents of this
+   * array. No copy is made. The internal arrays are swapped.
+   *
+   * Example of use
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#initinternalvector
+   * @until //#initinternalvector
+   * @skipline //#swapvector
+   * @until //#swapvector
+   *
+   * Python: The Python version only supports swapping XdmfArrays
+   *
+   * @param     array   A vector to exchange values with.
+   * @return            bool whether the swap was successful.
+   */
+  template<typename T>
+  bool swap(std::vector<T> & array);
+
+  /**
+   * Exchange the contents of the vector with the contents of this
+   * array. No copy is made. The internal arrays are swapped.
+   *
+   * Example of use
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#initinternalvector
+   * @until //#initinternalvector
+   * @skipline //#initsharedvector
+   * @until //#initsharedvector
+   * @skipline //#swapsharedvector
+   * @until //#swapsharedvector
+   *
+   * Python: The Python version only supports swapping XdmfArrays
+   *
+   * @param     array   A smart pointer to a vector to exchange values with.
+   * @return            bool whether the swap was successful.
+   */
+  template<typename T>
+  bool swap(const shared_ptr<std::vector<T> > array);
+
+  /**
    * Exchange the contents of an XdmfArray with the contents of this
    * array. No copy is made. The internal arrays are swapped.
    *
@@ -1416,52 +1464,26 @@ protected:
 
   XdmfArray();
 
-  template <typename T>
-  void setArrayType();
-
-  virtual void
-  populateArray(const shared_ptr<XdmfArray> array);
-
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
                const std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
-
-  unsigned int mStringSize;
 
 private:
 
   XdmfArray(const XdmfArray &);  // Not implemented.
   void operator=(const XdmfArray &);  // Not implemented.
 
-  template <typename T>
-  class XdmfVisitor;
-
-  template <typename T, typename U>
-  static
-  T
-  ApplyVisitor(const XdmfArray * const source, XdmfVisitor<T> & visitor, void * array, U * internal);
-
-  template<typename T, typename U, typename V>
-  static
-  T
-  ApplyVisitorFunction(XdmfVisitor<T> & visitor, U * array, V * internal);
-
-
   // Variant Visitor Operations
   class Clear;
   class Erase;
   class GetArrayType;
   class GetCapacity;
-  template <typename T>
-  class GetValue;
-  template <typename T>
-  class GetValues;
+  template <typename T> class GetValue;
+  template <typename T> class GetValues;
   class GetValuesPointer;
-  template <typename T>
   class GetValuesString;
-  template <typename T>
-  class Insert;
+  template <typename T> class Insert;
   class InsertArray;
   class InternalizeArrayPointer;
   class IsInitialized;
@@ -1481,21 +1503,35 @@ private:
    */
   void internalizeArrayPointer();
 
+  typedef boost::variant<
+    boost::blank,
+    shared_ptr<std::vector<char> >,
+    shared_ptr<std::vector<short> >,
+    shared_ptr<std::vector<int> >,
+    shared_ptr<std::vector<long> >,
+    shared_ptr<std::vector<float> >,
+    shared_ptr<std::vector<double> >,
+    shared_ptr<std::vector<unsigned char> >,
+    shared_ptr<std::vector<unsigned short> >,
+    shared_ptr<std::vector<unsigned int> >,
+    shared_ptr<std::vector<std::string> >,
+    boost::shared_array<const char>,
+    boost::shared_array<const short>,
+    boost::shared_array<const int>,
+    boost::shared_array<const long>,
+    boost::shared_array<const float>,
+    boost::shared_array<const double>,
+    boost::shared_array<const unsigned char>,
+    boost::shared_array<const unsigned short>,
+    boost::shared_array<const unsigned int>  > ArrayVariant;
+  
   unsigned int mArrayPointerNumValues;
-//  unsigned int mStringSize;
+  std::vector<unsigned int> mDimensions;
+  std::string mName;
   unsigned int mTmpReserveSize;
   ReadMode mReadMode;
   shared_ptr<XdmfArrayReference> mReference;
-  std::vector<unsigned int> mDimensions;
-  std::string mName;
-  std::string mRequestedHeavyDataset;
-  // Internal Array Data
-  // This will need to be expanded as T** or further to handle multiple dimensions
-  shared_ptr<const XdmfArrayType> mArrayType;
-  std::vector<unsigned int> mCapacity;
-  std::vector<unsigned long> mAllocation;
-  bool mHasArrayOwnership;
-  void * mArray;  
+  ArrayVariant mArray;
 };
 
 #include "XdmfArray.tpp"
@@ -1588,6 +1624,8 @@ XDMFCORE_EXPORT void XdmfArraySetValuesInternal(XDMFARRAY * array, void * pointe
 
 XDMFCORE_EXPORT void XdmfArraySwapWithXdmfArray(XDMFARRAY * array, XDMFARRAY * swapArray);
 
+XDMFCORE_EXPORT void XdmfArraySwapWithArray(XDMFARRAY * array, void ** pointer, int numValues, int arrayType, int * status);
+
 // C Wrappers for parent classes are generated by macros
 
 XDMF_ITEM_C_CHILD_DECLARE(XdmfArray, XDMFARRAY, XDMFCORE)
@@ -1676,7 +1714,12 @@ Level##_EXPORT void ClassName##SetValuesInternal( CClassName * array,           
                                                   int arrayType,                                                     \
                                                   int transferOwnership,                                             \
                                                   int * status);                                                     \
-Level##_EXPORT void ClassName##SwapWithXdmfArray( CClassName * array, XDMFARRAY * swapArray);
+Level##_EXPORT void ClassName##SwapWithXdmfArray( CClassName * array, XDMFARRAY * swapArray);                        \
+Level##_EXPORT void ClassName##SwapWithArray( CClassName * array,                                                    \
+                                              void ** pointer,                                                       \
+                                              int numValues,                                                         \
+                                              int arrayType,                                                         \
+                                              int * status);
 
 
 #define XDMF_ARRAY_C_CHILD_WRAPPER(ClassName, CClassName)                                                            \
@@ -1946,6 +1989,16 @@ void                                                                            
 ClassName##SwapWithXdmfArray( CClassName * array, XDMFARRAY * swapArray)                                             \
 {                                                                                                                    \
   XdmfArraySwapWithXdmfArray((XDMFARRAY *)((void *)array), swapArray);                                               \
+}                                                                                                                    \
+                                                                                                                     \
+void                                                                                                                 \
+ClassName##SwapWithArray( CClassName * array,                                                                        \
+                          void ** pointer,                                                                           \
+                          int numValues,                                                                             \
+                          int arrayType,                                                                             \
+                          int * status)                                                                              \
+{                                                                                                                    \
+  XdmfArraySwapWithArray((XDMFARRAY *)((void *)array), pointer, numValues, arrayType, status);                       \
 }
 
 #ifdef __cplusplus

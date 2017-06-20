@@ -2,7 +2,6 @@
 #include "XdmfTopologyType.hpp"
 
 #include <iostream>
-#include <assert.h>
 
 void setPolyTopology(shared_ptr<XdmfTopology> polyTop)
 {

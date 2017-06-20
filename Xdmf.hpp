@@ -142,28 +142,22 @@
 # define XDMF_TEMPLATE
 #else
 /* Used to export/import from the dlls */
+# undef XDMFCORE_EXPORT
+# define XDMFCORE_EXPORT __declspec(dllimport)
+# undef XDMFCORE_TEMPLATE
+# define XDMFCORE_TEMPLATE extern
+
+# undef XDMFDSM_EXPORT
+# define XDMFDSM_EXPORT __declspec(dllimport)
+# undef XDMFDSM_TEMPLATE
+# define XDMFDSM_TEMPLATE extern
+
 # ifdef XDMF_EXPORTS
-#   define XDMF_EXPORT __declspec(dllexport)
-#   define XDMF_TEMPLATE
-#   undef XDMFCORE_EXPORT
-#   define XDMFCORE_EXPORT __declspec(dllexport)
-#   undef XDMFCORE_TEMPLATE
-#   define XDMFCORE_TEMPLATE
-#   undef XDMFDSM_EXPORT
-#   define XDMFDSM_EXPORT __declspec(dllexport)
-#   undef XDMFDSM_TEMPLATE
-#   define XDMFDSM_TEMPLATE
+# define XDMF_EXPORT __declspec(dllexport)
+# define XDMF_TEMPLATE
 # else /* XDMF_EXPORTS */
-#   define XDMF_EXPORT __declspec(dllimport)
-#   define XDMF_TEMPLATE extern
-#   undef XDMFCORE_EXPORT
-#   define XDMFCORE_EXPORT __declspec(dllimport)
-#   undef XDMFCORE_TEMPLATE
-#   define XDMFCORE_TEMPLATE extern
-#   undef XDMFDSM_EXPORT
-#   define XDMFDSM_EXPORT __declspec(dllimport)
-#   undef XDMFDSM_TEMPLATE
-#   define XDMFDSM_TEMPLATE extern
+# define XDMF_EXPORT __declspec(dllimport)
+# define XDMF_TEMPLATE extern
 # endif /* XDMF_EXPORTS */
 #endif
 
