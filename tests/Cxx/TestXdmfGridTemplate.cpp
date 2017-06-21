@@ -9,7 +9,6 @@
 #include "XdmfWriter.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include <iostream>
-#include <assert.h>
 
 int main(int, char **)
 {

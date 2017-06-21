@@ -107,7 +107,7 @@ XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
     else if(shared_ptr<XdmfArray> array = 
             shared_dynamic_cast<XdmfArray>(*iter)) {
       if (!filled) {
-        this->populateArray(array);
+        this->swap(array);
         filled = true;
       }
       if (array->getReference()) {

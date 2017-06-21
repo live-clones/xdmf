@@ -2,7 +2,6 @@
 #include "XdmfWriter.hpp"
 #include "stdio.h"
 #include <iostream>
-#include <assert.h>
 
 int main(int, char **)
 {

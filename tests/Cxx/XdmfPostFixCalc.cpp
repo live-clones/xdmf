@@ -4,20 +4,20 @@
 #include <string>
 #include <stdlib.h>
 #include <math.h>
-#include <assert.h>
 #include <XdmfArray.hpp>
 #include <XdmfArrayType.hpp>
 #include <XdmfFunction.hpp>
+#include "boost/assign.hpp"
 
 double parse(std::string expression, std::map<std::string, double> variables);
 double calculation(double val1, double val2, char operation);
-double callfunction(std::vector<double> valueVector, std::string functionName);
+double function(std::vector<double> valueVector, std::string functionName);
 double sum(std::vector<double> values);
 double ave(std::vector<double> values);
 shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared_ptr<XdmfArray> > variables);
 shared_ptr<XdmfArray> calculation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2, char operation);
 shared_ptr<XdmfArray> invChunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
-shared_ptr<XdmfArray> callfunction(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName);
+shared_ptr<XdmfArray> function(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName);
 shared_ptr<XdmfArray> subtract(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
 shared_ptr<XdmfArray> sum(std::vector<shared_ptr<XdmfArray> > values);
 shared_ptr<XdmfArray> ave(std::vector<shared_ptr<XdmfArray> > values);
@@ -27,24 +27,11 @@ std::string validDigitChars = "-1234567890.";
 std::string validVariableChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_:.";
 
 //std::map<std::string,  double (*)(std::vector<double>)> functions = boost::assign::map_list_of ("SUM", sum) ("AVE", ave);
-#ifdef HAVE_CXX11_SHARED_PTR
-std::map<std::string,  double (*)(std::vector<double>)> functions = {{"SUM", (double (*)(std::vector<double>))sum}};
-#else
-#include "boost/assign.hpp"
 std::map<std::string,  double (*)(std::vector<double>)> functions = boost::assign::map_list_of ("SUM", (double (*)(std::vector<double>))sum);
-#endif
 
 //note, it doesn't handle overloaded functions well. Will generate errors unless typecast
 //std::map<std::string,  double (*)(std::vector<double>)> functions = boost::assign::map_list_of ("SUM", sum) ("AVE", ave);
-#ifdef HAVE_CXX11_SHARED_PTR
-std::map<std::string,  shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >)> arrayFunctions =
-  {
-    {"SUM", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))sum},
-    {"MAX", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))maximum}
-  };
-#else
 std::map<std::string,  shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >)> arrayFunctions = boost::assign::map_list_of ("SUM", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))sum) ("MAX", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))maximum);
-#endif
 
 
 
@@ -306,7 +293,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 							functionParameters = functionParameters.substr(parameterSplit+1);
 						}
 					}
-					valueStack.push(callfunction(parameterVector, currentFunction));
+					valueStack.push(function(parameterVector, currentFunction));
 				}
 			}
 			else
@@ -462,7 +449,7 @@ double calculation(double val1, double val2, char operation)
 }
 
 //this is how you use references to functions
-double callfunction(std::vector<double> valueVector, std::string functionName)
+double function(std::vector<double> valueVector, std::string functionName)
 {
 	return (*functions[functionName])(valueVector);
 }
@@ -578,7 +565,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 							functionParameters = functionParameters.substr(parameterSplit+1);
 						}
 					}
-					valueStack.push(callfunction(parameterVector, currentFunction));
+					valueStack.push(function(parameterVector, currentFunction));
 				}
 			}
 			else
@@ -1158,7 +1145,7 @@ shared_ptr<XdmfArray> subtract(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray>
 }
 
 //this is how you use references to functions
-shared_ptr<XdmfArray> callfunction(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName)
+shared_ptr<XdmfArray> function(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName)
 {
 	if (arrayFunctions.find(functionName) == arrayFunctions.end())
 	{

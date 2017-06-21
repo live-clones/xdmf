@@ -24,27 +24,12 @@
 #ifndef XDMFSHAREDPTR_HPP_
 #define XDMFSHAREDPTR_HPP_
 
+#ifdef __cplusplus
+
 #include "XdmfCoreConfig.hpp"
-
-#ifdef HAVE_CXX11_SHARED_PTR
-
-#include <memory>
-using std::shared_ptr;
-using std::const_pointer_cast;
-
-#else
-
 #include <boost/shared_ptr.hpp>
+
 using boost::shared_ptr;
-using boost::const_pointer_cast;
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string/trim.hpp>
-
-#endif /*  */
-
-
-// Tokenizer
-// http://en.cppreference.com/w/cpp/string/byte/strtok
 
 #ifdef HAVE_BOOST_SHARED_DYNAMIC_CAST
 
@@ -70,5 +55,7 @@ struct XdmfNullDeleter
 template<typename T>
 void operator()(T*) {}
 };
+
+#endif
 
 #endif /* XDMFSHAREDPTR_HPP_ */

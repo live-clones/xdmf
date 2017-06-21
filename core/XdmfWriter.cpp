@@ -208,7 +208,7 @@ XdmfWriter::~XdmfWriter()
 shared_ptr<XdmfHeavyDataWriter>
 XdmfWriter::getHeavyDataWriter()
 {
-  return const_pointer_cast<XdmfHeavyDataWriter>
+  return boost::const_pointer_cast<XdmfHeavyDataWriter>
     (static_cast<const XdmfWriter &>(*this).getHeavyDataWriter());
 }
 

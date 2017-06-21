@@ -7,7 +7,6 @@
 #include "XdmfTopologyType.hpp"
 #include "XdmfWriter.hpp"
 #include <iostream>
-#include <assert.h>
 
 #include "XdmfTestCompareFiles.hpp"
 
@@ -26,7 +25,7 @@ int main(int, char **)
 
   shared_ptr<XdmfGeometry> geometry = grid->getGeometry();
   geometry->setType(XdmfGeometryType::XYZ());
-  geometry->initialize<int>(36);
+  geometry->resize<int>(36);
   const int coordinates[36] = {0, 0, 0, 1, 0, 0, 4, 0, 0, 0, 0, 2, 1, 0, 2, 4,
 			       0, 2, 0, 1, 0, 1, 1, 0, 4, 1, 0, 0, 1, 2, 1, 1,
 			       2, 4, 1, 2};

@@ -1,7 +1,6 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
-#include <assert.h>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfGeometry.hpp"

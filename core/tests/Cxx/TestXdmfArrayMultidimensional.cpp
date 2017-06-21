@@ -2,7 +2,6 @@
 #include "XdmfArrayType.hpp"
 
 #include <iostream>
-#include <assert.h>
 
 int main(int, char **)
 {
@@ -11,9 +10,7 @@ int main(int, char **)
   // Create 1D arrays
   //
   shared_ptr<XdmfArray> array = XdmfArray::New();
-  std::vector<unsigned int> tempDims;
-  tempDims.push_back(2);
-  array->initialize<unsigned int>(tempDims);
+  array->initialize(XdmfArrayType::UInt32(), 2);
   std::cout << array->getArrayType() << " ?= " << XdmfArrayType::UInt32() << std::endl;
   assert(array->getArrayType() == XdmfArrayType::UInt32());
   std::cout << array->getSize() << " ?= " << 2 << std::endl;
@@ -26,9 +23,7 @@ int main(int, char **)
   std::string dimensionsString = array->getDimensionsString();
   std::cout << dimensionsString << " ?= " << "2" << std::endl;
   assert(dimensionsString.compare("2") == 0);
-  std::vector<unsigned int> tempDims2;
-  tempDims2.push_back(3);
-  array->resize<unsigned int>(tempDims2);
+  array->resize<unsigned int>(3);
   std::cout << array->getSize() << " ?= " << 3 << std::endl;
   assert(array->getSize() == 3);
   dimensions = array->getDimensions();
@@ -60,7 +55,7 @@ int main(int, char **)
   std::cout << dimensionsString << " ?= " << "2 2" << std::endl;
   assert(dimensionsString.compare("2 2") == 0);
   std::vector<unsigned int> newDimensions2(3,3);
-  array2->initialize<unsigned short>(newDimensions2);
+  array2->resize<unsigned short>(newDimensions2);
   std::cout << array2->getSize() << " ?= " << 27 << std::endl;
   assert(array2->getSize() == 27);
   dimensions = array2->getDimensions();

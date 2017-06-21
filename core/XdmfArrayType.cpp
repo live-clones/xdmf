@@ -23,6 +23,7 @@
 
 #include <sstream>
 #include <utility>
+#include <boost/assign.hpp>
 #include "string.h"
 #include "XdmfArrayType.hpp"
 #include "XdmfError.hpp"

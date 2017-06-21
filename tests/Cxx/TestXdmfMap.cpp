@@ -15,7 +15,6 @@
 #include "XdmfWriter.hpp"
 
 #include <iostream>
-#include <assert.h>
 
 void performTests(std::vector<shared_ptr<XdmfMap> > & boundaryMaps)
 {

@@ -1123,7 +1123,7 @@ XdmfHDF5Writer::write(XdmfArray & array)
     else if(array.getArrayType() == XdmfArrayType::String()) {
       // Strings are a special case as they have mutable size
       datatype = H5Tcopy(H5T_C_S1);
-      H5Tset_size(datatype, array.mStringSize);
+      H5Tset_size(datatype, H5T_VARIABLE);
       closeDatatype = true;
     }
     else {
@@ -1622,7 +1622,7 @@ XdmfHDF5Writer::write(XdmfArray & array)
 
         newDataController->setArrayOffset(curArrayOffset);
 
-        array.insert(shared_dynamic_cast<XdmfHeavyDataController>(newDataController));
+        array.insert(newDataController);
 
         fileNameWalker++;
         datasetWalker++;

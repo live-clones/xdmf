@@ -276,7 +276,7 @@ XdmfCurvilinearGrid::copyGrid(shared_ptr<XdmfGrid> sourceGrid)
 shared_ptr<XdmfArray>
 XdmfCurvilinearGrid::getDimensions()
 {
-  return const_pointer_cast<XdmfArray>
+  return boost::const_pointer_cast<XdmfArray>
     (static_cast<const XdmfCurvilinearGrid &>(*this).getDimensions());
 }
 
@@ -289,7 +289,7 @@ XdmfCurvilinearGrid::getDimensions() const
 shared_ptr<XdmfGeometry>
 XdmfCurvilinearGrid::getGeometry()
 {
-  return const_pointer_cast<XdmfGeometry>
+  return boost::const_pointer_cast<XdmfGeometry>
     (static_cast<const XdmfGrid &>(*this).getGeometry());
 }
 

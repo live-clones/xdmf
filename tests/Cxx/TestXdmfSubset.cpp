@@ -6,7 +6,6 @@
 #include "XdmfReader.hpp"
 #include <map>
 #include <iostream>
-#include <assert.h>
 
 int main(int, char **)
 {

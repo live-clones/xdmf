@@ -38,13 +38,8 @@
 #    define XDMFCORE_EXPORT __declspec(dllexport)
 #    define XDMFCORE_TEMPLATE
 #   else /* Xdmf_EXPORTS */
-#     ifdef XDMF_EXPORTS
-#       define XDMFCORE_EXPORT __declspec(dllexport)
-#       define XDMFCORE_TEMPLATE
-#     else
-#       define XDMFCORE_EXPORT __declspec(dllimport)
-#       define XDMFCORE_TEMPLATE extern
-#     endif
+#    define XDMFCORE_EXPORT __declspec(dllimport)
+#    define XDMFCORE_TEMPLATE extern
 #   endif /* Xdmf_EXPORTS */
 # endif
 

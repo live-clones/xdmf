@@ -12,8 +12,6 @@ if(MSVC10)
 	SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 endif()
 
-include(CheckCXXSourceCompiles)
-
 set(XDMF_LIBNAME "Xdmf" CACHE STRING "Name for this xdmf library to avoid collision")
 
 set(XDMF_MAJOR_VERSION 3)
@@ -50,7 +48,6 @@ if (XDMF_STATIC_AND_SHARED)
 endif ()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/CMake/VersionSuite)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 list(APPEND CMAKE_MODULE_PATH
@@ -103,33 +100,6 @@ endif (TIFF_FOUND)
 # Test for DSM
 option(XDMF_BUILD_DSM OFF)
 mark_as_advanced(XDMF_BUILD_DSM)
-
-option(XDMF_TRY_NOBOOST ON)
-mark_as_advanced(XDMF_TRY_NOBOOST)
-if (XDMF_TRY_NOBOOST)
-  # Test for Cxx11
-  unset(HAVE_CXX11_SHARED_PTR CACHE)
-
-  check_cxx_source_compiles("
-  #include <memory>
-  using namespace std;
-
-  struct Base { virtual ~Base(){} };
-
-  int main(int ac, char * av[])
-  {
-    shared_ptr<Base> ptr(new Base());
-  }
-  "
-  HAVE_CXX11_SHARED_PTR)
-endif ()
-
-# Cxx11 does not work with swig due to an issue with swig
-if (HAVE_CXX11_SHARED_PTR AND NOT XDMF_WRAP_PYTHON)
-    add_definitions(-DHAVE_CXX11_SHARED_PTR)
-endif ()
-
-
 if(XDMF_BUILD_DSM)
   find_package(MPI REQUIRED)
   if(MPI_FOUND)
@@ -403,15 +373,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
         )
     endif (BUILD_SHARED_LIBS)
   else()
-    if (WIN32)
-      if (XDMF_BUILD_DSM)
-        add_library(${XDMF_LIBNAME} ${LIBTYPE} ${XdmfSources} ${XdmfCoreSources} ${XdmfDSMSources})
-      else ()
-        add_library(${XDMF_LIBNAME} ${LIBTYPE} ${XdmfSources} ${XdmfCoreSources})
-      endif ()
-    else ()
-      add_library(${XDMF_LIBNAME} ${LIBTYPE} ${XdmfSources})
-    endif ()
+    add_library(${XDMF_LIBNAME} ${LIBTYPE} ${XdmfSources})
   endif()
   SET_TARGET_PROPERTIES(
     ${XDMF_LIBNAME} PROPERTIES
