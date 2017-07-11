@@ -141,14 +141,12 @@ foreach(executable ${XdmfUtilsExecutables})
   if(WIN32)
 	  set_target_properties(${executable} PROPERTIES
 	      DEFINE_SYMBOL XdmfUtils_EXPORTS)
-      if(NOT MSVC10)
-    	  set_target_properties(${executable} PROPERTIES
-	    	  PREFIX ../
-		      IMPORT_PREFIX ../
-		      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-		      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-		      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-      endif(NOT MSVC10)
+    set_target_properties(${executable} PROPERTIES
+      PREFIX ../
+      IMPORT_PREFIX ../
+      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   endif(WIN32)
 
 endforeach(executable ${XdmfUtilsExecutables})

@@ -7,11 +7,6 @@ if(WIN32)
   ADD_DEFINITIONS(-D_CRT_NONSTDC_NO_DEPRECATE)
   ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
 endif()
-if(MSVC10)
-	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-	SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-	SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-endif()
 
 set(XDMF_LIBNAME "Xdmf" CACHE STRING "Name for this xdmf library to avoid collision")
 
@@ -190,15 +185,13 @@ if(XDMF_WRAP_PYTHON)
     endif()
 
     if(WIN32)
-      if(NOT MSVC10)
-        set_target_properties(${SWIG_MODULE_${python_name}Python_REAL_NAME}
-          PROPERTIES
-          PREFIX ../
-          IMPORT_PREFIX ../
-          RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-          ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-      endif()
+      set_target_properties(${SWIG_MODULE_${python_name}Python_REAL_NAME}
+        PROPERTIES
+        PREFIX ../
+        IMPORT_PREFIX ../
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 
     if(APPLE)
@@ -261,15 +254,13 @@ if(XDMF_WRAP_JAVA)
     swig_link_libraries(${java_name}Java ${java_name})
 
     if(WIN32)
-	  if(NOT MSVC10)
-        set_target_properties(${SWIG_MODULE_${java_name}Java_REAL_NAME}
-          PROPERTIES
-          PREFIX ../
-          IMPORT_PREFIX ../
-          RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-          ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-	  endif()
+      set_target_properties(${SWIG_MODULE_${java_name}Java_REAL_NAME}
+        PROPERTIES
+        PREFIX ../
+        IMPORT_PREFIX ../
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
       set(java_files *.java)
       set(java_dest "bin")
       set(separator "\;")
