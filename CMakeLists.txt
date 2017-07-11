@@ -68,10 +68,9 @@ if(XDMF_BUILD_DSM)
   find_package(MPI REQUIRED)
   if(MPI_FOUND)
     include_directories(${MPI_INCLUDE_PATH})
-    # intel compiler requires an extra tag for CXX_FLAGS in order to properly build
-    STRING(REGEX MATCH "icpc" IS_INTEL "${CMAKE_CXX_COMPILER}")
-    if (NOT "${IS_INTEL}" STREQUAL "")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMPICH_IGNORE_CXX_SEEK")
+    # The Intel compiler requires an extra tag for CXX_FLAGS in order to properly build.
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+      add_definitions(-DMPICH_IGNORE_CXX_SEEK)
     endif ()
   endif()
   option(XDMF_BUILD_DSM_THREADS ON)
