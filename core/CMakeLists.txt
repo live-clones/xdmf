@@ -14,10 +14,7 @@ if(VERSION_CONTROL_AUTOUPDATE OR
 endif()
 
 if(BUILD_SHARED_LIBS)
-  set(LIBTYPE SHARED)
   set(BUILD_SHARED 1)
-else()
-  set(LIBTYPE STATIC)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -192,28 +189,7 @@ set(XdmfCoreSources
   core/XdmfWriter
   PARENT_SCOPE)
 
-if (XDMF_STATIC_AND_SHARED)
-  add_library(XdmfCoreObjects OBJECT ${XdmfCoreSources})
-  SET_TARGET_PROPERTIES(
-    XdmfCoreObjects PROPERTIES
-    VERSION ${XDMF_VERSION}
-    SOVERSION ${XDMF_MAJOR_VERSION}
-    )
-  set_target_properties(
-    XdmfCoreObjects PROPERTIES
-    POSITION_INDEPENDENT_CODE True
-    )
-  add_library(XdmfCore ${LIBTYPE} $<TARGET_OBJECTS:XdmfCoreObjects>)
-  if (BUILD_SHARED_LIBS)
-    add_library(XdmfCore_Static STATIC $<TARGET_OBJECTS:XdmfCoreObjects>)
-    set_target_properties(
-      XdmfCore_Static PROPERTIES
-      OUTPUT_NAME "XdmfCore"
-      )
-  endif (BUILD_SHARED_LIBS)
-else()
-  add_library(XdmfCore ${LIBTYPE} ${XdmfCoreSources})
-endif()
+add_library(XdmfCore ${XdmfCoreSources})
 SET_TARGET_PROPERTIES(
   XdmfCore PROPERTIES
   VERSION ${XDMF_VERSION}
@@ -223,9 +199,6 @@ SET_TARGET_PROPERTIES(
 link_directories(${XDMF_LIBRARY_DIRS})
 
 target_link_libraries(XdmfCore ${XDMF_LIBRARIES})
-if (XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
-  target_link_libraries(XdmfCore_Static ${XDMF_LIBRARIES})
-endif()
 
 if (COMMAND vtk_target_install)
   vtk_target_install(XdmfCore)
@@ -236,10 +209,6 @@ if(WIN32)
   if (BUILD_SHARED_LIBS)
     set_target_properties(XdmfCore PROPERTIES
       DEFINE_SYMBOL XdmfCore_EXPORTS)
-    if (XDMF_STATIC_AND_SHARED)
-      set_target_properties(XdmfCore_Static PROPERTIES
-        DEFINE_SYMBOL XdmfCore_EXPORTS)
-    endif()
   endif()
 endif()
 
@@ -292,12 +261,6 @@ install(TARGETS XdmfCore
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)
-if (XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
-  install(TARGETS XdmfCore_Static
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
-endif ()
 
 if (Boost_FOUND)
   set(FOUND_BOOST_INCLUDES ${Boost_INCLUDE_DIRS})

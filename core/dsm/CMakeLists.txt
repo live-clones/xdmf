@@ -85,63 +85,25 @@ if (XDMF_DSM_IS_CRAY)
   add_definitions(-DXDMF_DSM_IS_CRAY)
 endif (XDMF_DSM_IS_CRAY)
 
-add_library(XdmfDSMObjects OBJECT ${XdmfDSMSources})
-SET_TARGET_PROPERTIES(
-  XdmfDSMObjects PROPERTIES
-  VERSION ${XDMF_VERSION}
-  SOVERSION ${XDMF_MAJOR_VERSION}
-  )
-set_target_properties(XdmfDSMObjects PROPERTIES
-  POSITION_INDEPENDENT_CODE True)
-add_library(XdmfDSM $<TARGET_OBJECTS:XdmfDSMObjects>)
+add_library(XdmfDSM ${XdmfDSMSources})
 SET_TARGET_PROPERTIES(
   XdmfDSM PROPERTIES
   VERSION ${XDMF_VERSION}
   SOVERSION ${XDMF_MAJOR_VERSION}
   )
-if (BUILD_SHARED_LIBS)
-  add_library(XdmfDSM_Static STATIC $<TARGET_OBJECTS:XdmfDSMObjects>)
-  if (UNIX)
-    set_target_properties(XdmfDSM_Static PROPERTIES
-      OUTPUT_NAME "XdmfDSM")
-  endif (UNIX)
-endif (BUILD_SHARED_LIBS)
-#add_library(XdmfDSM ${XdmfDSMSources})
-#if (BUILD_SHARED_LIBS)
-#  add_library(XdmfDSM_Static STATIC ${XdmfDSMSources})
-#  if (UNIX)
-#    set_target_properties(XdmfDSM_Static PROPERTIES
-#      OUTPUT_NAME "XdmfDSM")
-#  endif (UNIX)
-#endif (BUILD_SHARED_LIBS)
 link_directories(${XDMF_LIBRARY_DIRS} ${XdmfDSMLinkLibraryDir})
 target_link_libraries(XdmfDSM ${XdmfDSMLinkLibraries})
-if (BUILD_SHARED_LIBS)
-  target_link_libraries(XdmfDSM_Static ${XdmfDSMLinkLibraries})
-endif (BUILD_SHARED_LIBS)
 
 if(WIN32)
   add_definitions(-D_HDF5USEDLL_ -D_HDF5USEHLDLL_)
   set_target_properties(XdmfDSM PROPERTIES
       DEFINE_SYMBOL XdmfDSM_EXPORTS)
-  if (BUILD_SHARED_LIBS)
-    set_target_properties(XdmfDSM_Static PROPERTIES
-        DEFINE_SYMBOL XdmfDSM_EXPORTS)
-  endif (BUILD_SHARED_LIBS)
   set_target_properties(XdmfDSM PROPERTIES
     PREFIX ../
     IMPORT_PREFIX ../
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
     ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-  if (BUILD_SHARED_LIBS)
-    set_target_properties(XdmfDSM_Static PROPERTIES
-      PREFIX ../
-      IMPORT_PREFIX ../
-      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-  endif()
 endif()
 
 if(XDMF_WRAP_JAVA)
@@ -187,12 +149,6 @@ install(TARGETS XdmfDSM
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)
-if (BUILD_SHARED_LIBS)
-  install(TARGETS XdmfDSM_Static
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
-endif (BUILD_SHARED_LIBS)
 
 if(XDMF_BUILD_DSM_THREADS)
 set(XdmfDSM_INCLUDE_DIRS

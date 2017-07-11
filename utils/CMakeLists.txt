@@ -92,26 +92,7 @@ if(XDMF_BUILD_PARTITIONER)
   set(XdmfUtilsLinkLibraries ${XdmfUtilsLinkLibraries} ${METIS_LIBRARIES})
 endif(XDMF_BUILD_PARTITIONER)
 
-if (XDMF_STATIC_AND_SHARED)
-  add_library(XdmfUtilsObjects OBJECT ${XdmfUtilsSources})
-  SET_TARGET_PROPERTIES(
-    XdmfUtilsObjects PROPERTIES
-    VERSION ${XDMF_VERSION}
-    SOVERSION ${XDMF_MAJOR_VERSION}
-    )
-  set_target_properties(XdmfUtilsObjects PROPERTIES
-    POSITION_INDEPENDENT_CODE True)
-  add_library(XdmfUtils $<TARGET_OBJECTS:XdmfUtilsObjects>)
-  if (BUILD_SHARED_LIBS)
-    add_library(XdmfUtils_Static STATIC $<TARGET_OBJECTS:XdmfUtilsObjects>)
-    if (UNIX)
-      set_target_properties(XdmfUtils_Static PROPERTIES
-        OUTPUT_NAME "XdmfUtils")
-    endif (UNIX)
-  endif (BUILD_SHARED_LIBS)
-else ()
-  add_library(XdmfUtils ${XdmfUtilsSources})
-endif ()
+add_library(XdmfUtils ${XdmfUtilsSources})
 SET_TARGET_PROPERTIES(
   XdmfUtils PROPERTIES
   VERSION ${XDMF_VERSION}
@@ -119,9 +100,6 @@ SET_TARGET_PROPERTIES(
   )
 
 target_link_libraries(XdmfUtils ${XdmfUtilsLinkLibraries})
-if (BUILD_SHARED_LIBS)
-  target_link_libraries(XdmfUtils_Static ${XdmfUtilsLinkLibraries})
-endif (BUILD_SHARED_LIBS)
 
 if(WIN32)
   set_target_properties(${executable} PROPERTIES
@@ -181,12 +159,6 @@ install(TARGETS XdmfUtils
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
-if (BUILD_SHARED_LIBS)
-install(TARGETS XdmfUtils_Static
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
-endif (BUILD_SHARED_LIBS)
 install(TARGETS ${XdmfUtilsExecutables}
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
