@@ -1,10 +1,6 @@
-project(Xdmf)
 cmake_minimum_required(VERSION 2.8.5)
 
-#Needed to build DSM because relative paths are used to add its libraries
-if (POLICY CMP0015)
-	cmake_policy(SET CMP0015 NEW)
-endif ()
+project(Xdmf)
 
 
 if(WIN32)
