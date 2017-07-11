@@ -59,7 +59,6 @@ find_package(TIFF)
 if (TIFF_FOUND)
   add_definitions(-DXDMF_BUILD_TIFF)
   include_directories(${TIFF_INCLUDE_DIR})
-  set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${TIFF_LIBRARIES})
 endif (TIFF_FOUND)
 
 # Test for DSM
@@ -69,7 +68,6 @@ if(XDMF_BUILD_DSM)
   find_package(MPI REQUIRED)
   if(MPI_FOUND)
     include_directories(${MPI_INCLUDE_PATH})
-    set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${MPI_LIBRARY} ${MPI_EXTRA_LIBRARY})
     # intel compiler requires an extra tag for CXX_FLAGS in order to properly build
     STRING(REGEX MATCH "icpc" IS_INTEL "${CMAKE_CXX_COMPILER}")
     if (NOT "${IS_INTEL}" STREQUAL "")

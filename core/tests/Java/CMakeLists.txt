@@ -9,7 +9,6 @@ ADD_TEST_JAVA_CLASSPATH("${XdmfCore_JAVA_JAR}")
 
 # Add any ldpath directories that the java tests may need
 ADD_TEST_JAVA_LDPATH("${CMAKE_BINARY_DIR}")
-ADD_TEST_JAVA_LDPATH("${XDMF_LIBRARIES}")
 
 # Add any path directories that the java tests may need
 ADD_TEST_JAVA_PATH("${CMAKE_BINARY_DIR}")
