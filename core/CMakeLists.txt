@@ -56,13 +56,9 @@ if(HDF5_FOUND)
       endif()
     endif ()
   endif()
-  get_filename_component(HDF5_ROOT "${HDF5_INCLUDE_DIR}/../" REALPATH)
-  set(HDF5_BINARY_DIRS ${HDF5_ROOT}/bin ${HDF5_ROOT}/dll)
   if (NOT HDF5_LIBRARIES)
     find_library (HDF5_LIBRARIES hdf5 HINTS ${HDF5_ROOT} ENV LD_LIBRARY_PATH)
   endif ()
-  set(XDMF_HDF5_BINARY_DIRS ${HDF5_BINARY_DIRS} PARENT_SCOPE)
-  set(XDMF_BINARIES ${XDMF_BINARIES} ${HDF5_BINARY_DIRS})
 endif()
 
 
@@ -72,10 +68,6 @@ set(LIBXML2_FOUND TRUE)
 find_package(LibXml2 REQUIRED)
 if(LIBXML2_FOUND)
   include_directories(${LIBXML2_INCLUDE_DIR})
-  get_filename_component(LIBXML2_ROOT "${LIBXML2_INCLUDE_DIR}/../" REALPATH)
-  set(LIBXML2_BINARY_DIRS ${LIBXML2_ROOT}/bin)
-  set(LIBXML2_BINARY_DIRS ${LIBXML2_BINARY_DIRS} PARENT_SCOPE)
-  set(XDMF_BINARIES ${XDMF_BINARIES} ${LIBXML2_BINARY_DIRS})
 endif()
 
 # Perform compile-time checks and generate XdmfCoreConfig.hpp
@@ -245,7 +237,6 @@ set(XdmfCore_INCLUDE_DIRS
 
 set(XDMF_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include PARENT_SCOPE)
 set(XDMF_DIR ${CMAKE_INSTALL_PREFIX} PARENT_SCOPE)
-set(XDMF_BINARIES ${XDMF_BINARIES} ${CMAKE_INSTALL_PREFIX}/bin)
 
 if(XDMF_BUILD_DSM)
   add_subdirectory(dsm)
@@ -255,5 +246,3 @@ endif(XDMF_BUILD_DSM)
 if(XDMF_BUILD_TESTING)
   add_subdirectory(tests)
 endif()
-
-set(XDMF_BINARIES ${XDMF_BINARIES} PARENT_SCOPE)

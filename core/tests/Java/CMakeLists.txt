@@ -12,7 +12,6 @@ ADD_TEST_JAVA_LDPATH("${CMAKE_BINARY_DIR}")
 
 # Add any path directories that the java tests may need
 ADD_TEST_JAVA_PATH("${CMAKE_BINARY_DIR}")
-ADD_TEST_JAVA_PATH("${XDMF_BINARIES}")
 
 # Add any java tests here:
 # Note: We don't want to use a foreach loop to test the files incase we
