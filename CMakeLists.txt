@@ -70,8 +70,6 @@ find_package(TIFF)
 if (TIFF_FOUND)
   add_definitions(-DXDMF_BUILD_TIFF)
   include_directories(${TIFF_INCLUDE_DIR})
-  get_filename_component(TIFF_LIBRARY_DIR "${TIFF_LIBRARY}" PATH)
-  set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${TIFF_LIBRARY_DIR})
   set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${TIFF_LIBRARIES})
 endif (TIFF_FOUND)
 
@@ -83,8 +81,6 @@ if(XDMF_BUILD_DSM)
   if(MPI_FOUND)
     include_directories(${MPI_INCLUDE_PATH})
     set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${MPI_LIBRARY} ${MPI_EXTRA_LIBRARY})
-    get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)
-    set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${MPI_LIBRARY_DIR})
     # intel compiler requires an extra tag for CXX_FLAGS in order to properly build
     STRING(REGEX MATCH "icpc" IS_INTEL "${CMAKE_CXX_COMPILER}")
     if (NOT "${IS_INTEL}" STREQUAL "")
@@ -293,7 +289,6 @@ endif()
 
 add_subdirectory(core)
 include_directories(${XdmfCore_INCLUDE_DIRS} ${XdmfDSM_INCLUDE_DIRS})
-link_directories(${XDMF_LIBRARY_DIRS})
 
 include(GNUInstallDirs)
 

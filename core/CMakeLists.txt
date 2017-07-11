@@ -40,7 +40,6 @@ endif()
 if ("$ENV{HDF5_ROOT}" STREQUAL "")
   find_file (HDF5_LIB libhdf5.so HINTS ENV LD_LIBRARY_PATH)
   if (NOT "${HDF5_LIB}" STREQUAL "")
-    get_filename_component(HDF5_LIBRARY_DIR "${HDF5_LIB}" PATH)
     get_filename_component(HDF5_ROOT "${HDF5_LIBRARY_DIR}/../" ABSOLUTE)
     set(ENV{HDF5_ROOT} ${HDF5_ROOT})
   endif ()
@@ -57,8 +56,6 @@ find_package(HDF5 REQUIRED)
 if(HDF5_FOUND)
   include_directories(${HDF5_INCLUDE_DIRS})
   include_directories(${HDF5_C_INCLUDE_DIR})
-  get_filename_component(HDF5_LIBRARY_DIR "${HDF5_hdf5_LIBRARY_RELEASE}" PATH)
-  set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${HDF5_LIBRARY_DIR})
   set(HDF5_LIBRARIES ${HDF5_hdf5_LIBRARY_RELEASE})
   # FIXME: Would like to get this info from HDF5 so we don't have conflicting
   # MPI versions
@@ -68,8 +65,6 @@ if(HDF5_FOUND)
       if(MPI_FOUND)
         include_directories(${MPI_INCLUDE_PATH})
         set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${MPI_LIBRARY} ${MPI_EXTRA_LIBRARY})
-        get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)
-        set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${MPI_LIBRARY_DIR})
       endif()
     endif ()
   endif()
@@ -188,8 +183,6 @@ SET_TARGET_PROPERTIES(
   SOVERSION ${XDMF_MAJOR_VERSION}
   )
 
-link_directories(${XDMF_LIBRARY_DIRS})
-
 target_link_libraries(XdmfCore ${XDMF_LIBRARIES})
 
 if (COMMAND vtk_target_install)
@@ -216,7 +209,6 @@ if(XDMF_WRAP_PYTHON)
   XDMF_SWIG_PYTHON(XdmfCore)
 endif()
 
-set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} PARENT_SCOPE)
 if(WIN32)
     set(XDMFCORE_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/XdmfCore.lib PARENT_SCOPE)
 endif()

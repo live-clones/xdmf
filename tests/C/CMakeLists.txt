@@ -7,7 +7,6 @@ ADD_TEST_C_DEPENDENCIES("Xdmf")
 
 # Add any ldpath directories that the cxx tests may need
 ADD_TEST_C_LDPATH("${CMAKE_BINARY_DIR}")
-ADD_TEST_C_LDPATH("${XDMF_LIBRARY_DIRS}")
 
 # Add any path directoreis that the Cxx tests may need
 ADD_TEST_C_PATH("${CMAKE_BINARY_DIR}")

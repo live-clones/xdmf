@@ -1,7 +1,6 @@
 project(XdmfDSM)
 
 set(XdmfDSMLinkLibraries XdmfCore)
-set(XdmfDSMLinkLibraryDir )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -14,8 +13,6 @@ if(HDF5_FOUND)
   include_directories(${HDF5_INCLUDE_DIRS})
   include_directories(${HDF5_C_INCLUDE_DIR})
   set(HDF5_LIBRARIES ${HDF5_hdf5_LIBRARY_RELEASE})
-  get_filename_component(HDF5_LIBRARY_DIR "${HDF5_hdf5_LIBRARY_RELEASE}" PATH)
-  set(XdmfDSMLinkLibraryDir ${XdmfDSMLinkLibraryDir} ${HDF5_LIBRARY_DIR})
   # FIXME: Would like to get this info from HDF5 so we don't have conflicting
   # MPI versions
   if(HDF5_IS_PARALLEL)
@@ -83,7 +80,6 @@ SET_TARGET_PROPERTIES(
   VERSION ${XDMF_VERSION}
   SOVERSION ${XDMF_MAJOR_VERSION}
   )
-link_directories(${XDMF_LIBRARY_DIRS} ${XdmfDSMLinkLibraryDir})
 target_link_libraries(XdmfDSM ${XdmfDSMLinkLibraries})
 
 if(WIN32)
@@ -110,8 +106,6 @@ if(XDMF_WRAP_PYTHON)
   XDMF_SWIG_PYTHON(XdmfDSM XdmfCore)
 endif()
 
-
-set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} PARENT_SCOPE)
 
 if(WIN32)
   set(XDMFDSM_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/XdmfDSM.lib PARENT_SCOPE)
