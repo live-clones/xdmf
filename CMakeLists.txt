@@ -43,17 +43,6 @@ include(XdmfFunctions)
 
 option(XDMF_INSTALL_NO_DEVELOPMENT "Prevent install from writing out developement files." OFF)
 mark_as_advanced(XDMF_INSTALL_NO_DEVELOPMENT)
-# Converting Install Prefix to an absolute path
-get_filename_component(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" ABSOLUTE)
-
-# RPath
-option(XDMF_SET_RPATH ON)
-if (XDMF_SET_RPATH)
-  set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-  set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-endif ()
 
 # Should we build with documentation
 option(XDMF_BUILD_DOCUMENTATION OFF)
