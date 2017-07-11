@@ -85,11 +85,8 @@ endif()
 
 # If we are wrapping either, we need swig
 if(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
-  find_package(SWIG REQUIRED)
+  find_package(SWIG 2.0.0 REQUIRED)
   include(${SWIG_USE_FILE})
-  if(${SWIG_VERSION} LESS 2.0.0)
-    message(SEND_ERROR "Swig must be version 2.0.0 or greater")
-  endif()
 endif()
 
 # If we are wrapping python, let's include it in the top level
