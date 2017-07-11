@@ -42,11 +42,9 @@ macro(usedoxygen_set_default name value)
   endif()
 endmacro()
 
-mark_as_advanced(CLEAR DOXYGEN_EXECUTABLE)
 find_package(Doxygen REQUIRED)
 
 if(DOXYGEN_FOUND)
-  mark_as_advanced(FORCE DOXYGEN_EXECUTABLE)
   find_file(DOXYFILE_IN "Doxyfile.in"
     PATHS "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_ROOT}/Modules/"
     NO_DEFAULT_PATH)
