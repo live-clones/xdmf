@@ -4,8 +4,6 @@ set(XdmfDSMLinkLibraries XdmfCore)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-option(XDMF_BUILD_DSM_THREADS ON)
-
 include_directories(${Boost_INCLUDE_DIRS})
 
 #find_package(HDF5 REQUIRED)

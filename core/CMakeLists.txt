@@ -20,13 +20,6 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-option(XDMF_BUILD_DSM OFF)
-mark_as_advanced(XDMF_BUILD_DSM)
-
-if(XDMF_BUILD_DSM)
-  option(XDMF_BUILD_DSM_THREADS ON)
-endif()
-
 find_package(Boost REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})

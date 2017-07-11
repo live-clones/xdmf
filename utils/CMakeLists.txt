@@ -3,7 +3,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 option(XDMF_BUILD_EXODUS_IO OFF)
 option(XDMF_BUILD_PARTITIONER OFF)
 option(XDMF_BUILD_FORTRAN OFF)
-option(XDMF_BUILD_DSM OFF)
 
 
 set(XdmfUtilsSources
