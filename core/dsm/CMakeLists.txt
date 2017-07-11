@@ -107,25 +107,6 @@ if(XDMF_WRAP_PYTHON)
 endif()
 
 
-if(WIN32)
-  set(XDMFDSM_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/XdmfDSM.lib PARENT_SCOPE)
-endif()
-
-if(UNIX)
-  if (BUILD_SHARED_LIBS)
-    set(XDMFDSM_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmfDSM.so
-      PARENT_SCOPE)
-  else (BUILD_SHARED_LIBS)
-    set(XDMFDSM_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmfDSM.a
-      PARENT_SCOPE)
-  endif (BUILD_SHARED_LIBS)
-endif()
-
-if(APPLE)
-    set(XDMFDSM_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmfDSM.dylib
-        PARENT_SCOPE)
-endif()
-
 file(GLOB_RECURSE
   XdmfDSMHeaders
   "*.hpp" "*.tpp" "*.i"

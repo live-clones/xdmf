@@ -209,25 +209,6 @@ if(XDMF_WRAP_PYTHON)
   XDMF_SWIG_PYTHON(XdmfCore)
 endif()
 
-if(WIN32)
-    set(XDMFCORE_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/XdmfCore.lib PARENT_SCOPE)
-endif()
-
-if(UNIX)
-    if (BUILD_SHARED_LIBS)
-      set(XDMFCORE_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmfCore.so
-          PARENT_SCOPE)
-    else()
-      set(XDMFCORE_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmfCore.a
-          PARENT_SCOPE)
-    endif()
-endif()
-
-if(APPLE)
-    set(XDMFCORE_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmfCore.dylib
-        PARENT_SCOPE)
-endif()
-
 file(GLOB_RECURSE
   XdmfCoreHeaders
   "*.hpp" "*.tpp" "*.i"

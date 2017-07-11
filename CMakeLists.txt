@@ -374,22 +374,6 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     add_subdirectory(utils)
   endif()
 
-  if(WIN32)
-    set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/${XDMF_LIBNAME}.lib)
-  endif()
-
-  if(UNIX)
-    if (BUILD_SHARED_LIBS)
-      set(XDMF_LIBRARY ${CMAKE_INSTALL_LIBDIR}/lib${XDMF_LIBNAME}.so)
-    else (BUILD_SHARED_LIBS)
-      set(XDMF_LIBRARY ${CMAKE_INSTALL_LIBDIR}/lib${XDMF_LIBNAME}.a)
-    endif (BUILD_SHARED_LIBS)
-  endif(UNIX)
-
-  if(APPLE)
-    set(XDMF_LIBRARY ${CMAKE_INSTALL_LIBDIR}/lib${XDMF_LIBNAME}.dylib)
-  endif()
-
   file(GLOB XdmfHeaders
     "*.hpp"
     "*.tpp"
