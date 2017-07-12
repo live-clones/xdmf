@@ -44,9 +44,6 @@ endif()
 
 include(XdmfFunctions)
 
-option(XDMF_INSTALL_NO_DEVELOPMENT "Prevent install from writing out developement files." OFF)
-mark_as_advanced(XDMF_INSTALL_NO_DEVELOPMENT)
-
 # Should we build with documentation
 option(XDMF_BUILD_DOCUMENTATION OFF)
 if(XDMF_BUILD_DOCUMENTATION)
@@ -348,9 +345,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     "*.i"
     "${CMAKE_CURRENT_BINARY_DIR}/*.hpp"
   )
-  if (NOT XDMF_INSTALL_NO_DEVELOPMENT) 
-    install(FILES ${XdmfHeaders} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-  endif()
+  install(FILES ${XdmfHeaders} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
   install(TARGETS ${XDMF_LIBNAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
