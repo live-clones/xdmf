@@ -25,20 +25,10 @@ if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-# Find HDF5_ROOT if not set
-if ("$ENV{HDF5_ROOT}" STREQUAL "")
-  find_file (HDF5_LIB libhdf5.so HINTS ENV LD_LIBRARY_PATH)
-  if (NOT "${HDF5_LIB}" STREQUAL "")
-    get_filename_component(HDF5_ROOT "${HDF5_LIBRARY_DIR}/../" ABSOLUTE)
-    set(ENV{HDF5_ROOT} ${HDF5_ROOT})
-  endif ()
-endif ()
-
 find_package(HDF5 REQUIRED)
 if(HDF5_FOUND)
   include_directories(${HDF5_INCLUDE_DIRS})
   include_directories(${HDF5_C_INCLUDE_DIR})
-  set(HDF5_LIBRARIES ${HDF5_hdf5_LIBRARY_RELEASE})
   # FIXME: Would like to get this info from HDF5 so we don't have conflicting
   # MPI versions
   if(HDF5_IS_PARALLEL)
@@ -49,9 +39,6 @@ if(HDF5_FOUND)
       endif()
     endif ()
   endif()
-  if (NOT HDF5_LIBRARIES)
-    find_library (HDF5_LIBRARIES hdf5 HINTS ${HDF5_ROOT} ENV LD_LIBRARY_PATH)
-  endif ()
 endif()
 
 

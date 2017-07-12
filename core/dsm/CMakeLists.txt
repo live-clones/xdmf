@@ -6,36 +6,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-#find_package(HDF5 REQUIRED)
-if(HDF5_FOUND)
-  include_directories(${HDF5_INCLUDE_DIRS})
-  include_directories(${HDF5_C_INCLUDE_DIR})
-  set(HDF5_LIBRARIES ${HDF5_hdf5_LIBRARY_RELEASE})
-  # FIXME: Would like to get this info from HDF5 so we don't have conflicting
-  # MPI versions
-  if(HDF5_IS_PARALLEL)
-    # If MPI variables are already populated don't search again
-    if (NOT MPI_FOUND)
-    find_package(MPI REQUIRED)
-    endif (NOT MPI_FOUND)
-    if(MPI_FOUND)
-      include_directories(${MPI_INCLUDE_PATH})
-      set(XdmfDSMLinkLibraries ${XdmfDSMLinkLibraries} ${MPI_LIBRARY} ${MPI_EXTRA_LIBRARY})
-    endif()
-  else()
-    message(SEND_ERROR
-      "Error: XdmfDSM requires a parallel enabled build of HDF5.")
-  endif()
-  set(XdmfDSMLinkLibraries ${XdmfDSMLinkLibraries} ${HDF5_LIBRARIES})
-endif()
-
-
-find_package(LibXml2 REQUIRED)
-if(LIBXML2_FOUND)
-  include_directories(${LIBXML2_INCLUDE_DIR})
-  set(XdmfDSMLinkLibraries ${XdmfDSMLinkLibraries} ${LIBXML2_LIBRARIES})
-endif()
-
 set(XdmfDSMSources
   XdmfHDF5ControllerDSM
   XdmfHDF5WriterDSM
