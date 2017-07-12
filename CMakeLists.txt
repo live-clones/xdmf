@@ -78,7 +78,9 @@ if(XDMF_BUILD_DSM)
   endif()
   option(XDMF_BUILD_DSM_THREADS ON)
   if (XDMF_WRAP_PYTHON)
-    set(PYTHON_INCLUDE_MPI4PY_DIR "" CACHE STRING "Directory containing mpi4py/mpi4py.i")
+    find_path(PYTHON_INCLUDE_MPI4PY_DIR
+      NAMES mpi4py/mpi4py.i
+      DOC   "Directory containing the mpi4py/mpi4py.i file")
   endif ()
   add_definitions(-DXDMF_BUILD_DSM)
 endif()
