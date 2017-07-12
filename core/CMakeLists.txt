@@ -5,7 +5,7 @@ include(SetUpVersion)
 include(TestBigEndian)
 
 if(VERSION_CONTROL_AUTOUPDATE OR
-    NOT EXISTS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion.hpp)
+    NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/XdmfVersion.hpp)
   VersionCreate(
     "Xdmf"
     "${XDMF_MAJOR_VERSION}" "${XDMF_MINOR_VERSION}" "${XDMF_PATCH_VERSION}"
@@ -114,7 +114,7 @@ set(XdmfCoreSources
   XdmfSparseMatrix
   XdmfSubset
   XdmfSystemUtils
-  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
+  ${CMAKE_CURRENT_BINARY_DIR}/XdmfVersion
   XdmfVisitor
   XdmfWriter)
 
@@ -149,7 +149,7 @@ set(XdmfCoreSources
   core/XdmfSubset
   core/XdmfSystemUtils
   ${FOUND_TIFF_LOCATION}
-  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
+  ${CMAKE_CURRENT_BINARY_DIR}/XdmfVersion
   core/XdmfVisitor
   core/XdmfWriter
   PARENT_SCOPE)
