@@ -258,10 +258,10 @@ if(XDMF_WRAP_JAVA)
   endmacro()
 endif()
 
+include(GNUInstallDirs)
+
 add_subdirectory(core)
 include_directories(${XdmfCore_INCLUDE_DIRS} ${XdmfDSM_INCLUDE_DIRS})
-
-include(GNUInstallDirs)
 
 option(XDMF_BUILD_CORE_ONLY OFF)
 mark_as_advanced(XDMF_BUILD_CORE_ONLY)
@@ -349,7 +349,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     "${CMAKE_CURRENT_BINARY_DIR}/*.hpp"
   )
   if (NOT XDMF_INSTALL_NO_DEVELOPMENT) 
-    install(FILES ${XdmfHeaders} DESTINATION include)
+    install(FILES ${XdmfHeaders} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
   endif()
   install(TARGETS ${XDMF_LIBNAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

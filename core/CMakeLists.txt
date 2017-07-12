@@ -177,8 +177,8 @@ set(XdmfCoreHeaders
       ${XdmfCoreHeaders}
       ${CMAKE_CURRENT_BINARY_DIR}/XdmfCoreConfig.hpp)
 if (NOT XDMF_INSTALL_NO_DEVELOPMENT)
-  install(FILES ${XdmfCoreHeaders} DESTINATION include)
-  install(FILES ${LokiHeaders} DESTINATION include/loki)
+  install(FILES ${XdmfCoreHeaders} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(FILES ${LokiHeaders} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/loki)
 endif()
 install(TARGETS XdmfCore
   RUNTIME DESTINATION bin
