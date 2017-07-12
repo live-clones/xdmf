@@ -51,7 +51,6 @@ endif()
 
 TEST_BIG_ENDIAN(XDMF_BIG_ENDIAN)
 
-unset(HAVE_BOOST_SHARED_DYNAMIC_CAST CACHE)
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
 check_cxx_source_compiles("
 #include <boost/shared_ptr.hpp>
