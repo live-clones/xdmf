@@ -346,7 +346,6 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     "*.hpp"
     "*.tpp"
     "*.i"
-    "CMake/VersionSuite/*.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/*.hpp"
   )
   if (NOT XDMF_INSTALL_NO_DEVELOPMENT) 
