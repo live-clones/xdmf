@@ -15,6 +15,10 @@ set(XDMF_MINOR_VERSION 0)
 set(XDMF_PATCH_VERSION 0)
 set(XDMF_VERSION "${XDMF_MAJOR_VERSION}.${XDMF_MINOR_VERSION}.${XDMF_PATCH_VERSION}")
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
+
 if(BUILD_SHARED_LIBS)
   set(BUILD_SHARED 1)
 endif()
@@ -30,7 +34,6 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 list(APPEND CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_SOURCE_DIR}/CMake
   ${CMAKE_CURRENT_SOURCE_DIR}/CMake/VersionSuite)
@@ -144,16 +147,6 @@ if(XDMF_WRAP_PYTHON)
       add_dependencies(${python_name} "${ARGN}")
     endif()
 
-    if(WIN32)
-      set_target_properties(${SWIG_MODULE_${python_name}Python_REAL_NAME}
-        PROPERTIES
-        PREFIX ../
-        IMPORT_PREFIX ../
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
-
     if(APPLE)
       set_target_properties(${SWIG_MODULE_${python_name}Python_REAL_NAME}
         PROPERTIES
@@ -214,13 +207,6 @@ if(XDMF_WRAP_JAVA)
     swig_link_libraries(${java_name}Java ${java_name})
 
     if(WIN32)
-      set_target_properties(${SWIG_MODULE_${java_name}Java_REAL_NAME}
-        PROPERTIES
-        PREFIX ../
-        IMPORT_PREFIX ../
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
       set(java_files *.java)
       set(java_dest "bin")
       set(separator "\;")
