@@ -58,7 +58,7 @@
 <!ELEMENT Attribute (Information*, DataItem*)>
 <!ATTLIST Attribute
 	Name CDATA #IMPLIED
-	Center (Node | Cell | Grid | Face | Edge) "Node"
+	Center (Node | Cell | Grid | Face | Edge | Other) "Node"
 	AttributeType (Scalar | Vector | Tensor | Tensor6 | Matrix) "Scalar"
 	ItemType (FiniteElementFunction) #IMPLIED
 	ElementFamily (CG | DG | RT | BDM | CR | N1curl | N2curl) #IMPLIED
