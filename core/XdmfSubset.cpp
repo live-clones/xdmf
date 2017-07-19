@@ -47,15 +47,6 @@ XdmfSubset::XdmfSubset(shared_ptr<XdmfArray> referenceArray,
   }
 }
 
-XdmfSubset::XdmfSubset(XdmfSubset & refSubset) :
-  XdmfArrayReference(refSubset),
-  mParent(refSubset.getReferenceArray()),
-  mDimensions(refSubset.getDimensions()),
-  mStart(refSubset.getStart()),
-  mStride(refSubset.getStride())
-{
-}
-
 XdmfSubset::~XdmfSubset()
 {
 }
@@ -325,161 +316,105 @@ XdmfSubset::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
 XDMFSUBSET * XdmfSubsetNew(void * referenceArray, unsigned int * start, unsigned int * stride, unsigned int * dimensions, unsigned int numDims, int passControl, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  try
-  {
-    std::vector<unsigned int> startVector(start, start + numDims);
-    std::vector<unsigned int> strideVector(stride, stride + numDims);
-    std::vector<unsigned int> dimVector(dimensions, dimensions + numDims);
-    shared_ptr<XdmfArray> referencePointer;
-    if (passControl) {
-      referencePointer = shared_ptr<XdmfArray>((XdmfArray *)referenceArray);
-    }
-    else {
-      referencePointer = shared_ptr<XdmfArray>((XdmfArray *)referenceArray, XdmfNullDeleter());
-    }
-    shared_ptr<XdmfSubset> generatedSubset = XdmfSubset::New(referencePointer, startVector, strideVector, dimVector);
-    return (XDMFSUBSET *)((void *)(new XdmfSubset(*generatedSubset.get())));
-  }
-  catch (...)
-  {
-    std::vector<unsigned int> startVector(start, start + numDims);
-    std::vector<unsigned int> strideVector(stride, stride + numDims);
-    std::vector<unsigned int> dimVector(dimensions, dimensions + numDims);
-    shared_ptr<XdmfArray> referencePointer;
-    if (passControl) {
-      referencePointer = shared_ptr<XdmfArray>((XdmfArray *)referenceArray);
-    }
-    else {
-      referencePointer = shared_ptr<XdmfArray>((XdmfArray *)referenceArray, XdmfNullDeleter());
-    }
-    shared_ptr<XdmfSubset> generatedSubset = XdmfSubset::New(referencePointer, startVector, strideVector, dimVector);
-    return (XDMFSUBSET *)((void *)(new XdmfSubset(*generatedSubset.get())));
-  }
+  std::vector<unsigned int> startVector(start, start + numDims);
+  std::vector<unsigned int> strideVector(stride, stride + numDims);
+  std::vector<unsigned int> dimVector(dimensions, dimensions + numDims);
+  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(referenceArray);
+  shared_ptr<XdmfSubset> * p = new shared_ptr<XdmfSubset>(XdmfSubset::New(refArray,
+									  startVector,
+									  strideVector,
+									  dimVector));
+  return (XDMFSUBSET *) p;
   XDMF_ERROR_WRAP_END(status)
   return NULL;
 }
 
 unsigned int * XdmfSubsetGetDimensions(XDMFSUBSET * subset)
 {
-  try
-  {
-    std::vector<unsigned int> tempVector = ((XdmfSubset *)(subset))->getDimensions();
-    unsigned int returnSize = tempVector.size();
-    unsigned int * returnArray = new unsigned int[returnSize]();
-    for (unsigned int i = 0; i < returnSize; ++i) {
-      returnArray[i] = tempVector[i];
-    }
-    return returnArray;
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
+  std::vector<unsigned int> tempVector = refSubset->getDimensions();
+  unsigned int returnSize = tempVector.size();
+  unsigned int * returnArray = (unsigned int *)malloc(sizeof(unsigned int) * returnSize);
+  for (unsigned int i = 0; i < returnSize; ++i) {
+    returnArray[i] = tempVector[i];
   }
-  catch (...)
-  {
-    std::vector<unsigned int> tempVector = ((XdmfSubset *)(subset))->getDimensions();
-    unsigned int returnSize = tempVector.size();
-    unsigned int * returnArray = new unsigned int[returnSize]();
-    for (unsigned int i = 0; i < returnSize; ++i) {
-      returnArray[i] = tempVector[i];
-    }
-    return returnArray;
-  }
+  return returnArray;
 }
 
 unsigned int XdmfSubsetGetNumberDimensions(XDMFSUBSET * subset)
 {
-  return ((XdmfSubset *)(subset))->getDimensions().size();
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
+  return refSubset->getDimensions().size();
 }
 
-void * XdmfSubsetGetReferenceArray(XDMFSUBSET * subset)
+XDMFARRAY * XdmfSubsetGetReferenceArray(XDMFSUBSET * subset)
 {
-  shared_ptr<XdmfArray> returnItem = ((XdmfSubset *)subset)->getReferenceArray();
-  return returnItem.get();
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
+  shared_ptr<XdmfArray> * p = new shared_ptr<XdmfArray>(refSubset->getReferenceArray());
+  return (XDMFARRAY *) p;
 }
 
 unsigned int XdmfSubsetGetSize(XDMFSUBSET * subset)
 {
-  return ((XdmfSubset *)(subset))->getSize();
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
+  return refSubset->getSize();
 }
 
 unsigned int * XdmfSubsetGetStart(XDMFSUBSET * subset)
 {
-  try
-  {
-    std::vector<unsigned int> tempVector = ((XdmfSubset *)(subset))->getStart();
-    unsigned int returnSize = tempVector.size();
-    unsigned int * returnArray = new unsigned int[returnSize]();
-    for (unsigned int i = 0; i < returnSize; ++i) {
-      returnArray[i] = tempVector[i];
-    }
-    return returnArray;
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
+  std::vector<unsigned int> tempVector = refSubset->getStart();
+  unsigned int returnSize = tempVector.size();
+  unsigned int * returnArray = (unsigned int*)malloc(sizeof(unsigned int) * returnSize);
+  for (unsigned int i = 0; i < returnSize; ++i) {
+    returnArray[i] = tempVector[i];
   }
-  catch (...)
-  {
-    std::vector<unsigned int> tempVector = ((XdmfSubset *)(subset))->getStart();
-    unsigned int returnSize = tempVector.size();
-    unsigned int * returnArray = new unsigned int[returnSize]();
-    for (unsigned int i = 0; i < returnSize; ++i) {
-      returnArray[i] = tempVector[i];
-    }
-    return returnArray;
-  }
+  return returnArray;
 }
 
 unsigned int * XdmfSubsetGetStride(XDMFSUBSET * subset)
 {
-  try
-  {
-    std::vector<unsigned int> tempVector = ((XdmfSubset *)(subset))->getStride();
-    unsigned int returnSize = tempVector.size();
-    unsigned int * returnArray = new unsigned int[returnSize]();
-    for (unsigned int i = 0; i < returnSize; ++i) {
-      returnArray[i] = tempVector[i];
-    }
-    return returnArray;
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
+  std::vector<unsigned int> tempVector = refSubset->getStride();
+  unsigned int returnSize = tempVector.size();
+  unsigned int * returnArray = (unsigned int *)malloc(sizeof(unsigned int) * returnSize);
+  for (unsigned int i = 0; i < returnSize; ++i) {
+    returnArray[i] = tempVector[i];
   }
-  catch (...)
-  {
-    std::vector<unsigned int> tempVector = ((XdmfSubset *)(subset))->getStride();
-    unsigned int returnSize = tempVector.size();
-    unsigned int * returnArray = new unsigned int[returnSize]();
-    for (unsigned int i = 0; i < returnSize; ++i) {
-      returnArray[i] = tempVector[i];
-    }
-    return returnArray;
-  }
+  return returnArray;
 }
 
 void XdmfSubsetSetDimensions(XDMFSUBSET * subset, unsigned int * newDimensions, unsigned int numDims, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
   std::vector<unsigned int> dimVector(newDimensions, newDimensions + numDims);
-  ((XdmfSubset *)(subset))->setDimensions(dimVector);
+  refSubset->setDimensions(dimVector);
   XDMF_ERROR_WRAP_END(status)
 }
 
 void XdmfSubsetSetReferenceArray(XDMFSUBSET * subset, XDMFARRAY * referenceArray, int passControl)
 {
-  shared_ptr<XdmfArray> referencePointer;
-  if (passControl) {
-    referencePointer = shared_ptr<XdmfArray>((XdmfArray *)referenceArray);
-  }
-  else {
-    referencePointer = shared_ptr<XdmfArray>((XdmfArray *)referenceArray, XdmfNullDeleter());
-  }
-  ((XdmfSubset *)subset)->setReferenceArray(referencePointer);
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
+  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(referenceArray);
+  refSubset->setReferenceArray(refArray);
 }
 
 void XdmfSubsetSetStart(XDMFSUBSET * subset, unsigned int * newStarts, unsigned int numDims, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
   std::vector<unsigned int> startVector(newStarts, newStarts + numDims);
-  ((XdmfSubset *)(subset))->setStart(startVector);
+  refSubset->setStart(startVector);
   XDMF_ERROR_WRAP_END(status)
 }
 
 void XdmfSubsetSetStride(XDMFSUBSET * subset, unsigned int * newStrides, unsigned int numDims, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
+  shared_ptr<XdmfSubset> & refSubset = *(shared_ptr<XdmfSubset> *)(subset);
   std::vector<unsigned int> strideVector(newStrides, newStrides + numDims);
-  ((XdmfSubset *)(subset))->setStride(strideVector);
+  refSubset->setStride(strideVector);
   XDMF_ERROR_WRAP_END(status)
 }
 

@@ -2080,8 +2080,9 @@ shared_ptr<const XdmfTopologyType> convertIntToType(int type, int nodes = 0)
 XDMFTOPOLOGYCONVERTER *
 XdmfTopologyConverterNew()
 {
-  shared_ptr<XdmfTopologyConverter> generatedConverter = XdmfTopologyConverter::New();
-  return (XDMFTOPOLOGYCONVERTER *)((void *)(new XdmfTopologyConverter(*generatedConverter.get())));
+  shared_ptr<XdmfTopologyConverter> * p = 
+    new shared_ptr<XdmfTopologyConverter>(XdmfTopologyConverter::New());
+  return (XDMFTOPOLOGYCONVERTER *) p;
 }
 
 XDMFUNSTRUCTUREDGRID *
@@ -2090,33 +2091,46 @@ XdmfTopologyConverterConvert(XDMFTOPOLOGYCONVERTER * converter,
                              int topologytype,
                              XDMFHEAVYDATAWRITER * heavyDataWriter)
 {
-  XdmfItem * tempPointer = (XdmfItem *)(gridToConvert);
-  XdmfUnstructuredGrid * gridPointer = dynamic_cast<XdmfUnstructuredGrid *>(tempPointer);
-  shared_ptr<XdmfUnstructuredGrid> tempgrid = shared_ptr<XdmfUnstructuredGrid>((XdmfUnstructuredGrid *)gridPointer, XdmfNullDeleter());
-  shared_ptr<const XdmfTopologyType> convertedType = convertIntToType(topologytype);
-  shared_ptr<XdmfHeavyDataWriter> tempwriter = shared_ptr<XdmfHeavyDataWriter>();
-  if (heavyDataWriter) {
-    tempwriter = shared_ptr<XdmfHeavyDataWriter>((XdmfHeavyDataWriter *)heavyDataWriter, XdmfNullDeleter());
-    return (XDMFUNSTRUCTUREDGRID *)((void *)((XdmfItem *)(new XdmfUnstructuredGrid(*((((XdmfTopologyConverter *)converter)->convert(tempgrid, convertedType, tempwriter)).get())))));
+  shared_ptr<XdmfTopologyConverter> & refConverter = 
+    *(shared_ptr<XdmfTopologyConverter> *)converter;
+  shared_ptr<XdmfUnstructuredGrid> & refGrid = 
+    *(shared_ptr<XdmfUnstructuredGrid> *)gridToConvert;
+  shared_ptr<const XdmfTopologyType> convertedType = 
+    convertIntToType(topologytype);
+
+  shared_ptr<XdmfUnstructuredGrid> * p;
+  if(heavyDataWriter) {
+    shared_ptr<XdmfHeavyDataWriter> & refHeavyDataWriter = 
+      *(shared_ptr<XdmfHeavyDataWriter> *)heavyDataWriter;
+    p = new shared_ptr<XdmfUnstructuredGrid>(refConverter->convert(refGrid,
+								   convertedType,
+								   refHeavyDataWriter));
   }
   else {
-    return (XDMFUNSTRUCTUREDGRID *)((void *)((XdmfItem *)(new XdmfUnstructuredGrid(*((((XdmfTopologyConverter *)converter)->convert(tempgrid, convertedType)).get())))));
+    p = new shared_ptr<XdmfUnstructuredGrid>(refConverter->convert(refGrid,
+								   convertedType));
   }
+  return (XDMFUNSTRUCTUREDGRID *) p;
 }
 
 XDMFTOPOLOGY *
 XdmfTopologyConverterGetExternalFaces(XDMFTOPOLOGYCONVERTER * converter,
                                       XDMFTOPOLOGY * convertedTopology)
 {
-  shared_ptr<XdmfTopology> temptopo = shared_ptr<XdmfTopology>((XdmfTopology *)convertedTopology, XdmfNullDeleter());
-  return (XDMFTOPOLOGY *)((void *)(new XdmfTopology(*((((XdmfTopologyConverter *)converter)->getExternalFaces(temptopo)).get()))));
+  shared_ptr<XdmfTopologyConverter> & refConverter = 
+    *(shared_ptr<XdmfTopologyConverter> *)converter;
+  shared_ptr<XdmfTopology> & refTopology = 
+    *(shared_ptr<XdmfTopology> *)convertedTopology;
+  shared_ptr<XdmfTopology> * p = 
+    new shared_ptr<XdmfTopology>(refConverter->getExternalFaces(refTopology));
+  return (XDMFTOPOLOGY *) p;
 }
 
 void
 XdmfTopologyConverterFree(XDMFTOPOLOGYCONVERTER * converter)
 {
   if (converter != NULL) {
-    delete ((XdmfTopologyConverter *)converter);
+    delete (shared_ptr<XdmfTopologyConverter> *)converter;
     converter = NULL;
   }
 }

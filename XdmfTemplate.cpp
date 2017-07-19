@@ -444,15 +444,6 @@ XdmfTemplate::XdmfTemplate() :
 {
 }
 
-XdmfTemplate::XdmfTemplate(XdmfTemplate & refTemplate) :
-  XdmfItem(refTemplate),
-  mBase(refTemplate.mBase),
-  mCurrentStep(refTemplate.mCurrentStep),
-  mNumSteps(refTemplate.mNumSteps),
-  mItemFactory(refTemplate.mItemFactory)
-{
-}
-
 XdmfTemplate::~XdmfTemplate()
 {
 }
@@ -702,7 +693,7 @@ XdmfTemplate::populateItem(const std::map<std::string, std::string> & itemProper
         ++iter) {
       if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
         // Pull hdf5 reference data from the first provided array
-        if (array->getNumberHeavyDataControllers() > 0 & !mHeavyWriter) {
+        if (array->getNumberHeavyDataControllers() > 0 && !mHeavyWriter) {
           mHeavyWriter = reader->generateHeavyDataWriter(array->getHeavyDataController(0)->getName(), array->getHeavyDataController(0)->getFilePath());
         }
         if (array->getName().compare("Data Description") == 0) {
@@ -845,7 +836,7 @@ XdmfTemplate::preallocateSteps(unsigned int numSteps)
   // Set to Default mode so that the new allocations are in new locations
   mHeavyWriter->setMode(XdmfHeavyDataWriter::Default);
   int preallocatedSize = 0;
-  int numberSetsPreallocated = 0;
+  unsigned int numberSetsPreallocated = 0;
   std::stringstream datastream;
   for (unsigned int i = 0; i < mTrackedArrays.size(); ++i) {
     preallocatedSize = mTrackedArrays[i]->getSize() * numSteps;

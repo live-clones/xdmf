@@ -51,7 +51,7 @@ int main()
 
   XDMFFUNCTION * function = XdmfFunctionNew();
 
-  free(function);
+  XdmfFunctionFree(function);
 
   char * keys[2];
 
@@ -83,6 +83,8 @@ int main()
 
   assert(strcmp("A#B", internalExpression) == 0);
 
+  free(internalExpression);
+
   unsigned int numVars = XdmfFunctionGetNumberVariables(function);
 
   printf("%d ?= %d\n", numVars, 2);
@@ -96,10 +98,12 @@ int main()
 
   assert(strcmp(internalVariableList[0], "A") == 0);
   assert(strcmp(internalVariableList[1], "B") == 0);
-
-  void * variable1 = XdmfFunctionGetVariable(function, internalVariableList[0]);
+  
+  XDMFARRAY * variable1 = XdmfFunctionGetVariable(function, internalVariableList[0]);
 
   valueString = XdmfArrayGetValuesString(variable1);
+
+  XdmfArrayFree(variable1);
 
   printf("%s ?= %s\n", "0 1 2 3 4 5 6 7 8 9", valueString);
 
@@ -107,15 +111,25 @@ int main()
 
   free(valueString);
 
-  void * variable2 = XdmfFunctionGetVariable(function, internalVariableList[1]);
+  XDMFARRAY * variable2 = XdmfFunctionGetVariable(function, internalVariableList[1]);
 
   valueString = XdmfArrayGetValuesString(variable2);
+
+  XdmfArrayFree(variable2);
 
   printf("%s ?= %s\n", "10 20 30 40 50 60 70 80 90 100", valueString);
 
   assert(strcmp("10 20 30 40 50 60 70 80 90 100", valueString) == 0);
 
   free(valueString);
+
+  char * internalVariable = internalVariableList[0];
+  i = 1;
+  while(internalVariable != NULL) {
+    free(internalVariable);
+    internalVariable = internalVariableList[i++];
+  }
+  free(internalVariableList);
 
   void * thirdarray = XdmfArrayNew();
 
@@ -136,7 +150,7 @@ int main()
 
   XdmfFunctionInsertVariable(function, "B", thirdarray, 0);
 
-  free(readArray);
+  XdmfArrayFree(readArray);
 
   readArray = XdmfFunctionRead(function, &status);
 
@@ -150,11 +164,13 @@ int main()
 
   XdmfFunctionSetExpression(function, "A|B", &status);
 
-  free(readArray);
+  XdmfArrayFree(readArray);
 
   readArray = XdmfFunctionRead(function, &status);
 
   valueString = XdmfArrayGetValuesString(readArray);
+
+  XdmfArrayFree(readArray);
 
   printf("%s ?= %s\n", "0 1 2 3 4 5 6 7 8 9 20 40 60 80 100 120 140 160 180 200", valueString);
 
@@ -176,11 +192,15 @@ int main()
 
   XdmfFunctionSetConstructedProperties(function, array);
 
+  free(constructedTag);
+
   char * internalTag = XdmfFunctionGetConstructedType(function);
 
   printf("%s ?= %s\n", "DataItem", internalTag);
 
   assert(strcmp(internalTag, "DataItem") == 0);
+
+  free(internalTag);
 
   char * validoperations = XdmfFunctionGetSupportedOperations();
 
@@ -188,17 +208,23 @@ int main()
 
   assert(strcmp("-+/*|#()", validoperations) == 0);
 
+  free(validoperations);
+
   char * validdigits = XdmfFunctionGetValidDigitChars();
 
   printf("%s ?= %s\n", "1234567890.", validdigits);
 
   assert(strcmp("1234567890.", validdigits) == 0);
 
+  free(validdigits);
+
   char * validvariablechars = XdmfFunctionGetValidVariableChars();
 
   printf("%s ?= %s\n", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_:.", validvariablechars);
 
   assert(strcmp("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_:.", validvariablechars) == 0);
+
+  free(validvariablechars);
 
   unsigned int priority = XdmfFunctionGetOperationPriority('#');
 
@@ -218,7 +244,7 @@ int main()
 
   free(valueString);
 
-  free(evaluatedarray);
+  XdmfArrayFree(evaluatedarray);
 
   XDMFARRAY * evaluatedpointers[3] = {array, secondarray, thirdarray};
 
@@ -232,7 +258,7 @@ int main()
 
   free(valueString);
 
-  free(evaluatedarray);
+  XdmfArrayFree(evaluatedarray);
 
   char * secondkeys[3];
 
@@ -250,7 +276,7 @@ int main()
 
   free(valueString);
 
-  free(evaluatedarray);
+  XdmfArrayFree(evaluatedarray);
 
   unsigned int numSupportedFunctions = XdmfFunctionGetNumberSupportedFunctions();
 
@@ -283,6 +309,11 @@ int main()
   assert(strcmp(functionsSupported[13], "SUM") == 0);
   assert(strcmp(functionsSupported[14], "TAN") == 0);
 
+  for (i = 0; i < numSupportedFunctions; ++i) {
+    free(functionsSupported[i]);
+  }
+  free(functionsSupported);
+
   evaluatedarray = XdmfFunctionChunk(array, secondarray, &status);
 
   valueString = XdmfArrayGetValuesString(evaluatedarray);
@@ -293,7 +324,7 @@ int main()
 
   free(valueString);
 
-  free(evaluatedarray);
+  XdmfArrayFree(evaluatedarray);
 
   evaluatedarray = XdmfFunctionInterlace(array, secondarray, &status);
 
@@ -305,7 +336,7 @@ int main()
 
   free(valueString);
 
-  free(evaluatedarray);
+  XdmfArrayFree(evaluatedarray);
 
   evaluatedarray = XdmfFunctionAverage(evaluatedpointers, 3);
 
@@ -317,7 +348,7 @@ int main()
 
   free(valueString);
 
-  free(evaluatedarray);
+  XdmfArrayFree(evaluatedarray);
 
   evaluatedarray = XdmfFunctionSum(evaluatedpointers, 3);
 
@@ -329,7 +360,7 @@ int main()
 
   free(valueString);
 
-  free(evaluatedarray);
+  XdmfArrayFree(evaluatedarray);
 
   XDMFWRITER * writer = XdmfWriterNew("functionfile.xmf");
 
@@ -340,6 +371,14 @@ int main()
   printf("%d ?= %d\n", numInfo, 0);
 
   assert(numInfo == 0);
+
+  XdmfWriterFree(writer);
+
+  XdmfFunctionFree(function);
+
+  XdmfArrayFree(array);
+  XdmfArrayFree(secondarray);
+  XdmfArrayFree(thirdarray);
 
   return 0;
 }
@@ -354,15 +393,20 @@ XDMFARRAY * maximum(XDMFARRAY ** values, unsigned int numValues)
   }
   else {
     // convert all to doubles and return the largest
-    double maxVal = ((double *)XdmfArrayGetValue(values[0], 0, XDMF_ARRAY_TYPE_FLOAT64, &status))[0];
+    double * maxValPtr = (double *)XdmfArrayGetValue(values[0], 0, XDMF_ARRAY_TYPE_FLOAT64, &status);
+    double maxVal = *maxValPtr;
+    free(maxValPtr);
     int limit;
     double currentVal;
+    double * currentValPtr;
     int i;
     int j;
     for (i = 0; i < numValues; ++i) {
       limit = XdmfArrayGetSize(values[i]);
       for (j = 0; j < limit; ++j) {
-        currentVal = ((double *)XdmfArrayGetValue(values[i], j, XDMF_ARRAY_TYPE_FLOAT64, &status))[0];
+        currentValPtr = (double *)XdmfArrayGetValue(values[i], j, XDMF_ARRAY_TYPE_FLOAT64, &status);
+	currentVal = *currentValPtr;
+	free(currentValPtr);
         if (maxVal < currentVal) {
           maxVal = currentVal;
         }

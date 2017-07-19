@@ -2,6 +2,7 @@
 #include <stack>
 #include <map>
 #include <string>
+#include <vector>
 #include <stdlib.h>
 #include <math.h>
 #include <XdmfArray.hpp>
@@ -205,7 +206,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 	std::stack<char> operationStack;
 
 	std::string validOperationChars = "+-*/()^"; //will be global at some point, all supported operations
-	int * operationPriority = new int[validOperationChars.size()]();
+	std::vector<int> operationPriority(validOperationChars.size());
 	//list the priorities for the operations, based on the order of operations
 	//the index of the corresponding operation in validOperationChars is the same as the index of its priority in this array
 	operationPriority[0] = 1;//+
@@ -476,7 +477,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 	std::stack<char> operationStack;
 
 	std::string validOperationChars = "|#()@"; //will be global at some point, all supported operations
-	int * operationPriority = new int[validOperationChars.size()]();
+	std::vector<int> operationPriority(validOperationChars.size());
 	//list the priorities for the operations, based on the order of operations
 	//the index of the corresponding operation in validOperationChars is the same as the index of its priority in this array
 	operationPriority[0] = 2;//|
@@ -645,7 +646,6 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 		}
 		//if not a value or operation the character is ignored
 	}
-
 
 	//empty what's left in the stacks before finishing
 	while (valueStack.size() > 1 && operationStack.size() > 0)

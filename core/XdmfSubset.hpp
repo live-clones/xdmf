@@ -44,7 +44,7 @@ class XdmfArray;
  * This class serves to allow an array to retrieve data that is a subsection
  * of an already existing array.
  */
-class XDMFCORE_EXPORT XdmfSubset: public XdmfArrayReference {
+class XDMFCORE_EXPORT XdmfSubset : public XdmfArrayReference {
 
 public:
 
@@ -366,8 +366,6 @@ public:
 
   void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
-  XdmfSubset(XdmfSubset&);
-
 protected:
 
   XdmfSubset(shared_ptr<XdmfArray> referenceArray,
@@ -409,7 +407,7 @@ XDMFCORE_EXPORT unsigned int * XdmfSubsetGetDimensions(XDMFSUBSET * subset);
 
 XDMFCORE_EXPORT unsigned int XdmfSubsetGetNumberDimensions(XDMFSUBSET * subset);
 
-XDMFCORE_EXPORT void * XdmfSubsetGetReferenceArray(XDMFSUBSET * subset);
+XDMFCORE_EXPORT XDMFARRAY * XdmfSubsetGetReferenceArray(XDMFSUBSET * subset);
 
 XDMFCORE_EXPORT unsigned int XdmfSubsetGetSize(XDMFSUBSET * subset);
 

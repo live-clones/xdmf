@@ -27,11 +27,6 @@
 #cmakedefine HAVE_BOOST_SHARED_DYNAMIC_CAST
 #cmakedefine XDMF_BIG_ENDIAN
 
-#cmakedefine BUILD_SHARED
-#ifndef BUILD_SHARED
-#  define XDMFSTATIC
-#endif
-
 #cmakedefine XDMF_NO_REALPATH
 
 #endif /* XDMFCORECONFIG_HPP_ */

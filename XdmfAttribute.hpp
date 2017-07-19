@@ -238,8 +238,6 @@ public:
    */
   void setType(const shared_ptr<const XdmfAttributeType> type);
 
-  XdmfAttribute(XdmfAttribute &);
-
 protected:
 
   XdmfAttribute();

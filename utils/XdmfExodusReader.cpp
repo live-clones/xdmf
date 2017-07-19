@@ -677,22 +677,37 @@ XdmfExodusReader::read(const std::string & fileName,
 XDMFEXODUSREADER *
 XdmfExodusReaderNew()
 {
-  shared_ptr<XdmfExodusReader> generatedReader = XdmfExodusReader::New();
-  return (XDMFEXODUSREADER *)((void *)(new XdmfExodusReader(*generatedReader.get())));
+  shared_ptr<XdmfExodusReader> * p = 
+    new shared_ptr<XdmfExodusReader>(XdmfExodusReader::New());
+  return (XDMFEXODUSREADER *) p;
 }
 
 XDMFUNSTRUCTUREDGRID *
 XdmfExodusReaderRead(XDMFEXODUSREADER * reader, char * fileName, XDMFHEAVYDATAWRITER * heavyDataWriter)
 {
-  shared_ptr<XdmfHeavyDataWriter> tempWriter = shared_ptr<XdmfHeavyDataWriter>((XdmfHeavyDataWriter *)heavyDataWriter, XdmfNullDeleter());
-  return (XDMFUNSTRUCTUREDGRID)((void *)(new XdmfUnstructuredGrid(*((((XdmfExodusReader *)reader)->read(fileName, tempWriter)).get()))));
+  shared_ptr<XdmfExodusReader> & refReader = 
+    *(shared_ptr<XdmfExodusReader> *)(reader);
+
+  shared_ptr<XdmfUnstructuredGrid> * p; 
+  if(heavyDataWriter) {
+    shared_ptr<XdmfHeavyDataWriter> & refHeavyDataWriter = 
+      *(shared_ptr<XdmfHeavyDataWriter> *)(heavyDataWriter);
+    p = new shared_ptr<XdmfUnstructuredGrid>(refReader->read(fileName,
+							     refHeavyDataWriter));
+  }
+  else {
+    shared_ptr<XdmfHeavyDataWriter> refHeavyDataWriter;
+    p = new shared_ptr<XdmfUnstructuredGrid>(refReader->read(fileName,
+							     refHeavyDataWriter));
+  }
+  return (XDMFUNSTRUCTUREDGRID * ) p;
 }
 
 void
 XdmfExodusReaderFree(XDMFEXODUSREADER * reader)
 {
   if (reader != NULL) {
-    delete ((XdmfExodusReader *)reader);
+    delete (shared_ptr<XdmfExodusReader> *)reader;
     reader = NULL;
   }
 }

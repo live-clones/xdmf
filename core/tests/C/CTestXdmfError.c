@@ -96,5 +96,9 @@ int main()
 
   assert(functionResult == NULL);
 
+  XdmfArrayFree(array1);
+  XdmfArrayFree(array2);
+  XdmfFunctionFree(function);
+
   return 0;
 }

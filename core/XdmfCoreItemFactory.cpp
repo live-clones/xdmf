@@ -731,26 +731,3 @@ XdmfCoreItemFactory::isArrayTag(char * tag) const
   }
   return false;
 }
-
-XdmfItem *
-XdmfCoreItemFactory::DuplicatePointer(shared_ptr<XdmfItem> original) const
-{
-  if (original->getItemTag() == XdmfArray::ItemTag) {
-    return (XdmfItem *)(new XdmfArray(*((XdmfArray *)original.get())));
-  }
-  else if (original->getItemTag() == XdmfInformation::ItemTag) {
-    return (XdmfItem *)(new XdmfInformation(*((XdmfInformation *)original.get())));
-  }
-  else if (original->getItemTag() == XdmfFunction::ItemTag) {
-    return (XdmfItem *)(new XdmfFunction(*((XdmfFunction *)original.get())));
-  }
-  else if (original->getItemTag() == XdmfSubset::ItemTag) {
-    return (XdmfItem *)(new XdmfSubset(*((XdmfSubset *)original.get())));
-  }
-  else if (original->getItemTag() == XdmfSparseMatrix::ItemTag) {
-   return (XdmfItem *)(new XdmfSparseMatrix(*((XdmfSparseMatrix *)original.get())));
-  }
-  else {
-    return NULL;
-  }
-}

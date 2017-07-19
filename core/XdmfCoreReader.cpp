@@ -21,6 +21,10 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#define vtk_libxml2_reference reference // Reversing VTK name mangling
+#include <libxml/uri.h>
+#include <libxml/xpointer.h>
+#include <libxml/xmlreader.h>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
 #include <cstring>
@@ -168,7 +172,7 @@ public:
         else {
           document = iter->second;
         }
-        
+	xmlFree(filePath);
         mXPathContext = xmlXPtrNewContext(document, NULL, NULL);           
       }
       
@@ -305,15 +309,6 @@ XdmfCoreReader::~XdmfCoreReader()
   delete mImpl;
 }
 
-XdmfItem *
-XdmfCoreReader::DuplicatePointer(shared_ptr<XdmfItem> original) const
-{
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Reader Internal Object is NULL");
-  }
-  return mImpl->mItemFactory->DuplicatePointer(original);
-}
-
 std::vector<shared_ptr<XdmfHeavyDataController> >
 XdmfCoreReader::generateHeavyDataControllers(std::map<std::string, std::string> controllerProperties,
                                              const std::vector<unsigned int> & passedDimensions,
@@ -395,8 +390,9 @@ XDMFITEM *
 XdmfCoreReaderRead(XDMFCOREREADER * reader, char * filePath, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfItem> returnItem = ((XdmfCoreReader *)reader)->read(filePath);
-  return (XDMFITEM *)((void *)((XdmfItem *)((XdmfCoreReader *)reader)->DuplicatePointer(returnItem)));
+  shared_ptr<XdmfCoreReader> & refReader = *(shared_ptr<XdmfCoreReader> *)(reader);
+  shared_ptr<XdmfItem> * p = new shared_ptr<XdmfItem>(refReader->read(filePath));
+  return (XDMFITEM *) p;
   XDMF_ERROR_WRAP_END(status)
   return NULL;
 }
