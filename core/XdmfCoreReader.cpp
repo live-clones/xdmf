@@ -25,8 +25,6 @@
 #include <libxml/uri.h>
 #include <libxml/xpointer.h>
 #include <libxml/xmlreader.h>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/tokenizer.hpp>
 #include <cstring>
 #include <map>
 #include <sstream>
@@ -231,9 +229,7 @@ public:
                 }
               }
               if(!whitespace) {
-                std::string contentString(content);
-                boost::algorithm::trim(contentString);
-                itemProperties.insert(std::make_pair("Content", contentString));
+                itemProperties.insert(std::make_pair("Content", content));
                 itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
                 break;
               }
