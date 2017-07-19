@@ -42,7 +42,7 @@
  *   FiniteElementFunction
  */
 
-class XDMF_EXPORT XdmfAttributeItemType : public XdmfItemProperty {
+class XDMF_EXPORT XdmfAttributeItemType : public XdmfItemProperty 
 {
 
 public:
