@@ -126,7 +126,7 @@ XdmfGrid::getName() const
 shared_ptr<XdmfTime>
 XdmfGrid::getTime()
 {
-  return boost::const_pointer_cast<XdmfTime>
+  return const_pointer_cast<XdmfTime>
     (static_cast<const XdmfGrid &>(*this).getTime());
 }
 

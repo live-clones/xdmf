@@ -55,7 +55,7 @@ XdmfGraph::getItemTag() const
 shared_ptr<XdmfTime>
 XdmfGraph::getTime()
 {
-  return boost::const_pointer_cast<XdmfTime>
+  return const_pointer_cast<XdmfTime>
     (static_cast<const XdmfGraph &>(*this).getTime());
 }
 

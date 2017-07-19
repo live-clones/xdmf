@@ -361,7 +361,7 @@ XdmfRegularGrid::copyGrid(shared_ptr<XdmfGrid> sourceGrid)
 shared_ptr<XdmfArray>
 XdmfRegularGrid::getBrickSize()
 {
-  return boost::const_pointer_cast<XdmfArray>
+  return const_pointer_cast<XdmfArray>
     (static_cast<const XdmfRegularGrid &>(*this).getBrickSize());
 }
 
@@ -374,7 +374,7 @@ XdmfRegularGrid::getBrickSize() const
 shared_ptr<XdmfArray>
 XdmfRegularGrid::getDimensions()
 {
-  return boost::const_pointer_cast<XdmfArray>
+  return const_pointer_cast<XdmfArray>
     (static_cast<const XdmfRegularGrid &>(*this).getDimensions());
 }
 
@@ -387,7 +387,7 @@ XdmfRegularGrid::getDimensions() const
 shared_ptr<XdmfArray>
 XdmfRegularGrid::getOrigin()
 {
-  return boost::const_pointer_cast<XdmfArray>
+  return const_pointer_cast<XdmfArray>
     (static_cast<const XdmfRegularGrid &>(*this).getOrigin());
 }
 

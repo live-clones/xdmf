@@ -26,16 +26,22 @@
 
 #ifdef __cplusplus
 
+#include <memory>
+
 #include "XdmfCoreConfig.hpp"
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 
-using boost::shared_ptr;
+using std::shared_ptr;
+using std::const_pointer_cast;
 
-#ifdef HAVE_BOOST_SHARED_DYNAMIC_CAST
+//using boost::shared_ptr;
+//using boost::const_pointer_cast;
 
-using boost::shared_dynamic_cast;
+//#ifdef HAVE_BOOST_SHARED_DYNAMIC_CAST
 
-#else
+//using boost::shared_dynamic_cast;
+
+//#else
 
 template <typename T, typename U>
 shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r) 
@@ -45,16 +51,7 @@ shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r)
   return p? shared_ptr<T>( r, p ): shared_ptr<T>();
 }
 
-#endif /* HAVE_BOOST_SHARED_DYNAMIC_CAST */
-
-// Used by C wrappers to prevent shared pointers from prematurely deleting objects
-// Normally this would be completely against the point of shared pointers,
-// but the  C wrapping requires that objects be seperated from the shared pointers.
-struct XdmfNullDeleter
-{
-template<typename T>
-void operator()(T*) {}
-};
+//#endif /* HAVE_BOOST_SHARED_DYNAMIC_CAST */
 
 #endif
 

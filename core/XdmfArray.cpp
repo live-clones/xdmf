@@ -742,7 +742,7 @@ XdmfArray::getValuesString() const
 shared_ptr<XdmfHeavyDataController>
 XdmfArray::getHeavyDataController()
 {
-  return boost::const_pointer_cast<XdmfHeavyDataController>
+  return const_pointer_cast<XdmfHeavyDataController>
     (static_cast<const XdmfArray &>(*this).getHeavyDataController(0));
 }
 
