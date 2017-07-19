@@ -43,7 +43,7 @@ XdmfAttributeItemType::FiniteElementFunction()
 //-----------------------------------------------------------------------------
 void XdmfAttributeItemType::InitTypes()
 {
-  mAttributeDefinitions["NONE"] = NoAttributeType;
+  mAttributeDefinitions["NONE"] = NoAttributeItemType;
   mAttributeDefinitions["FINITE_ELEMENT_FUNCTION"] = FiniteElementFunction;
 }
 //-----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ XdmfAttributeItemType::~XdmfAttributeItemType()
 }
 //-----------------------------------------------------------------------------
 shared_ptr<const XdmfAttributeItemType> XdmfAttributeItemType::New(
-  const std::map<std::string, std::string &itemProperties)
+  const std::map<std::string, std::string> &itemProperties)
 {
   InitTypes();
 

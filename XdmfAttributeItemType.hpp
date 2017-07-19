@@ -42,7 +42,7 @@
  *   FiniteElementFunction
  */
 
-class XDMF_EXPORT XdmfAttributeItemType : public XdmfItemProperty 
+class XDMF_EXPORT XdmfAttributeItemType : public XdmfItemProperty
 {
 
 public:
@@ -52,6 +52,7 @@ public:
   friend class XdmfAttribute;
 
   // Supported Xdmf Attribute Types
+  static shared_ptr<const XdmfAttributeType> NoAttributeItemType();
   static shared_ptr<const XdmfAttributeItemType> FiniteElementFunction();
 
   void
