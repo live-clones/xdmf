@@ -21,46 +21,53 @@
 /*                                                                           */
 /*****************************************************************************/
 
+
 #include <utility>
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
 #include "XdmfError.hpp"
-
+//-----------------------------------------------------------------------------
 shared_ptr<XdmfAttribute>
 XdmfAttribute::New()
 {
   shared_ptr<XdmfAttribute> p(new XdmfAttribute());
   return p;
 }
-
+//-----------------------------------------------------------------------------
 XdmfAttribute::XdmfAttribute() :
   mCenter(XdmfAttributeCenter::Grid()),
   mName(""),
-  mType(XdmfAttributeType::NoAttributeType())
+  mType(XdmfAttributeType::NoAttributeType()),
+  mItemType(""),
+  mElementDegree(0),
+  mElementFamily("")
 {
 }
-
+//-----------------------------------------------------------------------------
 XdmfAttribute::XdmfAttribute(XdmfAttribute & refAttribute) :
   XdmfArray(refAttribute),
   mCenter(refAttribute.mCenter),
   mName(refAttribute.mName),
-  mType(refAttribute.mType)
+  mType(refAttribute.mType),
+  mItemType(refAttribute.mItemType),
+  mElementDegree(refAttribute.mElementDegree),
+  mElementFamily(refAttribute.mElementFamily)
 {
 }
-
+//-----------------------------------------------------------------------------
 XdmfAttribute::~XdmfAttribute()
 {
 }
-
+//-----------------------------------------------------------------------------
 const std::string XdmfAttribute::ItemTag = "Attribute";
-
+//-----------------------------------------------------------------------------
 shared_ptr<const XdmfAttributeCenter>
 XdmfAttribute::getCenter() const
 {
   return mCenter;
 }
-
+//-----------------------------------------------------------------------------
 std::map<std::string, std::string>
 XdmfAttribute::getItemProperties() const
 {
@@ -68,31 +75,51 @@ XdmfAttribute::getItemProperties() const
   attributeProperties.insert(std::make_pair("Name", mName));
   mType->getProperties(attributeProperties);
   mCenter->getProperties(attributeProperties);
+  attributeProperties.insert(std::make_pair("ItemType", mItemType));
+  attributeProperties.insert(std::make_pair("ElementDegree",
+    std::to_string(mElementDegree)));
+  attributeProperties.insert(std::make_pair("ElementFamily", mElementFamily));
   return attributeProperties;
 }
-
+//-----------------------------------------------------------------------------
 std::string
 XdmfAttribute::getItemTag() const
 {
   return ItemTag;
 }
-
+//-----------------------------------------------------------------------------
 std::string
 XdmfAttribute::getName() const
 {
   return mName;
 }
-
+//-----------------------------------------------------------------------------
 shared_ptr<const XdmfAttributeType>
 XdmfAttribute::getType() const
 {
   return mType;
 }
-
+//-----------------------------------------------------------------------------
+std::string XdmfAttribute::getItemType() const
+{
+  return mItemType;
+}
+//-----------------------------------------------------------------------------
+unsigned int XdmfAttribute::getElementDegree() const
+{
+  return mElementDegree;
+}
+//-----------------------------------------------------------------------------
+std::string XdmfAttribute::getElementFamily() const
+{
+  return mElementFamily;
+}
+//-----------------------------------------------------------------------------
 void
-XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties,
-                            const std::vector<shared_ptr<XdmfItem> > & childItems,
-                            const XdmfCoreReader * const reader)
+XdmfAttribute::populateItem(
+  const std::map<std::string, std::string> & itemProperties,
+  const std::vector<shared_ptr<XdmfItem> > & childItems,
+  const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
 
@@ -109,7 +136,26 @@ XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemPrope
 
   mCenter = XdmfAttributeCenter::New(itemProperties);
   mType = XdmfAttributeType::New(itemProperties);
-  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter = 
+
+  std::map<std::string, std::string>::const_iterator element_degree =
+    itemProperties.find("ElementDegree");
+  if(element_degree != itemProperties.end()) {
+    mElementDegree = std::stoi(element_degree->second);
+  }
+
+  std::map<std::string, std::string>::const_iterator element_family =
+    itemProperties.find("ElementFamily");
+  if(element_family != itemProperties.end()) {
+    mElementFamily = element_family->second;
+  }
+
+  std::map<std::string, std::string>::const_iterator item_type =
+    itemProperties.find("ItemType");
+  if(item_type != itemProperties.end()) {
+    mItemType = item_type->second;
+  }
+
+  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
         childItems.begin();
       iter != childItems.end();
       ++iter) {
@@ -123,30 +169,51 @@ XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemPrope
     }
   }
 }
-
+//-----------------------------------------------------------------------------
 void
 XdmfAttribute::setCenter(const shared_ptr<const XdmfAttributeCenter> center)
 {
   mCenter = center;
   this->setIsChanged(true);
 }
-
+//-----------------------------------------------------------------------------
 void
 XdmfAttribute::setName(const std::string & name)
 {
   mName = name;
   this->setIsChanged(true);
 }
-
+//-----------------------------------------------------------------------------
 void
 XdmfAttribute::setType(const shared_ptr<const XdmfAttributeType> type)
 {
   mType = type;
   this->setIsChanged(true);
 }
-
+//-----------------------------------------------------------------------------
+void
+XdmfAttribute::setItemType(std::string type)
+{
+  mItemType = type;
+  this->setIsChanged(true);
+}
+//-----------------------------------------------------------------------------
+void
+XdmfAttribute::setElementDegree(unsigned int degree)
+{
+  mElementDegree = degree;
+  this->setIsChanged(true);
+}
+//-----------------------------------------------------------------------------
+void
+XdmfAttribute::setElementFamily(std::string family)
+{
+  mElementFamily = family;
+  this->setIsChanged(true);
+}
+//-----------------------------------------------------------------------------
 // C Wrappers
-
+//-----------------------------------------------------------------------------
 XDMFATTRIBUTE * XdmfAttributeNew()
 {
   try
@@ -160,7 +227,7 @@ XDMFATTRIBUTE * XdmfAttributeNew()
     return (XDMFATTRIBUTE *)((void *)(new XdmfAttribute(*generatedAttribute.get())));
   }
 }
-
+//-----------------------------------------------------------------------------
 int XdmfAttributeGetCenter(XDMFATTRIBUTE * attribute)
 {
   if (((XdmfAttribute *)attribute)->getCenter() == XdmfAttributeCenter::Grid()) {
@@ -178,11 +245,15 @@ int XdmfAttributeGetCenter(XDMFATTRIBUTE * attribute)
   else if (((XdmfAttribute *)attribute)->getCenter() == XdmfAttributeCenter::Node()) {
     return XDMF_ATTRIBUTE_CENTER_NODE;
   }
+  else if (((XdmfAttribute *)attribute)->getCenter() ==
+    XdmfAttributeCenter::Other()) {
+    return XDMF_ATTRIBUTE_CENTER_OTHER;
+  }
   else {
     return -1;
   }
 }
-
+//-----------------------------------------------------------------------------
 int XdmfAttributeGetType(XDMFATTRIBUTE * attribute)
 {
   if (((XdmfAttribute *)attribute)->getType() == XdmfAttributeType::Scalar()) {
@@ -210,7 +281,7 @@ int XdmfAttributeGetType(XDMFATTRIBUTE * attribute)
     return -1;
   }
 }
-
+//-----------------------------------------------------------------------------
 void XdmfAttributeSetCenter(XDMFATTRIBUTE * attribute, int center, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
@@ -237,7 +308,7 @@ void XdmfAttributeSetCenter(XDMFATTRIBUTE * attribute, int center, int * status)
   }
   XDMF_ERROR_WRAP_END(status)
 }
-
+//-----------------------------------------------------------------------------
 void XdmfAttributeSetType(XDMFATTRIBUTE * attribute, int type, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
@@ -270,6 +341,6 @@ void XdmfAttributeSetType(XDMFATTRIBUTE * attribute, int type, int * status)
   }
   XDMF_ERROR_WRAP_END(status)
 }
-
+//-----------------------------------------------------------------------------
 XDMF_ITEM_C_CHILD_WRAPPER(XdmfAttribute, XDMFATTRIBUTE)
 XDMF_ARRAY_C_CHILD_WRAPPER(XdmfAttribute, XDMFATTRIBUTE)
