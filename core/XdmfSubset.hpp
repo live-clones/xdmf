@@ -75,9 +75,9 @@ public:
    */
   static shared_ptr<XdmfSubset>
   New(shared_ptr<XdmfArray> referenceArray,
-      std::vector<unsigned int> & start,
-      std::vector<unsigned int> & stride,
-      std::vector<unsigned int> & dimensions);
+      const std::vector<unsigned int> & start,
+      const std::vector<unsigned int> & stride,
+      const std::vector<unsigned int> & dimensions);
 
   virtual ~XdmfSubset();
 
@@ -369,14 +369,9 @@ public:
 protected:
 
   XdmfSubset(shared_ptr<XdmfArray> referenceArray,
-             std::vector<unsigned int> & start,
-             std::vector<unsigned int> & stride,
-             std::vector<unsigned int> & dimensions);
-
-  void
-  populateItem(const std::map<std::string, std::string> & itemProperties,
-               const std::vector<shared_ptr<XdmfItem> > & childItems,
-               const XdmfCoreReader * const reader);
+             const std::vector<unsigned int> & start,
+             const std::vector<unsigned int> & stride,
+             const std::vector<unsigned int> & dimensions);
 
   shared_ptr<XdmfArray> mParent;
   std::vector<unsigned int> mDimensions;

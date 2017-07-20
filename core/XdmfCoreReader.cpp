@@ -34,8 +34,6 @@
 #include "XdmfCoreItemFactory.hpp"
 #include "XdmfCoreReader.hpp"
 #include "XdmfError.hpp"
-#include "XdmfFunction.hpp"
-#include "XdmfSubset.hpp"
 #include "XdmfItem.hpp"
 #include "XdmfSystemUtils.hpp"
 

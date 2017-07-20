@@ -21,11 +21,11 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "XdmfGeometry.hpp"
-#include "XdmfGeometryType.hpp"
 #include "XdmfError.hpp"
 #include "XdmfFunction.hpp"
-#include <boost/tokenizer.hpp>
+#include "XdmfGeometry.hpp"
+#include "XdmfGeometryType.hpp"
+#include "XdmfStringUtils.hpp"
 
 shared_ptr<XdmfGeometry> XdmfGeometry::New()
 {
@@ -188,12 +188,7 @@ XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProper
   std::map<std::string, std::string>::const_iterator origin =
     itemProperties.find("Origin");
   if (origin != itemProperties.end()) {
-    boost::tokenizer<> tokens(origin->second);
-    for(boost::tokenizer<>::const_iterator iter = tokens.begin();
-        iter != tokens.end();
-        ++iter) {
-      mOrigin.push_back(atof((*iter).c_str()));
-    }
+    XdmfStringUtils::split(origin->second, mOrigin);
   }
 }
 

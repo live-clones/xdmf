@@ -23,7 +23,6 @@
 
 #include <numeric>
 #include <functional>
-#include <boost/tokenizer.hpp>
 #include "string.h"
 #include "XdmfArray.hpp"
 #include "XdmfError.hpp"
@@ -31,9 +30,9 @@
 #include "XdmfWriter.hpp"
 
 XdmfSubset::XdmfSubset(shared_ptr<XdmfArray> referenceArray,
-                       std::vector<unsigned int> & start,
-                       std::vector<unsigned int> & stride,
-                       std::vector<unsigned int> & dimensions) :
+                       const std::vector<unsigned int> & start,
+                       const std::vector<unsigned int> & stride,
+                       const std::vector<unsigned int> & dimensions) :
   mParent(referenceArray),
   mDimensions(dimensions),
   mStart(start),
@@ -55,11 +54,14 @@ const std::string XdmfSubset::ItemTag = "Subset";
 
 shared_ptr<XdmfSubset>
 XdmfSubset::New(shared_ptr<XdmfArray> referenceArray,
-                std::vector<unsigned int> & start,
-                std::vector<unsigned int> & stride,
-                std::vector<unsigned int> & dimensions)
+                const std::vector<unsigned int> & start,
+                const std::vector<unsigned int> & stride,
+                const std::vector<unsigned int> & dimensions)
 {
-  shared_ptr<XdmfSubset> p(new XdmfSubset(referenceArray, start, stride, dimensions));
+  shared_ptr<XdmfSubset> p(new XdmfSubset(referenceArray, 
+					  start, 
+					  stride, 
+					  dimensions));
   return p;
 }
 
@@ -88,36 +90,28 @@ XdmfSubset::getItemProperties() const
                        "one value contained within");
   }
 
-  std::map<std::string, std::string> subsetMap = XdmfArrayReference::getItemProperties();
+  std::map<std::string, std::string> subsetMap = 
+    XdmfArrayReference::getItemProperties();
 
   std::stringstream vectorStream;
-
   vectorStream << mStart[0];
-
   for (unsigned int i = 1; i < mStart.size(); ++i) {
     vectorStream << " " << mStart[i];
   }
-
   subsetMap["SubsetStarts"] = vectorStream.str();
 
   vectorStream.str(std::string());
-
   vectorStream << mStride[0];
-
   for (unsigned int i = 1; i < mStride.size(); ++i) {
     vectorStream << " " << mStride[i];
   }
-
   subsetMap["SubsetStrides"] = vectorStream.str();
 
   vectorStream.str(std::string());
-
   vectorStream << mDimensions[0];
-
   for (unsigned int i = 1; i < mDimensions.size(); ++i) {
     vectorStream << " " << mDimensions[i];
   }
-
   subsetMap["SubsetDimensions"] = vectorStream.str();
 
   return subsetMap;
@@ -159,44 +153,6 @@ std::vector<unsigned int>
 XdmfSubset::getStride() const
 {
   return mStride;
-}
-
-void
-XdmfSubset::populateItem(const std::map<std::string, std::string> & itemProperties,
-             const std::vector<shared_ptr<XdmfItem> > & childItems,
-             const XdmfCoreReader * const reader)
-{
-  std::map<std::string, std::string>::const_iterator starts =
-    itemProperties.find("SubsetStarts");
-
-  boost::tokenizer<> tokens(starts->second);
-  for(boost::tokenizer<>::const_iterator iter = tokens.begin();
-      iter != tokens.end();
-      ++iter) {
-    mStart.push_back(atoi((*iter).c_str()));
-  }
-
-  std::map<std::string, std::string>::const_iterator strides =
-    itemProperties.find("SubsetStrides");
-
-  boost::tokenizer<> stridetokens(strides->second);
-  for(boost::tokenizer<>::const_iterator iter = stridetokens.begin();
-      iter != stridetokens.end();
-      ++iter) {
-    mStride.push_back(atoi((*iter).c_str()));
-  }
-
-  std::map<std::string, std::string>::const_iterator dimensions =
-    itemProperties.find("SubsetDimensions");
-
-  boost::tokenizer<> dimtokens(dimensions->second);
-  for(boost::tokenizer<>::const_iterator iter = dimtokens.begin();
-      iter != dimtokens.end();
-      ++iter) {
-    mDimensions.push_back(atoi((*iter).c_str()));
-  }
-
-  mParent = shared_dynamic_cast<XdmfArray>(childItems[0]);
 }
 
 shared_ptr<XdmfArray>

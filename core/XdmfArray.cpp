@@ -21,7 +21,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <boost/tokenizer.hpp>
 #include <limits>
 #include <sstream>
 #include <utility>
@@ -33,11 +32,12 @@
 #include "XdmfArrayReference.hpp"
 #include "XdmfBinaryController.hpp"
 #include "XdmfCoreReader.hpp"
-#include "XdmfFunction.hpp"
-#include "XdmfSubset.hpp"
-#include "XdmfHeavyDataController.hpp"
-#include "XdmfVisitor.hpp"
 #include "XdmfError.hpp"
+#include "XdmfFunction.hpp"
+#include "XdmfHeavyDataController.hpp"
+#include "XdmfSubset.hpp"
+#include "XdmfStringUtils.hpp"
+#include "XdmfVisitor.hpp"
 
 XDMF_CHILDREN_IMPLEMENTATION(XdmfArray,
                              XdmfHeavyDataController,
@@ -1092,20 +1092,17 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
 
       unsigned int i = 0;
 
-      while (i < dimArray->getSize() / 3)
-      {
+      while (i < dimArray->getSize() / 3) {
         start.push_back(dimArray->getValue<unsigned int>(i));
         ++i;
       }
 
-      while (i < 2 * (dimArray->getSize() / 3))
-      {
+      while (i < 2 * (dimArray->getSize() / 3)) {
         stride.push_back(dimArray->getValue<unsigned int>(i));
         ++i;
       }
 
-      while (i < dimArray->getSize())
-      {
+      while (i < dimArray->getSize()) {
         dimensions.push_back(dimArray->getValue<unsigned int>(i));
         ++i;
       }
@@ -1173,12 +1170,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
                          "XdmfArray::populateItem");
     }
    
-    boost::tokenizer<> tokens(dimensions->second);
-    for(boost::tokenizer<>::const_iterator iter = tokens.begin();
-        iter != tokens.end();
-        ++iter) {
-      mDimensions.push_back(atoi((*iter).c_str()));
-    }
+    XdmfStringUtils::split(dimensions->second, mDimensions);
 
     std::map<std::string, std::string>::const_iterator format =
       itemProperties.find("Format");
@@ -1193,26 +1185,17 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
       if(formatVal.compare("XML") == 0) {
         this->initialize(arrayType,
                          mDimensions);
-        unsigned int index = 0;
-        boost::char_separator<char> sep(" \t\n");
-        for (contentIndex = 0; contentIndex < contentVals.size(); ++contentIndex)
-        {
-          boost::tokenizer<boost::char_separator<char> > tokens(contentVals[contentIndex], sep);
+        for (contentIndex = 0; contentIndex < contentVals.size(); 
+	     ++contentIndex) {  
           if(arrayType == XdmfArrayType::String()) {
-            for(boost::tokenizer<boost::char_separator<char> >::const_iterator
-                  iter = tokens.begin();
-                iter != tokens.end();
-                ++iter, ++index) {
-              this->insert(index, *iter);
-            }
+	    std::vector<std::string> tokens;
+	    XdmfStringUtils::split(contentVals[contentIndex], tokens);
+	    this->insert(0, &(tokens[0]), tokens.size());
           }
           else {
-            for(boost::tokenizer<boost::char_separator<char> >::const_iterator
-                  iter = tokens.begin();
-                iter != tokens.end();
-                ++iter, ++index) {
-              this->insert(index, atof((*iter).c_str()));
-            }
+	    std::vector<double> tokens;
+	    XdmfStringUtils::split(contentVals[contentIndex], tokens);
+	    this->insert(0, &(tokens[0]), tokens.size());
           }
         }
       }

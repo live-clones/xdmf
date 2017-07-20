@@ -22,7 +22,6 @@
 /*****************************************************************************/
 
 #include <cctype>
-#include <boost/tokenizer.hpp>
 #include "XdmfAttribute.hpp"
 #include "XdmfCurvilinearGrid.hpp"
 #include "XdmfDomain.hpp"
@@ -41,6 +40,7 @@
 #include "XdmfRegularGrid.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSparseMatrix.hpp"
+#include "XdmfStringUtils.hpp"
 #include "XdmfTemplate.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
@@ -277,12 +277,11 @@ XdmfItemFactory::createItem(const std::string & itemTag,
         if(dimensions != itemProperties.end()) {
           dimensionsString = dimensions->second;
         }
-        boost::tokenizer<> tokens(dimensionsString);
-        for(boost::tokenizer<>::const_iterator iter = tokens.begin();
-            iter != tokens.end();
-            ++iter) {
-          dimensionsArray->pushBack<unsigned int>(atoi((*iter).c_str()));
-        }
+	std::vector<unsigned int> dimensionsVector;
+	XdmfStringUtils::split(dimensionsString, dimensionsVector);
+	dimensionsArray->insert(0,
+				&(dimensionsVector[0]),
+				dimensionsVector.size());
         if(typeVal.compare("2DCORECTMESH") == 0 ||
            typeVal.compare("3DCORECTMESH") == 0 ||
            typeVal.compare("CORECTMESH") == 0) {
