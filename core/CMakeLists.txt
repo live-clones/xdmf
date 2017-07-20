@@ -17,6 +17,7 @@ if(VERSION_CONTROL_AUTOUPDATE OR
     )
 endif()
 
+option(BUILD_SHARED_LIBS "Build the shared library" ON)
 if(BUILD_SHARED_LIBS)
   set(LIBTYPE SHARED)
   set(BUILD_SHARED 1)
@@ -115,22 +116,6 @@ endif()
 # Perform compile-time checks and generate XdmfCoreConfig.hpp
 
 TEST_BIG_ENDIAN(XDMF_BIG_ENDIAN)
-
-unset(HAVE_BOOST_SHARED_DYNAMIC_CAST CACHE)
-set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
-check_cxx_source_compiles("
-#include <boost/shared_ptr.hpp>
-
-struct Base { virtual ~Base(){} };
-struct Derived : public Base {};
-
-int main(int ac, char * av[])
-{
-  boost::shared_ptr<Base> ptr(new Base());
-  boost::shared_dynamic_cast<Derived>(ptr);
-}
-"
-HAVE_BOOST_SHARED_DYNAMIC_CAST)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XdmfCoreConfig.hpp.in
                ${CMAKE_CURRENT_BINARY_DIR}/XdmfCoreConfig.hpp)
