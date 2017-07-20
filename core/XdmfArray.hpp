@@ -36,9 +36,11 @@
 class XdmfArrayType;
 class XdmfHeavyDataController;
 
+#include <memory>
+
 // Includes
-#include <boost/shared_array.hpp>
 #include <boost/variant.hpp>
+using boost::variant;
 
 /**
  * @brief Provides storage for data values that are read in or will be
@@ -1473,6 +1475,7 @@ private:
   void operator=(const XdmfArray &);  // Not implemented.
 
   // Variant Visitor Operations
+  template <typename T> struct ArrayDeleter;
   class Clear;
   class Erase;
   class GetArrayType;
@@ -1501,7 +1504,7 @@ private:
    */
   void internalizeArrayPointer();
 
-  typedef boost::variant<
+  typedef variant<
     boost::blank,
     shared_ptr<std::vector<char> >,
     shared_ptr<std::vector<short> >,
@@ -1513,15 +1516,15 @@ private:
     shared_ptr<std::vector<unsigned short> >,
     shared_ptr<std::vector<unsigned int> >,
     shared_ptr<std::vector<std::string> >,
-    boost::shared_array<const char>,
-    boost::shared_array<const short>,
-    boost::shared_array<const int>,
-    boost::shared_array<const long>,
-    boost::shared_array<const float>,
-    boost::shared_array<const double>,
-    boost::shared_array<const unsigned char>,
-    boost::shared_array<const unsigned short>,
-    boost::shared_array<const unsigned int>  > ArrayVariant;
+    shared_ptr<const char>,
+    shared_ptr<const short>,
+    shared_ptr<const int>,
+    shared_ptr<const long>,
+    shared_ptr<const float>,
+    shared_ptr<const double>,
+    shared_ptr<const unsigned char>,
+    shared_ptr<const unsigned short>,
+    shared_ptr<const unsigned int>  > ArrayVariant;
   
   unsigned int mArrayPointerNumValues;
   std::vector<unsigned int> mDimensions;

@@ -67,7 +67,7 @@ public:
 
   template<typename T>
   void
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -103,7 +103,7 @@ public:
 
   template<typename T>
   void
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -203,7 +203,7 @@ public:
 
   template<typename T>
   shared_ptr<const XdmfArrayType>
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     return this->getArrayType(array.get());
   }
@@ -235,7 +235,7 @@ public:
 
   template<typename T>
   unsigned int
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     return 0;
   }
@@ -264,7 +264,7 @@ public:
 
   template<typename T>
   const void *
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     return array.get();
   }
@@ -335,7 +335,7 @@ public:
 
   template<typename T>
   std::string
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     return getValuesString(array.get(), mArrayPointerNumValues);
   }
@@ -398,7 +398,7 @@ public:
 
   template<typename T>
   void
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -440,7 +440,7 @@ public:
 
   template<typename T>
   void
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     const T * const pointer = array.get();
     shared_ptr<std::vector<T> > newArray(new std::vector<T>(pointer,
@@ -507,7 +507,7 @@ public:
 
   template<typename T>
   void
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -547,7 +547,7 @@ public:
 
   template<typename T>
   unsigned int
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const shared_ptr<const T> & array) const
   {
     return mArray->mArrayPointerNumValues;
   }
@@ -600,7 +600,7 @@ XdmfArray::erase(const unsigned int index)
 shared_ptr<const XdmfArrayType>
 XdmfArray::getArrayType() const
 {
-  if (mHeavyDataControllers.size()>0) {
+  if (mHeavyDataControllers.size() > 0) {
     return boost::apply_visitor(GetArrayType(mHeavyDataControllers[0]), 
                                 mArray);
   }

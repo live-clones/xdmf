@@ -56,9 +56,9 @@ public:
 
   template<typename U>
   T
-  operator()(const boost::shared_array<const U> & array) const
+  operator()(const shared_ptr<const U> & array) const
   {
-    return (T)array[mIndex];
+    return (T)array.get()[mIndex];
   }
 
 private:
@@ -97,18 +97,12 @@ public:
     return value.str();
   }
 
-  std::string
-  operator()(const boost::shared_array<const std::string> & array) const
-  {
-    return array[mIndex];
-  }
-
   template<typename U>
   std::string
-  operator()(const boost::shared_array<const U> & array) const
+  operator()(const shared_ptr<const U> & array) const
   {
     std::stringstream value;
-    value << array[mIndex];
+    value << array.get()[mIndex];
     return value.str();
   }
 
@@ -161,10 +155,12 @@ public:
 
   template<typename U>
   void
-  operator()(const boost::shared_array<const U> & array) const
+  operator()(const shared_ptr<const U> & array) const
   {
+    const U * const arrayPtr = array.get();
     for(unsigned int i=0; i<mNumValues; ++i) {
-      mValuesPointer[i*mValuesStride] = (T)array[mStartIndex + i*mArrayStride];
+      mValuesPointer[i*mValuesStride] = 
+	(T)arrayPtr[mStartIndex + i*mArrayStride];
     }
   }
 
@@ -213,11 +209,12 @@ public:
 
   template<typename U>
   void
-  operator()(const boost::shared_array<const U> & array) const
+  operator()(const shared_ptr<const U> & array) const
   {
+    const U * const arrayPtr = array.get();
     for(unsigned int i=0; i<mNumValues; ++i) {
       std::stringstream value;
-      value << array[mStartIndex + i*mArrayStride];
+      value << arrayPtr[mStartIndex + i*mArrayStride];
       mValuesPointer[i*mValuesStride] = value.str();
     }
   }
@@ -292,7 +289,7 @@ public:
 
   template<typename U>
   void
-  operator()(boost::shared_array<const U> &) const
+  operator()(shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -370,7 +367,7 @@ public:
 
   template<typename U>
   void
-  operator()(boost::shared_array<const U> &) const
+  operator()(shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -426,7 +423,7 @@ public:
 
   template<typename U>
   void
-  operator()(const boost::shared_array<const U> &) const
+  operator()(const shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -475,7 +472,7 @@ public:
 
   template<typename U>
   void
-  operator()(const boost::shared_array<const U> &) const
+  operator()(const shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -528,7 +525,7 @@ public:
 
   template<typename U>
   void
-  operator()(const boost::shared_array<const U> &) const
+  operator()(const shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -580,7 +577,7 @@ public:
 
   template<typename U>
   void
-  operator()(const boost::shared_array<const U> &) const
+  operator()(const shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -594,12 +591,24 @@ private:
   const std::string & mVal;
 };
 
+template <typename T>
+struct XdmfArray::ArrayDeleter
+{
+  void
+  operator()(T const * p) const
+  {
+    delete[] p;
+  }
+
+};
+
 struct XdmfArray::NullDeleter
 {
   void
   operator()(void const *) const
   {
   }
+
 };
 
 template <typename T>
@@ -709,7 +718,6 @@ XdmfArray::pushBack(const T & value)
   return boost::apply_visitor(PushBack<T>(value,
                                           this),
                               mArray);
-
 }
 
 template<typename T>
@@ -722,7 +730,6 @@ XdmfArray::resize(const unsigned int numValues,
                                         numValues,
                                         value),
                               mArray);
-
 }
 
 template<typename T>
@@ -745,13 +752,12 @@ XdmfArray::setValuesInternal(const T * const arrayPointer,
 {
   // Remove contents of internal array.
   if(transferOwnership) {
-    const boost::shared_array<const T> newArrayPointer(arrayPointer);
-    mArray = newArrayPointer;
+    mArray = shared_ptr<const T>(arrayPointer,
+				 ArrayDeleter<T>());
   }
   else {
-    const boost::shared_array<const T> newArrayPointer(arrayPointer,
-                                                       NullDeleter());
-    mArray = newArrayPointer;
+    mArray = shared_ptr<const T>(arrayPointer,
+				 NullDeleter());
   }
   mArrayPointerNumValues = numValues;
   this->setIsChanged(true);
