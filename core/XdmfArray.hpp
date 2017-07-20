@@ -39,8 +39,7 @@ class XdmfHeavyDataController;
 #include <memory>
 
 // Includes
-#include <boost/variant.hpp>
-using boost::variant;
+#include "mapbox/variant.hpp"
 
 /**
  * @brief Provides storage for data values that are read in or will be
@@ -1504,8 +1503,10 @@ private:
    */
   void internalizeArrayPointer();
 
-  typedef variant<
-    boost::blank,
+  struct Empty {}; 
+
+  typedef mapbox::util::variant<
+    Empty,
     shared_ptr<std::vector<char> >,
     shared_ptr<std::vector<short> >,
     shared_ptr<std::vector<int> >,

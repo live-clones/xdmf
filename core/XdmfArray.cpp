@@ -44,7 +44,7 @@ XDMF_CHILDREN_IMPLEMENTATION(XdmfArray,
                              HeavyDataController,
                              Name)
 
-class XdmfArray::Clear : public boost::static_visitor<void> {
+class XdmfArray::Clear {
 public:
 
   Clear(XdmfArray * const array) :
@@ -53,7 +53,7 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     return;
   }
@@ -70,15 +70,15 @@ public:
   operator()(const shared_ptr<const T> & array) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private: 
   XdmfArray * const mArray;
 };
 
-class XdmfArray::Erase : public boost::static_visitor<void> {
+class XdmfArray::Erase {
 public:
 
   Erase(XdmfArray * const array,
@@ -89,7 +89,7 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     return;
   }
@@ -106,8 +106,8 @@ public:
   operator()(const shared_ptr<const T> & array) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -116,8 +116,7 @@ private:
   const unsigned int mIndex;
 };
 
-class XdmfArray::GetArrayType :
-  public boost::static_visitor<shared_ptr<const XdmfArrayType> > {
+class XdmfArray::GetArrayType {
 public:
 
   GetArrayType(const shared_ptr<XdmfHeavyDataController> & heavyDataController) :
@@ -186,7 +185,7 @@ public:
   }
 
   shared_ptr<const XdmfArrayType>
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     if(mHeavyDataController) {
       return mHeavyDataController->getType();
@@ -213,7 +212,7 @@ private:
   const shared_ptr<XdmfHeavyDataController> mHeavyDataController;
 };
 
-class XdmfArray::GetCapacity : public boost::static_visitor<unsigned int> {
+class XdmfArray::GetCapacity {
 public:
 
   GetCapacity()
@@ -221,7 +220,7 @@ public:
   }
 
   unsigned int
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     return 0;
   }
@@ -241,8 +240,7 @@ public:
   }
 };
 
-class XdmfArray::GetValuesPointer :
-  public boost::static_visitor<const void *> {
+class XdmfArray::GetValuesPointer {
 public:
 
   GetValuesPointer()
@@ -250,7 +248,7 @@ public:
   }
 
   const void *
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     return NULL;
   }
@@ -270,7 +268,7 @@ public:
   }
 };
 
-class XdmfArray::GetValuesString : public boost::static_visitor<std::string> {
+class XdmfArray::GetValuesString {
 public:
 
   GetValuesString(const int arrayPointerNumValues) :
@@ -321,7 +319,7 @@ public:
   }
 
   std::string
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     return "";
   }
@@ -345,7 +343,7 @@ private:
   const unsigned int mArrayPointerNumValues;
 };
 
-class XdmfArray::InsertArray : public boost::static_visitor<void> {
+class XdmfArray::InsertArray {
 public:
 
   InsertArray(XdmfArray * const array,
@@ -368,16 +366,16 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     const shared_ptr<const XdmfArrayType> copyType = 
       mArrayToCopy->getArrayType();
     if(copyType == XdmfArrayType::Uninitialized()) {
-        return;
+      return;
     }
     mArray->initialize(copyType);
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
   template<typename T>
@@ -401,8 +399,8 @@ public:
   operator()(const shared_ptr<const T> & array) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -417,7 +415,7 @@ private:
   const shared_ptr<const XdmfArray> mArrayToCopy;
 };
 
-class XdmfArray::InternalizeArrayPointer : public boost::static_visitor<void> {
+class XdmfArray::InternalizeArrayPointer {
 public:
 
   InternalizeArrayPointer(XdmfArray * const array) :
@@ -426,7 +424,7 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     return;
   }
@@ -454,7 +452,7 @@ private:
   XdmfArray * const mArray;
 };
 
-class XdmfArray::IsInitialized : public boost::static_visitor<bool> {
+class XdmfArray::IsInitialized {
 public:
 
   IsInitialized()
@@ -462,7 +460,7 @@ public:
   }
 
   bool
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     return false;
   }
@@ -482,7 +480,7 @@ public:
   }
 };
 
-class XdmfArray::Reserve : public boost::static_visitor<void> {
+class XdmfArray::Reserve {
 public:
 
   Reserve(XdmfArray * const array,
@@ -493,7 +491,7 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     mArray->mTmpReserveSize = mSize;
   }
@@ -510,8 +508,8 @@ public:
   operator()(const shared_ptr<const T> & array) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -520,7 +518,7 @@ private:
   const unsigned int mSize;
 };
 
-class XdmfArray::Size : public boost::static_visitor<unsigned int> {
+class XdmfArray::Size {
 public:
 
   Size(const XdmfArray * const array) :
@@ -529,7 +527,7 @@ public:
   }
 
   unsigned int
-  operator()(const boost::blank & array) const
+  operator()(const Empty & array) const
   {
     unsigned int total = 0;
     for (unsigned int i = 0; i < mArray->mHeavyDataControllers.size(); ++i) {
@@ -581,8 +579,8 @@ const std::string XdmfArray::ItemTag = "DataItem";
 void
 XdmfArray::clear()
 {
-  boost::apply_visitor(Clear(this), 
-                       mArray);
+  mapbox::util::apply_visitor(Clear(this), 
+			      mArray);
   mDimensions.clear();
   this->setIsChanged(true);
 }
@@ -590,9 +588,9 @@ XdmfArray::clear()
 void
 XdmfArray::erase(const unsigned int index)
 {
-  boost::apply_visitor(Erase(this,
-                             index),
-                       mArray);
+  mapbox::util::apply_visitor(Erase(this,
+				    index),
+			      mArray);
   mDimensions.clear();
   this->setIsChanged(true);
 }
@@ -601,20 +599,20 @@ shared_ptr<const XdmfArrayType>
 XdmfArray::getArrayType() const
 {
   if (mHeavyDataControllers.size() > 0) {
-    return boost::apply_visitor(GetArrayType(mHeavyDataControllers[0]), 
-                                mArray);
+    return mapbox::util::apply_visitor(GetArrayType(mHeavyDataControllers[0]), 
+				       mArray);
   }
   else {
-    return boost::apply_visitor(GetArrayType(shared_ptr<XdmfHeavyDataController>()),
-                                mArray);
+    return mapbox::util::apply_visitor(GetArrayType(shared_ptr<XdmfHeavyDataController>()),
+				       mArray);
   }
 }
 
 unsigned int
 XdmfArray::getCapacity() const
 {
-  return boost::apply_visitor(GetCapacity(), 
-                              mArray);
+  return mapbox::util::apply_visitor(GetCapacity(), 
+				     mArray);
 }
 
 std::vector<unsigned int>
@@ -702,8 +700,8 @@ XdmfArray::getReadMode() const
 unsigned int
 XdmfArray::getSize() const
 {
-  return boost::apply_visitor(Size(this), 
-                              mArray);
+  return mapbox::util::apply_visitor(Size(this), 
+				     mArray);
 }
 
 shared_ptr<XdmfArrayReference>
@@ -728,15 +726,15 @@ XdmfArray::getValuesInternal()
 const void *
 XdmfArray::getValuesInternal() const
 {
-  return boost::apply_visitor(GetValuesPointer(), 
-                              mArray);
+  return mapbox::util::apply_visitor(GetValuesPointer(), 
+				     mArray);
 }
 
 std::string
 XdmfArray::getValuesString() const
 {
-  return boost::apply_visitor(GetValuesString(mArrayPointerNumValues), 
-                              mArray);
+  return mapbox::util::apply_visitor(GetValuesString(mArrayPointerNumValues), 
+				     mArray);
 }
 
 shared_ptr<XdmfHeavyDataController>
@@ -821,15 +819,15 @@ XdmfArray::insert(const unsigned int startIndex,
                   const unsigned int arrayStride,
                   const unsigned int valuesStride)
 {
-  boost::apply_visitor(InsertArray(this,
-                                   startIndex,
-                                   valuesStartIndex,
-                                   numValues,
-                                   arrayStride,
-                                   valuesStride,
-                                   mDimensions,
-                                   values),
-                       mArray);
+  mapbox::util::apply_visitor(InsertArray(this,
+					  startIndex,
+					  valuesStartIndex,
+					  numValues,
+					  arrayStride,
+					  valuesStride,
+					  mDimensions,
+					  values),
+			      mArray);
   this->setIsChanged(true);
 }
 
@@ -845,11 +843,11 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
 {
   // Ensuring dimensions match up when pulling data
   if ((values->getDimensions().size() == valuesStartIndex.size()
-      && valuesStartIndex.size() == numValues.size()
-      && numValues.size() == valuesStride.size())
+       && valuesStartIndex.size() == numValues.size()
+       && numValues.size() == valuesStride.size())
       && (numInserted.size() == startIndex.size()
-      && startIndex.size() == this->getDimensions().size()
-      && this->getDimensions().size() == arrayStride.size())) {
+	  && startIndex.size() == this->getDimensions().size()
+	  && this->getDimensions().size() == arrayStride.size())) {
     // Pull data from values
     std::vector<unsigned int > dimTotalVector;
     unsigned int dimTotal = 1;
@@ -876,7 +874,7 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
         }
         else {
           startTotal += valuesStartIndex[i] * dimTotal
-                        + valuesStride[i] * dimTotal * indexVector[i-1];
+	    + valuesStride[i] * dimTotal * indexVector[i-1];
         }
         dimTotal *= values->getDimensions()[i];
       }
@@ -971,15 +969,15 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
 bool
 XdmfArray::isInitialized() const
 {
-  return boost::apply_visitor(IsInitialized(),
-                                mArray);
+  return mapbox::util::apply_visitor(IsInitialized(),
+				     mArray);
 }
 
 void
 XdmfArray::internalizeArrayPointer()
 {
-  boost::apply_visitor(InternalizeArrayPointer(this), 
-                       mArray);
+  mapbox::util::apply_visitor(InternalizeArrayPointer(this), 
+			      mArray);
 }
 
 void
@@ -1014,7 +1012,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
       while (loc != std::string::npos) {
         expression.replace(loc, 1, "Val");
         loc = expression.find("$", loc);
-     }
+      }
 
       // Create Variable list
 
@@ -1052,34 +1050,34 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
           ++iter) {
         if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
           if (foundArrayIndex == 0)
-          {
-            dimArray = array;
-            foundArrayIndex++;
-          }
+	    {
+	      dimArray = array;
+	      foundArrayIndex++;
+	    }
           else if (foundArrayIndex == 1)
-          {
-            valArray = array;
-            foundArrayIndex++;
-          }
+	    {
+	      valArray = array;
+	      foundArrayIndex++;
+	    }
         }
       }
 
       if (!(dimArray))
-      {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Hyperslab description missing");
-      }
+	{
+	  XdmfError::message(XdmfError::FATAL,
+			     "Error: Hyperslab description missing");
+	}
       if (!(valArray))
-      {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Hyperslab values missing");
-      }
+	{
+	  XdmfError::message(XdmfError::FATAL,
+			     "Error: Hyperslab values missing");
+	}
 
       if (dimArray->getSize() % 3 != 0)
-      {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Hyperslab description structured improperly");
-      }
+	{
+	  XdmfError::message(XdmfError::FATAL,
+			     "Error: Hyperslab description structured improperly");
+	}
 
       // A start, stride, and dimension need to be
       // specified for each dimension
@@ -1200,11 +1198,11 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
         }
       }
       else
-      {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Invalid Data Format "
-                           "in XdmfArray::populateItem");
-      }
+	{
+	  XdmfError::message(XdmfError::FATAL,
+			     "Error: Invalid Data Format "
+			     "in XdmfArray::populateItem");
+	}
     }
   }
 
@@ -1223,7 +1221,7 @@ void
 XdmfArray::read()
 {
   switch (mReadMode)
-  {
+    {
     case XdmfArray::Controller:
       this->readController();
       break;
@@ -1233,7 +1231,7 @@ XdmfArray::read()
     default:
       XdmfError::message(XdmfError::FATAL,
                          "Error: Invalid Read Mode");
-  }
+    }
 }
 
 void
@@ -1257,11 +1255,11 @@ XdmfArray::readController()
     unsigned int dimSizeMax = 0;
     unsigned int dimTotal = 0;
     for (unsigned int i = 0; i < mHeavyDataControllers.size(); ++i) {
-        dimTotal += mHeavyDataControllers[i]->getSize();
-        if (mHeavyDataControllers[i]->getSize() > dimSizeMax) {
-          dimSizeMax = mHeavyDataControllers[i]->getSize();
-          dimControllerIndex = i;
-        }
+      dimTotal += mHeavyDataControllers[i]->getSize();
+      if (mHeavyDataControllers[i]->getSize() > dimSizeMax) {
+	dimSizeMax = mHeavyDataControllers[i]->getSize();
+	dimControllerIndex = i;
+      }
     }
     // Total up the size of the lower dimensions
     int controllerDimensionSubtotal = 1;
@@ -1301,7 +1299,7 @@ XdmfArray::readReference()
 void
 XdmfArray::release()
 {
-  mArray = boost::blank();
+  mArray = Empty();
   mArrayPointerNumValues = 0;
   mDimensions.clear();
 }
@@ -1309,9 +1307,9 @@ XdmfArray::release()
 void
 XdmfArray::reserve(const unsigned int size)
 {
-  boost::apply_visitor(Reserve(this,
-                               size),
-                       mArray);
+  mapbox::util::apply_visitor(Reserve(this,
+				      size),
+			      mArray);
   this->setIsChanged(true);
 }
 
@@ -1403,71 +1401,71 @@ void XdmfArrayErase(XDMFARRAY * array, unsigned int index)
 int XdmfArrayGetArrayType(XDMFARRAY * array, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   shared_ptr<const XdmfArrayType> compareType = refArray->getArrayType();
   std::string typeName = compareType->getName();
   unsigned int typePrecision = compareType->getElementSize();
   if (typeName == XdmfArrayType::UInt8()->getName())
-  {
+    {
       return XDMF_ARRAY_TYPE_UINT8;
-  }
+    }
   else if (typeName == XdmfArrayType::UInt16()->getName())
-  {
+    {
       return XDMF_ARRAY_TYPE_UINT16;
-  }
+    }
   else if (typeName == XdmfArrayType::UInt32()->getName())
-  {
+    {
       return XDMF_ARRAY_TYPE_UINT32;
-  }
+    }
   else if (typeName == XdmfArrayType::Int8()->getName())
-  {
+    {
       return XDMF_ARRAY_TYPE_INT8;
-  }
+    }
   else if (typeName == XdmfArrayType::Int16()->getName())
-  {
+    {
       return XDMF_ARRAY_TYPE_INT16;
-  }
+    }
   else if (typeName == XdmfArrayType::Int32()->getName() || typeName == XdmfArrayType::Int64()->getName())
-  {
-    if (typePrecision == 4)
     {
-      return XDMF_ARRAY_TYPE_INT32;
+      if (typePrecision == 4)
+	{
+	  return XDMF_ARRAY_TYPE_INT32;
+	}
+      else if (typePrecision == 8)
+	{
+	  return XDMF_ARRAY_TYPE_INT64;
+	}
+      else
+	{
+	}
     }
-    else if (typePrecision == 8)
-    {
-      return XDMF_ARRAY_TYPE_INT64;
-    }
-    else
-    {
-    }
-  }
   else if (typeName == XdmfArrayType::Float32()->getName() || typeName == XdmfArrayType::Float64()->getName())
-  {
-    if (typePrecision == 4)
     {
-      return XDMF_ARRAY_TYPE_FLOAT32;
+      if (typePrecision == 4)
+	{
+	  return XDMF_ARRAY_TYPE_FLOAT32;
+	}
+      else if (typePrecision == 8)
+	{
+	  return XDMF_ARRAY_TYPE_FLOAT64;
+	}
+      else
+	{
+	}
     }
-    else if (typePrecision == 8)
-    {
-      return XDMF_ARRAY_TYPE_FLOAT64;
-    }
-    else
-    {
-    }
-  }
   else if (typeName == XdmfArrayType::String()->getName())
-  {
-    //This shouldn't be used from C bindings
-    XdmfError::message(XdmfError::FATAL,
-                       "Error: String type not usable from C.");
-  }
+    {
+      //This shouldn't be used from C bindings
+      XdmfError::message(XdmfError::FATAL,
+			 "Error: String type not usable from C.");
+    }
   else
-  {
-    XdmfError::message(XdmfError::FATAL,
-                       "Error: Invalid ArrayType.");
-  }
+    {
+      XdmfError::message(XdmfError::FATAL,
+			 "Error: Invalid ArrayType.");
+    }
   XDMF_ERROR_WRAP_END(status)
-  return -1;
+    return -1;
 }
 
 unsigned int XdmfArrayGetCapacity(XDMFARRAY * array)
@@ -1540,22 +1538,22 @@ int
 XdmfArrayGetReadMode(XDMFARRAY * array, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   int readMode = refArray->getReadMode();
   switch (readMode) {
-    case XdmfArray::Controller:
-      return XDMF_ARRAY_READ_MODE_CONTROLLER;
-      break;
-    case XdmfArray::Reference:
-      return XDMF_ARRAY_READ_MODE_REFERENCE;
-      break;
-    default:
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Invalid ReadMode.");
-      break;
+  case XdmfArray::Controller:
+    return XDMF_ARRAY_READ_MODE_CONTROLLER;
+    break;
+  case XdmfArray::Reference:
+    return XDMF_ARRAY_READ_MODE_REFERENCE;
+    break;
+  default:
+    XdmfError::message(XdmfError::FATAL,
+		       "Error: Invalid ReadMode.");
+    break;
   }
   XDMF_ERROR_WRAP_END(status)
-  return -1;
+    return -1;
 }
 
 XDMFARRAYREFERENCE *
@@ -1571,7 +1569,7 @@ void *
 XdmfArrayGetValue(XDMFARRAY * array, unsigned int index, int arrayType, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   void * returnVal;
   switch (arrayType) {
   case XDMF_ARRAY_TYPE_UINT8:
@@ -1625,14 +1623,14 @@ XdmfArrayGetValue(XDMFARRAY * array, unsigned int index, int arrayType, int * st
     break;
   }
   XDMF_ERROR_WRAP_END(status)
-  return NULL;
+    return NULL;
 }
 
 void *
 XdmfArrayGetValues(XDMFARRAY * array, unsigned int startIndex, int arrayType, unsigned int numValues, unsigned int arrayStride, unsigned int valueStride, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   void * returnVal;
   switch (arrayType) {
   case XDMF_ARRAY_TYPE_UINT8:
@@ -1708,51 +1706,51 @@ void
 XdmfArrayInitialize(XDMFARRAY * array, int * dims, int numDims, int arrayType, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   std::vector<unsigned int> dimVector((int *)dims, (int *)dims + numDims);
   shared_ptr<const XdmfArrayType> tempPointer = XdmfArrayType::Uninitialized();
   switch (arrayType) {
-    case XDMF_ARRAY_TYPE_UINT8:
-      tempPointer = XdmfArrayType::UInt8();
-      break;
-    case XDMF_ARRAY_TYPE_UINT16:
-      tempPointer = XdmfArrayType::UInt16();
-      break;
-    case XDMF_ARRAY_TYPE_UINT32:
-      tempPointer = XdmfArrayType::UInt32();
-      break;
-    case XDMF_ARRAY_TYPE_INT8:
-      tempPointer = XdmfArrayType::Int8();
-      break;
-    case XDMF_ARRAY_TYPE_INT16:
-      tempPointer = XdmfArrayType::Int16();
-      break;
-    case XDMF_ARRAY_TYPE_INT32:
-      tempPointer = XdmfArrayType::Int32();
-      break;
-    case XDMF_ARRAY_TYPE_INT64:
-      tempPointer = XdmfArrayType::Int64();
-      break;
-    case XDMF_ARRAY_TYPE_FLOAT32:
-      tempPointer = XdmfArrayType::Float32();
-      break;
-    case XDMF_ARRAY_TYPE_FLOAT64:
-      tempPointer = XdmfArrayType::Float64();
-      break;
-    default:
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Invalid ArrayType.");
-      break;
+  case XDMF_ARRAY_TYPE_UINT8:
+    tempPointer = XdmfArrayType::UInt8();
+    break;
+  case XDMF_ARRAY_TYPE_UINT16:
+    tempPointer = XdmfArrayType::UInt16();
+    break;
+  case XDMF_ARRAY_TYPE_UINT32:
+    tempPointer = XdmfArrayType::UInt32();
+    break;
+  case XDMF_ARRAY_TYPE_INT8:
+    tempPointer = XdmfArrayType::Int8();
+    break;
+  case XDMF_ARRAY_TYPE_INT16:
+    tempPointer = XdmfArrayType::Int16();
+    break;
+  case XDMF_ARRAY_TYPE_INT32:
+    tempPointer = XdmfArrayType::Int32();
+    break;
+  case XDMF_ARRAY_TYPE_INT64:
+    tempPointer = XdmfArrayType::Int64();
+    break;
+  case XDMF_ARRAY_TYPE_FLOAT32:
+    tempPointer = XdmfArrayType::Float32();
+    break;
+  case XDMF_ARRAY_TYPE_FLOAT64:
+    tempPointer = XdmfArrayType::Float64();
+    break;
+  default:
+    XdmfError::message(XdmfError::FATAL,
+		       "Error: Invalid ArrayType.");
+    break;
   }
   refArray->initialize(tempPointer, dimVector);
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArrayInsertDataFromPointer(XDMFARRAY * array, void * values, int arrayType, unsigned int startIndex, unsigned int numVals, unsigned int arrayStride, unsigned int valueStride, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   switch (arrayType) {
   case XDMF_ARRAY_TYPE_UINT8:
     refArray->insert<unsigned char>(startIndex, (unsigned char *)values, numVals, arrayStride, valueStride);
@@ -1787,12 +1785,12 @@ XdmfArrayInsertDataFromPointer(XDMFARRAY * array, void * values, int arrayType, 
     break;
   }
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void XdmfArrayInsertDataFromXdmfArray(XDMFARRAY * array, XDMFARRAY * valArray, int * arrayStarts, int * valueStarts, int * arrayCounts, int * valueCounts, int * arrayStrides, int * valueStrides, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   shared_ptr<XdmfArray> & refValArray = *(shared_ptr<XdmfArray> *)(valArray);
   std::vector<unsigned int> arrayStartVector((int *)arrayStarts, (int *)arrayStarts + refArray->getDimensions().size());
   std::vector<unsigned int> valueStartVector((int *)valueStarts, (int *)valueStarts + refValArray->getDimensions().size());
@@ -1802,7 +1800,7 @@ void XdmfArrayInsertDataFromXdmfArray(XDMFARRAY * array, XDMFARRAY * valArray, i
   std::vector<unsigned int> valueStrideVector((int *)valueStrides, (int *)valueStrides + refValArray->getDimensions().size());
   refArray->insert(arrayStartVector, refValArray, valueStartVector, arrayCountVector, valueCountVector, arrayStrideVector, valueStrideVector);
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArrayInsertHeavyDataController(XDMFARRAY * array, XDMFHEAVYDATACONTROLLER * controller, int passControl)
@@ -1816,7 +1814,7 @@ void
 XdmfArrayInsertValue(XDMFARRAY * array, unsigned int index, void * value, int arrayType, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   switch (arrayType) {
   case XDMF_ARRAY_TYPE_UINT8:
     refArray->insert(index, *((unsigned char *)value));
@@ -1851,7 +1849,7 @@ XdmfArrayInsertValue(XDMFARRAY * array, unsigned int index, void * value, int ar
     break;
   }
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 int
 XdmfArrayIsInitialized(XDMFARRAY * array)
@@ -1864,7 +1862,7 @@ void
 XdmfArrayPushBack(XDMFARRAY * array, void * value, int arrayType, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   switch (arrayType) {
   case XDMF_ARRAY_TYPE_UINT8:
     refArray->pushBack<unsigned char>(*((unsigned char *)value));
@@ -1899,34 +1897,34 @@ XdmfArrayPushBack(XDMFARRAY * array, void * value, int arrayType, int * status)
     break;
   }
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArrayRead(XDMFARRAY * array, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   refArray->read();
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArrayReadController(XDMFARRAY * array, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   refArray->readController();
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArrayReadReference(XDMFARRAY * array, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   refArray->readReference();
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArrayRelease(XDMFARRAY * array)
@@ -1953,7 +1951,7 @@ void
 XdmfArrayResize(XDMFARRAY * array, int * dims, int numDims, int arrayType, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   std::vector<unsigned int> dimVector((int *)dims, (int *)dims + numDims);
   switch (arrayType) {
   case XDMF_ARRAY_TYPE_UINT8: {
@@ -2000,27 +1998,27 @@ XdmfArrayResize(XDMFARRAY * array, int * dims, int numDims, int arrayType, int *
   }
   dimVector.clear();
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArraySetReadMode(XDMFARRAY * array, int readMode, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   switch (readMode) {
-    case XDMF_ARRAY_READ_MODE_CONTROLLER:
-      refArray->setReadMode(XdmfArray::Controller);
-      break;
-    case XDMF_ARRAY_READ_MODE_REFERENCE:
-      refArray->setReadMode(XdmfArray::Reference);
-      break;
-    default:
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Invalid ReadMode.");
-      break;
+  case XDMF_ARRAY_READ_MODE_CONTROLLER:
+    refArray->setReadMode(XdmfArray::Controller);
+    break;
+  case XDMF_ARRAY_READ_MODE_REFERENCE:
+    refArray->setReadMode(XdmfArray::Reference);
+    break;
+  default:
+    XdmfError::message(XdmfError::FATAL,
+		       "Error: Invalid ReadMode.");
+    break;
   }
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArraySetReference(XDMFARRAY * array, XDMFARRAYREFERENCE * reference, int passControl)
@@ -2034,51 +2032,51 @@ void
 XdmfArraySetName(XDMFARRAY * array, char * name, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   refArray->setName(name);
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArraySetValuesInternal(XDMFARRAY * array, void * pointer, unsigned int numValues, int arrayType, int transferOwnership, int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
+    shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   switch (arrayType) {
-    case XDMF_ARRAY_TYPE_UINT8:
-      refArray->setValuesInternal((unsigned char *)pointer, numValues, transferOwnership);
-      break;
-    case XDMF_ARRAY_TYPE_UINT16:
-      refArray->setValuesInternal((unsigned short *)pointer, numValues, transferOwnership);
-      break;
-    case XDMF_ARRAY_TYPE_UINT32:
-      refArray->setValuesInternal((unsigned int *)pointer, numValues, transferOwnership);
-      break;
-    case XDMF_ARRAY_TYPE_INT8:
-      refArray->setValuesInternal((char *)pointer, numValues, transferOwnership);
-      break;
-    case XDMF_ARRAY_TYPE_INT16:
-      refArray->setValuesInternal((short *)pointer, numValues, transferOwnership);
-     break;
-    case XDMF_ARRAY_TYPE_INT32:
-      refArray->setValuesInternal((int *)pointer, numValues, transferOwnership);
-      break;
-    case XDMF_ARRAY_TYPE_INT64:
-      refArray->setValuesInternal((long *)pointer, numValues, transferOwnership);
-      break;
-    case XDMF_ARRAY_TYPE_FLOAT32:
-      refArray->setValuesInternal((float *)pointer, numValues, transferOwnership);
-      break;
-    case XDMF_ARRAY_TYPE_FLOAT64:
-      refArray->setValuesInternal((double *)pointer, numValues, transferOwnership);
-      break;
-    default:
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Invalid ArrayType.");
-      break;
+  case XDMF_ARRAY_TYPE_UINT8:
+    refArray->setValuesInternal((unsigned char *)pointer, numValues, transferOwnership);
+    break;
+  case XDMF_ARRAY_TYPE_UINT16:
+    refArray->setValuesInternal((unsigned short *)pointer, numValues, transferOwnership);
+    break;
+  case XDMF_ARRAY_TYPE_UINT32:
+    refArray->setValuesInternal((unsigned int *)pointer, numValues, transferOwnership);
+    break;
+  case XDMF_ARRAY_TYPE_INT8:
+    refArray->setValuesInternal((char *)pointer, numValues, transferOwnership);
+    break;
+  case XDMF_ARRAY_TYPE_INT16:
+    refArray->setValuesInternal((short *)pointer, numValues, transferOwnership);
+    break;
+  case XDMF_ARRAY_TYPE_INT32:
+    refArray->setValuesInternal((int *)pointer, numValues, transferOwnership);
+    break;
+  case XDMF_ARRAY_TYPE_INT64:
+    refArray->setValuesInternal((long *)pointer, numValues, transferOwnership);
+    break;
+  case XDMF_ARRAY_TYPE_FLOAT32:
+    refArray->setValuesInternal((float *)pointer, numValues, transferOwnership);
+    break;
+  case XDMF_ARRAY_TYPE_FLOAT64:
+    refArray->setValuesInternal((double *)pointer, numValues, transferOwnership);
+    break;
+  default:
+    XdmfError::message(XdmfError::FATAL,
+		       "Error: Invalid ArrayType.");
+    break;
   }
   XDMF_ERROR_WRAP_END(status)
-}
+    }
 
 void
 XdmfArraySwapWithXdmfArray(XDMFARRAY * array, XDMFARRAY * swapArray)
@@ -2089,109 +2087,109 @@ XdmfArraySwapWithXdmfArray(XDMFARRAY * array, XDMFARRAY * swapArray)
 }
 
 /*
-void
-XdmfArraySwapWithArray(XDMFARRAY * array, void ** pointer, int numValues, int arrayType, int * status)
-{
+  void
+  XdmfArraySwapWithArray(XDMFARRAY * array, void ** pointer, int numValues, int arrayType, int * status)
+  {
   XDMF_ERROR_WRAP_START(status)
   shared_ptr<XdmfArray> & refArray = *(shared_ptr<XdmfArray> *)(array);
   switch (arrayType) {
-    case XDMF_ARRAY_TYPE_UINT8: {
-      std::vector<unsigned char> swapVector((unsigned char *)(*pointer), (unsigned char *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new unsigned char[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((unsigned char *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    case XDMF_ARRAY_TYPE_UINT16: {
-      std::vector<unsigned short> swapVector((unsigned short *)(*pointer), (unsigned short *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new unsigned short[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((unsigned short *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    case XDMF_ARRAY_TYPE_UINT32: {
-      std::vector<unsigned int> swapVector((unsigned int *)(*pointer), (unsigned int *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new unsigned int[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((unsigned int *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    case XDMF_ARRAY_TYPE_INT8: {
-      std::vector<char> swapVector((char *)(*pointer), (char *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new char[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((char *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    case XDMF_ARRAY_TYPE_INT16: {
-      std::vector<short> swapVector((short *)(*pointer), (short *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new short[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((short *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    case XDMF_ARRAY_TYPE_INT32: {
-      std::vector<int> swapVector((int *)(*pointer), (int *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new int[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((int *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    case XDMF_ARRAY_TYPE_INT64: {
-      std::vector<long> swapVector((long *)(*pointer), (long *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new long[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((long *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    case XDMF_ARRAY_TYPE_FLOAT32: {
-      std::vector<float> swapVector((float *)(*pointer), (float *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new float[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((float *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    case XDMF_ARRAY_TYPE_FLOAT64: {
-      std::vector<double> swapVector((double *)(*pointer), (double *)(*pointer) + numValues);
-      refArray->swap(swapVector);
-      *pointer = new double[swapVector.size()];
-      for (unsigned int i = 0; i < swapVector.size(); ++i)
-      {
-        ((double *) (*pointer))[i] = swapVector[i];
-      }
-      break;
-    }
-    default:
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Invalid ArrayType.");
-      break;
+  case XDMF_ARRAY_TYPE_UINT8: {
+  std::vector<unsigned char> swapVector((unsigned char *)(*pointer), (unsigned char *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new unsigned char[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((unsigned char *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  case XDMF_ARRAY_TYPE_UINT16: {
+  std::vector<unsigned short> swapVector((unsigned short *)(*pointer), (unsigned short *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new unsigned short[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((unsigned short *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  case XDMF_ARRAY_TYPE_UINT32: {
+  std::vector<unsigned int> swapVector((unsigned int *)(*pointer), (unsigned int *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new unsigned int[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((unsigned int *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  case XDMF_ARRAY_TYPE_INT8: {
+  std::vector<char> swapVector((char *)(*pointer), (char *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new char[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((char *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  case XDMF_ARRAY_TYPE_INT16: {
+  std::vector<short> swapVector((short *)(*pointer), (short *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new short[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((short *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  case XDMF_ARRAY_TYPE_INT32: {
+  std::vector<int> swapVector((int *)(*pointer), (int *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new int[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((int *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  case XDMF_ARRAY_TYPE_INT64: {
+  std::vector<long> swapVector((long *)(*pointer), (long *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new long[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((long *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  case XDMF_ARRAY_TYPE_FLOAT32: {
+  std::vector<float> swapVector((float *)(*pointer), (float *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new float[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((float *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  case XDMF_ARRAY_TYPE_FLOAT64: {
+  std::vector<double> swapVector((double *)(*pointer), (double *)(*pointer) + numValues);
+  refArray->swap(swapVector);
+  *pointer = new double[swapVector.size()];
+  for (unsigned int i = 0; i < swapVector.size(); ++i)
+  {
+  ((double *) (*pointer))[i] = swapVector[i];
+  }
+  break;
+  }
+  default:
+  XdmfError::message(XdmfError::FATAL,
+  "Error: Invalid ArrayType.");
+  break;
   }
   XDMF_ERROR_WRAP_END(status)
-}
+  }
 */
 
 // C Wrappers for parent classes are generated by macros

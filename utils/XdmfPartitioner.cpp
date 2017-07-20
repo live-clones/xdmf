@@ -1178,6 +1178,7 @@ XdmfPartitionerFree(XDMFPARTITIONER * partitioner)
 #include <cstdio>
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 #include "XdmfDomain.hpp"
 #include "XdmfGraph.hpp"
 #include "XdmfGridCollection.hpp"

@@ -27,7 +27,7 @@
 #include "XdmfArray.hpp"
 
 template <typename T>
-class XdmfArray::GetValue : public boost::static_visitor<T> {
+class XdmfArray::GetValue {
 public:
 
   GetValue(const unsigned int index) :
@@ -36,7 +36,7 @@ public:
   }
 
   T
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     return 0;
   }
@@ -67,8 +67,7 @@ private:
 };
 
 template <>
-class XdmfArray::GetValue<std::string> :
-  public boost::static_visitor<std::string> {
+class XdmfArray::GetValue<std::string> {
 public:
 
   GetValue(const unsigned int index) :
@@ -77,7 +76,7 @@ public:
   }
 
   std::string
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     return "";
   }
@@ -112,7 +111,7 @@ private:
 };
 
 template <typename T>
-class XdmfArray::GetValues : public boost::static_visitor<void> {
+class XdmfArray::GetValues {
 public:
 
   GetValues(const unsigned int startIndex,
@@ -129,7 +128,7 @@ public:
   }
 
   void
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     return;
   }
@@ -174,7 +173,7 @@ private:
 };
 
 template <>
-class XdmfArray::GetValues<std::string> : public boost::static_visitor<void> {
+class XdmfArray::GetValues<std::string> {
 public:
 
   GetValues(const unsigned int startIndex,
@@ -191,7 +190,7 @@ public:
   }
 
   void
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     return;
   }
@@ -229,7 +228,7 @@ private:
 };
 
 template <typename T>
-class XdmfArray::Insert : public boost::static_visitor<void> {
+class XdmfArray::Insert {
 public:
 
   Insert(XdmfArray * const array,
@@ -250,11 +249,11 @@ public:
   }
 
   void
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     mArray->initialize<T>();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
   void
@@ -292,8 +291,8 @@ public:
   operator()(shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -308,7 +307,7 @@ private:
 };
 
 template <>
-class XdmfArray::Insert<std::string> : public boost::static_visitor<void> {
+class XdmfArray::Insert<std::string> {
 public:
 
   Insert(XdmfArray * const array,
@@ -329,11 +328,11 @@ public:
   }
 
   void
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     mArray->initialize<std::string>();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
   void
@@ -370,8 +369,8 @@ public:
   operator()(shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -386,7 +385,7 @@ private:
 };
 
 template <typename T>
-class XdmfArray::PushBack : public boost::static_visitor<void> {
+class XdmfArray::PushBack {
 public:
 
   PushBack(const T & val,
@@ -397,11 +396,11 @@ public:
   }
 
   void
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     mArray->initialize<T>();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
   void
@@ -426,8 +425,8 @@ public:
   operator()(const shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -437,22 +436,22 @@ private:
 };
 
 template <>
-class XdmfArray::PushBack<std::string> : public boost::static_visitor<void> {
-public:
-
-  PushBack(const std::string & val,
-           XdmfArray * const array) :
-    mVal(val),
+class XdmfArray::PushBack<std::string>	{
+public:					
+					
+  PushBack(const std::string & val,	
+           XdmfArray * const array) :	
+    mVal(val),	     
     mArray(array)
   {
   }
 
   void
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     mArray->initialize<std::string>();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
   void
@@ -475,8 +474,8 @@ public:
   operator()(const shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -486,7 +485,7 @@ private:
 };
 
 template <typename T>
-class XdmfArray::Resize : public boost::static_visitor<void> {
+class XdmfArray::Resize {
 public:
 
   Resize(XdmfArray * const array,
@@ -499,11 +498,11 @@ public:
   }
 
   void
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     mArray->initialize<T>();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
   void
@@ -528,8 +527,8 @@ public:
   operator()(const shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -540,7 +539,7 @@ private:
 };
 
 template <>
-class XdmfArray::Resize<std::string> : public boost::static_visitor<void> {
+class XdmfArray::Resize<std::string> {
 public:
 
   Resize(XdmfArray * const array,
@@ -553,11 +552,11 @@ public:
   }
 
   void
-  operator()(const boost::blank &) const
+  operator()(const Empty &) const
   {
     mArray->initialize<std::string>();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
   void
@@ -580,8 +579,8 @@ public:
   operator()(const shared_ptr<const U> &) const
   {
     mArray->internalizeArrayPointer();
-    boost::apply_visitor(*this,
-                         mArray->mArray);
+    mapbox::util::apply_visitor(*this,
+				mArray->mArray);
   }
 
 private:
@@ -615,8 +614,8 @@ template <typename T>
 T
 XdmfArray::getValue(const unsigned int index) const
 {
-  return boost::apply_visitor(GetValue<T>(index),
-                              mArray);
+  return mapbox::util::apply_visitor(GetValue<T>(index),
+				     mArray);
 }
 
 template <typename T>
@@ -627,12 +626,12 @@ XdmfArray::getValues(const unsigned int startIndex,
                      const unsigned int arrayStride,
                      const unsigned int valuesStride) const
 {
-  boost::apply_visitor(GetValues<T>(startIndex,
-                                    valuesPointer,
-                                    numValues,
-                                    arrayStride,
-                                    valuesStride),
-                       mArray);
+  mapbox::util::apply_visitor(GetValues<T>(startIndex,
+					   valuesPointer,
+					   numValues,
+					   arrayStride,
+					   valuesStride),
+			      mArray);
 }
 
 template <typename T>
@@ -642,10 +641,10 @@ XdmfArray::getValuesInternal()
   this->internalizeArrayPointer();
   try {
     shared_ptr<std::vector<T> > currArray =
-      boost::get<shared_ptr<std::vector<T> > >(mArray);
+      mapbox::util::get<shared_ptr<std::vector<T> > >(mArray);
     return currArray;
   }
-  catch(const boost::bad_get & exception) {
+  catch(const mapbox::util::bad_variant_access & exception) {
     return shared_ptr<std::vector<T> >();
   }
 }
@@ -671,8 +670,8 @@ XdmfArray::initialize(const std::vector<unsigned int> & dimensions)
 {
   mDimensions = dimensions;
   const unsigned int size = static_cast<unsigned int>(
-    std::accumulate(dimensions.begin(), dimensions.end(), 1,
-                    std::multiplies<unsigned int>()));
+						      std::accumulate(dimensions.begin(), dimensions.end(), 1,
+								      std::multiplies<unsigned int>()));
   return this->initialize<T>(size);
 }
 
@@ -681,14 +680,14 @@ void
 XdmfArray::insert(const unsigned int index,
                   const T & value)
 {
-  boost::apply_visitor(Insert<T>(this,
-                                 index,
-                                 &value,
-                                 1,
-                                 0,
-                                 0,
-                                 mDimensions),
-                       mArray);
+  mapbox::util::apply_visitor(Insert<T>(this,
+					index,
+					&value,
+					1,
+					0,
+					0,
+					mDimensions),
+			      mArray);
 }
 
 template <typename T>
@@ -699,14 +698,14 @@ XdmfArray::insert(const unsigned int startIndex,
                   const unsigned int arrayStride,
                   const unsigned int valuesStride)
 {
-  boost::apply_visitor(Insert<T>(this,
-                                 startIndex,
-                                 valuesPointer,
-                                 numValues,
-                                 arrayStride,
-                                 valuesStride,
-                                 mDimensions),
-                       mArray);
+  mapbox::util::apply_visitor(Insert<T>(this,
+					startIndex,
+					valuesPointer,
+					numValues,
+					arrayStride,
+					valuesStride,
+					mDimensions),
+			      mArray);
   this->setIsChanged(true);
 }
 
@@ -715,9 +714,9 @@ void
 XdmfArray::pushBack(const T & value)
 {
   this->setIsChanged(true);
-  return boost::apply_visitor(PushBack<T>(value,
-                                          this),
-                              mArray);
+  return mapbox::util::apply_visitor(PushBack<T>(value,
+						 this),
+				     mArray);
 }
 
 template<typename T>
@@ -726,10 +725,10 @@ XdmfArray::resize(const unsigned int numValues,
                   const T & value)
 {
   this->setIsChanged(true);
-  return boost::apply_visitor(Resize<T>(this,
-                                        numValues,
-                                        value),
-                              mArray);
+  return mapbox::util::apply_visitor(Resize<T>(this,
+					       numValues,
+					       value),
+				     mArray);
 }
 
 template<typename T>
@@ -797,11 +796,11 @@ XdmfArray::swap(std::vector<T> & array)
   }
   try {
     shared_ptr<std::vector<T> > currArray =
-      boost::get<shared_ptr<std::vector<T> > >(mArray);
+      mapbox::util::get<shared_ptr<std::vector<T> > >(mArray);
     currArray->swap(array);
     return true;
   }
-  catch(const boost::bad_get & exception) {
+  catch(const mapbox::util::bad_variant_access & exception) {
     return false;
   }
   this->setIsChanged(true);

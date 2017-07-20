@@ -22,11 +22,13 @@
 /*****************************************************************************/
 
 #include <exodusII.h>
+#include <algorithm>
 #include <cstring>
 #include "XdmfArrayType.hpp"
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
+#include "XdmfError.hpp"
 #include "XdmfExodusReader.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
@@ -36,7 +38,6 @@
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
-#include "XdmfError.hpp"
 
 //
 // local methods
