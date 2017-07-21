@@ -27,6 +27,7 @@
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
 #include "XdmfError.hpp"
+#include "XdmfArray.hpp"
 //-----------------------------------------------------------------------------
 shared_ptr<XdmfAttribute>
 XdmfAttribute::New()
@@ -157,7 +158,7 @@ XdmfAttribute::populateItem(
 
   // If this attribute is FiniteElementFunction
   if(mItemType == "FiniteElementFunction"){
-
+    
     // FiniteElementFunction must have at least 2 children
     if (childItems.size() < 2)
     {
@@ -169,7 +170,6 @@ XdmfAttribute::populateItem(
     // Prepare arrays for values and indices
     shared_ptr<XdmfArray> indices_array;
     shared_ptr<XdmfArray> values_array;
-    shared_ptr<XdmfArray> parsed_array;
 
     // Iterate over each child under this Attribute
     for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
@@ -193,8 +193,16 @@ XdmfAttribute::populateItem(
       }
     }
 
-    // TODO: Prepare here logic to combine indices and values to get single
-    // correct parsed_array
+    // Prepare new array
+    shared_ptr<XdmfArray> parsed_array(XdmfArray::New());
+    parsed_array->initialize(XdmfArrayType::Float64(),
+      indices_array->getSize());
+
+    for (unsigned int i = 0; i < indices_array->getSize(); ++i)
+    {
+      unsigned int index = indices_array->getValue<unsigned int>(i);
+      parsed_array->insert(i, values_array->getValue<double>(index));
+    }
 
     this->swap(parsed_array);
     if (parsed_array->getReference()) {
