@@ -155,19 +155,70 @@ XdmfAttribute::populateItem(
     mItemType = item_type->second;
   }
 
-  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
-        childItems.begin();
-      iter != childItems.end();
-      ++iter) {
-    if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
-      this->swap(array);
-      if (array->getReference()) {
-        this->setReference(array->getReference());
-        this->setReadMode(XdmfArray::Reference);
+  // If this attribute is FiniteElementFunction
+  if(mItemType == "FiniteElementFunction"){
+
+    // FiniteElementFunction must have at least 2 children
+    if (childItems.size() < 2)
+    {
+      XdmfError::message(XdmfError::FATAL,
+        "Attribute of ItemType=\"FiniteElementFunction\" must have at "
+        "least two children DataItems (containing indices and values)");
+    }
+
+    // Prepare arrays for values and indices
+    shared_ptr<XdmfArray> indices_array;
+    shared_ptr<XdmfArray> values_array;
+    shared_ptr<XdmfArray> parsed_array;
+
+    // Iterate over each child under this Attribute
+    for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
+      childItems.begin(); iter != childItems.end(); ++iter) {
+      // If pointer to children is castable to a pointer to a XdmfArray
+      // it means that there is an DataItem as a child
+      if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
+
+        // The first array is always indices array
+        if (iter - childItems.begin() == 0){
+          indices_array = array;
+        }
+
+        // The second array is always values array
+        if (iter - childItems.begin() == 1){
+          values_array = array;
+
+          // Ignore other (third, etc.) children
+          break;
+        }
       }
-      break;
+    }
+
+    // TODO: Prepare here logic to combine indices and values to get single
+    // correct parsed_array
+
+    this->swap(parsed_array);
+    if (parsed_array->getReference()) {
+      this->setReference(parsed_array->getReference());
+      this->setReadMode(XdmfArray::Reference);
+    }
+
+  } else
+  {
+    for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
+                                                             childItems.begin();
+      iter != childItems.end();
+    ++iter) {
+      if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
+        this->swap(array);
+        if (array->getReference()) {
+          this->setReference(array->getReference());
+          this->setReadMode(XdmfArray::Reference);
+        }
+        break;
+      }
     }
   }
+
 }
 //-----------------------------------------------------------------------------
 void
