@@ -39,8 +39,6 @@ shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r)
   return std::dynamic_pointer_cast<T>(r);
 }
 
-//#endif /* HAVE_BOOST_SHARED_DYNAMIC_CAST */
-
 #endif
 
 #endif /* XDMFSHAREDPTR_HPP_ */

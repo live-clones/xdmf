@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <iterator>
 #include <sstream>
+#include <string>
 #include <vector>
 
 /**
@@ -43,7 +44,7 @@ class XDMFCORE_EXPORT XdmfStringUtils {
  public:
 
   /**
-   * Split a string by whitespace and insert into container
+   * Split a string by whitespace and insert into container.
    *
    * @param stringToSplit a string to split by spaces.
    * @param containerToInsert a container to insert the split string into.
@@ -51,6 +52,15 @@ class XDMFCORE_EXPORT XdmfStringUtils {
   template <typename T>
   static void split(const std::string & stringToSplit,
 		    std::vector<T> & containerToInsert);
+
+  /**
+   * Capitalize a string.
+   *
+   * @param string to capitalize
+   *
+   * @return capitalized string
+   */
+  static std::string toUpper(const std::string & string);
 
  protected:
 

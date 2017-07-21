@@ -2,7 +2,7 @@
 /*                                    XDMF                                   */
 /*                       eXtensible Data Model and Format                    */
 /*                                                                           */
-/*  Id : XdmfItemProperty.hpp                                                */
+/*  Id : XdmfStringUtils.cpp                                                 */
 /*                                                                           */
 /*  Author:                                                                  */
 /*     Kenneth Leiter                                                        */
@@ -21,68 +21,24 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifndef XDMFITEMPROPERTY_HPP_
-#define XDMFITEMPROPERTY_HPP_
+#include <cctype>
+#include "XdmfStringUtils.hpp"
 
-#ifdef __cplusplus
+XdmfStringUtils::XdmfStringUtils()
+{
+}
 
-// Includes
-#include <map>
-#include <string>
-#include "XdmfCore.hpp"
-#include "XdmfSharedPtr.hpp"
+XdmfStringUtils::~XdmfStringUtils()
+{
+}
 
-/**
- * @brief A property attached to an XdmfItem.
- *
- * XdmfItems can have zero or more properties attached to them that
- * describe a specific characteristic of that item. For instance,
- * XdmfAttributes have both center and type properties.
- *
- * This is an abstract base class to facilitate reading and writing of
- * properties in a generic way.
- */
-
-class XDMFCORE_EXPORT XdmfItemProperty {
-
-public:
-
-  virtual ~XdmfItemProperty() = 0;
-
-  /**
-   * Retrieve the key/value pairs that this XdmfItemProperty contains by
-   * inserting into the passed map.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfItemProperty.cpp
-   * @skipline //#getProperties
-   * @until //#getProperties
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleItemProperty.py
-   * @skipline #//getProperties
-   * @until #//getProperties
-   *
-   * @param     collectedProperties     A map to insert name / value pairs into.
-   */
-  virtual void
-  getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;
-
-protected:
-
-  XdmfItemProperty();
-
-private:
-
-  XdmfItemProperty(const XdmfItemProperty &);  // Not implemented.
-  void operator=(const XdmfItemProperty &);  // Not implemented.
-
-};
-
-#endif
-
-#endif /* XDMFITEMPROPERTY_HPP_ */
+std::string
+XdmfStringUtils::toUpper(const std::string & string)
+{
+  std::string returnString;
+  std::transform(string.begin(), 
+		 string.end(), 
+		 std::back_inserter(returnString),
+		 [](unsigned char c) {return std::toupper(c); } );
+  return returnString;
+}

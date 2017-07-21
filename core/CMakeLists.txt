@@ -1,8 +1,11 @@
 project(XdmfCore)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1)
 if (POLICY CMP0015)
   cmake_policy(SET CMP0015 NEW)
 endif ()
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(CheckCXXSourceCompiles)
 include(SetUpVersion)
@@ -37,13 +40,6 @@ mark_as_advanced(XDMF_BUILD_DSM)
 
 if(XDMF_BUILD_DSM)
   option(XDMF_BUILD_DSM_THREADS ON)
-endif()
-
-mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
-find_package(Boost REQUIRED)
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-  mark_as_advanced(FORCE Boost_INCLUDE_DIR)
 endif()
 
 # Find HDF5_ROOT if not set
@@ -140,6 +136,7 @@ set(XdmfCoreSources
   XdmfPlaceholder
   XdmfSparseMatrix
   XdmfSubset
+  XdmfStringUtils
   XdmfSystemUtils
   ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/XdmfVersion
   XdmfVisitor
@@ -288,21 +285,7 @@ if (XDMF_STATIC_AND_SHARED AND BUILD_SHARED_LIBS)
     ARCHIVE DESTINATION lib)
 endif ()
 
-if (Boost_FOUND)
-  set(FOUND_BOOST_INCLUDES ${Boost_INCLUDE_DIRS})
-  set(XdmfCore_INCLUDE_DIRS
-    ${Boost_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${HDF5_INCLUDE_DIR}
-    ${LIBXML2_INCLUDE_DIR}
-    ${PYTHON_INCLUDE_DIRS}
-    CACHE INTERNAL "")
-else ()
-  set(FOUND_BOOST_INCLUDES "")
-endif ()
 set(XdmfCore_INCLUDE_DIRS
-  ${FOUND_BOOST_INCLUDES}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${HDF5_INCLUDE_DIR}

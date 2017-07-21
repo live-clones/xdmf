@@ -45,5 +45,11 @@ int main() {
   assert(split[1] == 2);
   assert(split[2] == 3);
 
+  const std::string abc("abc");
+  const std::string capABC = XdmfStringUtils::toUpper(abc);
+
+  assert(abc.compare("abc") == 0);
+  assert(capABC.compare("ABC") == 0);
+
   return 0;
 }
