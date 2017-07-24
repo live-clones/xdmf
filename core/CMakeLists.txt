@@ -261,11 +261,12 @@ if(APPLE)
         PARENT_SCOPE)
 endif()
 
-file(GLOB_RECURSE
+file(GLOB
   XdmfCoreHeaders
   "*.hpp" "*.tpp" "*.i"
   "../CMake/VersionSuite/*.hpp")
 file(GLOB LokiHeaders loki/*.h)
+file(GLOB MapboxHeaders mapbox/*.hpp)
 
 set(XdmfCoreHeaders
       ${XdmfCoreHeaders}
@@ -273,6 +274,7 @@ set(XdmfCoreHeaders
 if (NOT XDMF_INSTALL_NO_DEVELOPMENT)
   install(FILES ${XdmfCoreHeaders} DESTINATION include)
   install(FILES ${LokiHeaders} DESTINATION include/loki)
+  install(FILES ${MapboxHeaders} DESTINATION include/mapbox)
 endif()
 install(TARGETS XdmfCore
   RUNTIME DESTINATION bin

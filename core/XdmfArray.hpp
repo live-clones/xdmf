@@ -1481,6 +1481,7 @@ private:
   class GetCapacity;
   template <typename T> class GetValue;
   template <typename T> class GetValues;
+  template <typename T> class GetValuesInternal;
   class GetValuesPointer;
   class GetValuesString;
   template <typename T> class Insert;
@@ -1492,6 +1493,7 @@ private:
   class Reserve;
   template <typename T> class Resize;
   class Size;
+  template <typename T> class Swap;
 
   /**
    * After setValues() is called, XdmfArray stores a pointer that is

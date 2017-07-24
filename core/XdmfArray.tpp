@@ -26,6 +26,8 @@
 #include <sstream>
 #include "XdmfArray.hpp"
 
+#include <iostream>
+
 template <typename T>
 class XdmfArray::GetValue {
 public:
@@ -226,6 +228,49 @@ private:
   const unsigned int mArrayStride;
   const unsigned int mValuesStride;
 };
+
+template <typename T>
+class XdmfArray::GetValuesInternal {
+public:
+
+  GetValuesInternal(XdmfArray * const array) :
+    mArray(array)    
+  {
+  }
+
+  shared_ptr<std::vector<T> >
+  operator()(const Empty &) const
+  {
+    return shared_ptr<std::vector<T> >();
+  }
+
+  shared_ptr<std::vector<T> >
+  operator()(shared_ptr<std::vector<T> > & array) const 
+  {
+    return array;
+  }
+
+  template<typename U>
+  shared_ptr<std::vector<T> >
+  operator()(shared_ptr<std::vector<U> > &) const
+  {
+    return shared_ptr<std::vector<T> >();
+  }
+
+  template<typename U>
+  shared_ptr<std::vector<T> >
+  operator()(const shared_ptr<const U> &) const
+  {
+    mArray->internalizeArrayPointer();
+    return mapbox::util::apply_visitor(*this,
+				       mArray->mArray);
+  }
+
+private:
+
+  XdmfArray * mArray;
+};
+
 
 template <typename T>
 class XdmfArray::Insert {
@@ -591,6 +636,55 @@ private:
 };
 
 template <typename T>
+class XdmfArray::Swap {
+public:
+
+  Swap(XdmfArray * const array,
+       std::vector<T> & swapArray) :
+    mArray(array),
+    mSwapArray(swapArray)
+    
+  {
+  }
+
+  bool
+  operator()(const Empty &) const
+  {
+    mArray->initialize<T>();
+    return mapbox::util::apply_visitor(*this,
+				       mArray->mArray);
+  }
+
+  bool
+  operator()(shared_ptr<std::vector<T> > & array) const 
+  {
+    array->swap(mSwapArray);
+    return true;
+  }
+
+  template<typename U>
+  bool
+  operator()(shared_ptr<std::vector<U> > &) const
+  {
+    // Arrays of different types, return failure
+    return false;
+  }
+
+  template<typename U>
+  bool
+  operator()(const shared_ptr<const U> &) const
+  {
+    // Not storing std::vector, return failure
+    return false;
+  }
+
+private:
+
+  XdmfArray * mArray;
+  std::vector<T> & mSwapArray;
+};
+
+template <typename T>
 struct XdmfArray::ArrayDeleter
 {
   void
@@ -638,6 +732,11 @@ template <typename T>
 shared_ptr<std::vector<T> >
 XdmfArray::getValuesInternal()
 {
+  std::cout << "HERE" << std::endl;
+  return mapbox::util::apply_visitor(GetValuesInternal<T>(this),
+				     mArray);
+
+/*
   this->internalizeArrayPointer();
   try {
     shared_ptr<std::vector<T> > currArray =
@@ -647,6 +746,7 @@ XdmfArray::getValuesInternal()
   catch(const mapbox::util::bad_variant_access & exception) {
     return shared_ptr<std::vector<T> >();
   }
+*/
 }
 
 template <typename T>
@@ -669,9 +769,11 @@ shared_ptr<std::vector<T> >
 XdmfArray::initialize(const std::vector<unsigned int> & dimensions)
 {
   mDimensions = dimensions;
-  const unsigned int size = static_cast<unsigned int>(
-						      std::accumulate(dimensions.begin(), dimensions.end(), 1,
-								      std::multiplies<unsigned int>()));
+  const unsigned int size = 
+    static_cast<unsigned int>(std::accumulate(dimensions.begin(), 
+					      dimensions.end(), 
+					      1,
+					      std::multiplies<unsigned int>()));
   return this->initialize<T>(size);
 }
 
@@ -736,8 +838,11 @@ void
 XdmfArray::resize(const std::vector<unsigned int> & dimensions,
                   const T & value)
 {
-  const unsigned int size = static_cast<unsigned int>(std::accumulate(dimensions.begin(), dimensions.end(), 1,
-                                                                      std::multiplies<unsigned int>()));
+  const unsigned int size = 
+    static_cast<unsigned int>(std::accumulate(dimensions.begin(), 
+					      dimensions.end(), 
+					      1,               
+					      std::multiplies<unsigned int>()));
   this->resize(size, value);
   mDimensions = dimensions;
   this->setIsChanged(true);
@@ -790,6 +895,12 @@ template <typename T>
 bool
 XdmfArray::swap(std::vector<T> & array)
 {
+  std::cout << "HERE" << std::endl;
+  this->setIsChanged(true);
+  return mapbox::util::apply_visitor(Swap<T>(this,
+					     array),
+				     mArray);
+  /*
   this->internalizeArrayPointer();
   if(!this->isInitialized()) {
     this->initialize<T>();
@@ -803,7 +914,7 @@ XdmfArray::swap(std::vector<T> & array)
   catch(const mapbox::util::bad_variant_access & exception) {
     return false;
   }
-  this->setIsChanged(true);
+  */
 }
 
 template <typename T>

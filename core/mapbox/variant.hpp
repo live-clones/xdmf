@@ -42,7 +42,7 @@
 # ifdef NDEBUG
 #  define VARIANT_INLINE //inline __attribute__((always_inline))
 # else
-#  define VARIANT_INLINE __attribute__((noinline))
+#  define VARIANT_INLINE //__attribute__((noinline))
 # endif
 #endif
 // clang-format on
