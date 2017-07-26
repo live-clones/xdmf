@@ -158,18 +158,20 @@ XdmfAttribute::populateItem(
 
   // If this attribute is FiniteElementFunction
   if(mItemType == "FiniteElementFunction"){
-    
+
     // FiniteElementFunction must have at least 2 children
     if (childItems.size() < 2)
     {
       XdmfError::message(XdmfError::FATAL,
         "Attribute of ItemType=\"FiniteElementFunction\" must have at "
-        "least two children DataItems (containing indices and values)");
+          "least two children DataItems (containing indices and values)");
     }
 
     // Prepare arrays for values and indices
     shared_ptr<XdmfArray> indices_array;
     shared_ptr<XdmfArray> values_array;
+    shared_ptr<XdmfArray> number_of_dofs_array;
+    shared_ptr<XdmfArray> cell_order_array;
 
     // Iterate over each child under this Attribute
     for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
@@ -179,13 +181,24 @@ XdmfAttribute::populateItem(
       if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
 
         // The first array is always indices array
-        if (iter - childItems.begin() == 0){
+        if (iter - childItems.begin() == 0)
+        {
           indices_array = array;
         }
 
         // The second array is always values array
-        if (iter - childItems.begin() == 1){
+        if (iter - childItems.begin() == 1)
+        {
           values_array = array;
+        }
+        if (iter - childItems.begin() == 2)
+        {
+          number_of_dofs_array = array;
+        }
+
+        if (iter - childItems.begin() == 3)
+        {
+          cell_order_array = array;
 
           // Ignore other (third, etc.) children
           break;
@@ -193,17 +206,59 @@ XdmfAttribute::populateItem(
       }
     }
 
+    std::vector<unsigned int> scalar_triangle_map = {0, 1, 2};
+    std::vector<unsigned int> scalar_quadratic_triangle_map =
+      {0, 1, 2, 5, 3, 4};
+    std::vector<unsigned int> dof_to_vtk_map;
+
     // Prepare new array
     shared_ptr<XdmfArray> parsed_array(XdmfArray::New());
     parsed_array->initialize(XdmfArrayType::Float64(),
       indices_array->getSize());
 
-    for (unsigned int i = 0; i < indices_array->getSize(); ++i)
+    unsigned long index = 0;
+    // For each cell
+    for (unsigned long cell = 0; cell < cell_order_array->getSize(); ++cell)
     {
-      unsigned int index = indices_array->getValue<unsigned int>(i);
-      parsed_array->insert(i, values_array->getValue<double>(index));
+      // Remap with array for ordering of cells
+      unsigned long ordered_cell =
+        cell_order_array->getValue<unsigned long>(cell);
+
+      // Compute number of degrees of freedom
+      unsigned int number_dofs_in_cell =
+        number_of_dofs_array->getValue<unsigned int>(ordered_cell + 1) -
+        number_of_dofs_array->getValue<unsigned int>(ordered_cell);
+
+      if ((mElementFamily == "CG" or mElementFamily == "DG")
+        and mElementDegree == 2
+        and number_dofs_in_cell == 6)
+      {
+        // If the cell is CG/DG2 with 6 dofs then it is quadratic_triangle
+        dof_to_vtk_map = scalar_quadratic_triangle_map;
+      } else if ((mElementFamily == "CG" or mElementFamily == "DG")
+        and mElementDegree == 1
+        and number_dofs_in_cell == 3)
+      {
+        // If CG/DG1 and 3 dofs then it is linear triangle
+        dof_to_vtk_map = scalar_triangle_map;
+      }
+      // For each degree of freedom in this cell
+      for (unsigned int dof_in_cell = 0;
+           dof_in_cell < number_dofs_in_cell; ++dof_in_cell)
+      {
+        // Get global reordered index for degree of freedom
+        unsigned long dof_index =
+          indices_array->getValue<unsigned long>(index +
+          dof_to_vtk_map[dof_in_cell]);
+
+        // Insert the value of degree of freedom
+        parsed_array->insert(index + dof_in_cell,
+          values_array->getValue<double>(dof_index));
+      }
+      index = index + number_dofs_in_cell;
     }
 
+    // And set the data to parent
     this->swap(parsed_array);
     if (parsed_array->getReference()) {
       this->setReference(parsed_array->getReference());
