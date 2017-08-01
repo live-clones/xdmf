@@ -184,6 +184,8 @@ public:
    */
   unsigned int getElementDegree() const;
 
+  std::string getElementCell() const;
+
   /**
    * Set the XdmfAttributeCenter associated with this attribute.
    *
@@ -280,6 +282,8 @@ public:
    */
   void setElementDegree(unsigned int degree);
 
+  void setElementCell(std::string cell);
+
   XdmfAttribute(XdmfAttribute &);
 
 protected:
@@ -302,6 +306,7 @@ private:
   std::string mItemType;
   unsigned int mElementDegree;
   std::string mElementFamily;
+  std::string mElementCell;
 
 };
 
