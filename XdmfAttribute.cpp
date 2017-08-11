@@ -231,7 +231,11 @@ XdmfAttribute::populateItem(
     std::vector<unsigned int> tetrahedron_map = {0, 1, 2, 3, 4};
     std::vector<unsigned int> quadratic_tetrahedron_map =
       {0, 1, 2, 3, 9, 6, 8, 7, 5, 4};
-    std::vector<unsigned int> quadrilateral_map = {0, 1, 2, 3};
+    std::vector<unsigned int> quadrilateral_map = {0, 1, 3, 2};
+    std::vector<unsigned int> quadratic_quadrilateral_map =
+      {0, 1, 4, 3, 2, 7, 5, 6, 8};
+    std::vector<unsigned int> single_value_map = {0};
+
     std::vector<unsigned int> dof_to_vtk_map;
 
     // Prepare new array
@@ -245,6 +249,7 @@ XdmfAttribute::populateItem(
     // For each cell
     for (unsigned long cell = 0; cell < cell_order_array->getSize(); ++cell)
     {
+
       // Remap with array for ordering of cells
       unsigned long ordered_cell =
         cell_order_array->getValue<unsigned long>(cell);
@@ -281,12 +286,38 @@ XdmfAttribute::populateItem(
       {
         dof_to_vtk_map = quadratic_tetrahedron_map;
         dofs_per_component = 10;
-      } else if ((mElementFamily == "CG" or mElementFamily == "DG")
+      } else if ((mElementFamily == "Q" or mElementFamily == "DQ")
         and mElementDegree == 1 and mElementCell == "quadrilateral"
         and (number_dofs_in_cell % 4) == 0)
       {
         dof_to_vtk_map = quadrilateral_map;
         dofs_per_component = 4;
+      } else if ((mElementFamily == "Q" or mElementFamily == "DQ")
+        and mElementDegree == 2 and mElementCell == "quadrilateral"
+        and (number_dofs_in_cell % 9) == 0)
+      {
+        dof_to_vtk_map = quadratic_quadrilateral_map;
+        dofs_per_component = 9;
+      } else if ((mElementFamily == "DG")
+        and mElementDegree == 0 and mElementCell == "triangle")
+      {
+        dof_to_vtk_map = single_value_map;
+        dofs_per_component = 1;
+      } else if ((mElementFamily == "DQ")
+        and mElementDegree == 0 and mElementCell == "quadrilateral")
+      {
+        dof_to_vtk_map = single_value_map;
+        dofs_per_component = 1;
+      } else if (mElementFamily == "RT"
+        and mElementDegree == 1 and mElementCell == "triangle")
+      {
+        dof_to_vtk_map = triangle_map;
+        dofs_per_component = 3;
+      } else if (mElementFamily == "RT"
+        and mElementDegree == 1 and mElementCell == "tetrahedron")
+      {
+        dof_to_vtk_map = tetrahedron_map;
+        dofs_per_component = 3;
       } else {
         XdmfError(XdmfError::FATAL, "Unsupported FiniteElementFunction type.");
       }
