@@ -29,6 +29,8 @@
 #include "XdmfError.hpp"
 #include "XdmfArray.hpp"
 //-----------------------------------------------------------------------------
+XDMF_CHILDREN_IMPLEMENTATION(XdmfAttribute, XdmfArray, AuxiliaryArray, Name)
+//-----------------------------------------------------------------------------
 shared_ptr<XdmfAttribute>
 XdmfAttribute::New()
 {
@@ -170,219 +172,38 @@ XdmfAttribute::populateItem(
     mItemType = item_type->second;
   }
 
-  // If this attribute is FiniteElementFunction
-  if(mItemType == "FiniteElementFunction"){
-
-    // FiniteElementFunction must have at least 2 children
-    if (childItems.size() < 2)
+  bool first = true;
+  for (std::vector<shared_ptr<XdmfItem>>::const_iterator iter =
+         childItems.begin(); iter != childItems.end();  ++iter) {
+    if (shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter))
     {
-      XdmfError::message(XdmfError::FATAL,
-        "Attribute of ItemType=\"FiniteElementFunction\" must have at "
-          "least two children DataItems (containing indices and values)");
-    }
-
-    // Prepare arrays for values and indices
-    shared_ptr<XdmfArray> indices_array;
-    shared_ptr<XdmfArray> values_array;
-    shared_ptr<XdmfArray> number_of_dofs_array;
-    shared_ptr<XdmfArray> cell_order_array;
-
-    // Iterate over each child under this Attribute
-    for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
-      childItems.begin(); iter != childItems.end(); ++iter) {
-      // If pointer to children is castable to a pointer to a XdmfArray
-      // it means that there is an DataItem as a child
-      if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
-
-        // The first array is always indices array
-        if (iter - childItems.begin() == 0)
-        {
-          indices_array = array;
-        }
-
-        // The second array is always values array
-        if (iter - childItems.begin() == 1)
-        {
-          values_array = array;
-        }
-        if (iter - childItems.begin() == 2)
-        {
-          number_of_dofs_array = array;
-        }
-
-        if (iter - childItems.begin() == 3)
-        {
-          cell_order_array = array;
-
-          // Ignore other (fifth, etc.) children
-          break;
-        }
-      }
-    }
-
-    // Number of components
-    unsigned int ncomp = 1;
-    // Number of dofs per component
-    unsigned int dofs_per_component;
-    // Mapping of dofs per component to the correct VTK order
-    std::vector<unsigned int> triangle_map = {0, 1, 2};
-    std::vector<unsigned int> quadratic_triangle_map =
-      {0, 1, 2, 5, 3, 4};
-    std::vector<unsigned int> tetrahedron_map = {0, 1, 2, 3, 4};
-    std::vector<unsigned int> quadratic_tetrahedron_map =
-      {0, 1, 2, 3, 9, 6, 8, 7, 5, 4};
-    std::vector<unsigned int> quadrilateral_map = {0, 1, 3, 2};
-    std::vector<unsigned int> quadratic_quadrilateral_map =
-      {0, 1, 4, 3, 2, 7, 5, 6, 8};
-    std::vector<unsigned int> single_value_map = {0};
-
-    std::vector<unsigned int> dof_to_vtk_map;
-
-    // Prepare new array
-    shared_ptr<XdmfArray> parsed_array(XdmfArray::New());
-    parsed_array->initialize(XdmfArrayType::Float64(),
-      indices_array->getSize());
-
-    unsigned long index = 0;
-    unsigned long padded_index = 0;
-
-    // For each cell
-    for (unsigned long cell = 0; cell < cell_order_array->getSize(); ++cell)
-    {
-
-      // Remap with array for ordering of cells
-      unsigned long ordered_cell =
-        cell_order_array->getValue<unsigned long>(cell);
-
-      // This number iterates through dofs in cell
-      unsigned int padded_dof_in_cell = 0;
-
-      // Compute number of degrees of freedom
-      unsigned int number_dofs_in_cell =
-        number_of_dofs_array->getValue<unsigned int>(ordered_cell + 1) -
-        number_of_dofs_array->getValue<unsigned int>(ordered_cell);
-
-      if ((mElementFamily == "CG" or mElementFamily == "DG")
-        and mElementDegree == 2 and mElementCell == "triangle"
-        and (number_dofs_in_cell % 6) == 0)
+      if (first)
       {
-        dof_to_vtk_map = quadratic_triangle_map;
-        dofs_per_component = 6;
-      } else if ((mElementFamily == "CG" or mElementFamily == "DG")
-        and mElementDegree == 1 and mElementCell == "triangle"
-        and (number_dofs_in_cell % 3) == 0)
-      {
-        dof_to_vtk_map = triangle_map;
-        dofs_per_component = 3;
-      } else if ((mElementFamily == "CG" or mElementFamily == "DG")
-        and mElementDegree == 1 and mElementCell == "tetrahedron"
-        and (number_dofs_in_cell % 4) == 0)
-      {
-        dof_to_vtk_map = tetrahedron_map;
-        dofs_per_component = 4;
-      } else if ((mElementFamily == "CG" or mElementFamily == "DG")
-        and mElementDegree == 2 and mElementCell == "tetrahedron"
-        and (number_dofs_in_cell % 10) == 0)
-      {
-        dof_to_vtk_map = quadratic_tetrahedron_map;
-        dofs_per_component = 10;
-      } else if ((mElementFamily == "Q" or mElementFamily == "DQ")
-        and mElementDegree == 1 and mElementCell == "quadrilateral"
-        and (number_dofs_in_cell % 4) == 0)
-      {
-        dof_to_vtk_map = quadrilateral_map;
-        dofs_per_component = 4;
-      } else if ((mElementFamily == "Q" or mElementFamily == "DQ")
-        and mElementDegree == 2 and mElementCell == "quadrilateral"
-        and (number_dofs_in_cell % 9) == 0)
-      {
-        dof_to_vtk_map = quadratic_quadrilateral_map;
-        dofs_per_component = 9;
-      } else if ((mElementFamily == "DG")
-        and mElementDegree == 0 and mElementCell == "triangle")
-      {
-        dof_to_vtk_map = single_value_map;
-        dofs_per_component = 1;
-      } else if ((mElementFamily == "DQ")
-        and mElementDegree == 0 and mElementCell == "quadrilateral")
-      {
-        dof_to_vtk_map = single_value_map;
-        dofs_per_component = 1;
-      } else if (mElementFamily == "RT"
-        and mElementDegree == 1 and mElementCell == "triangle")
-      {
-        dof_to_vtk_map = triangle_map;
-        dofs_per_component = 3;
-      } else if (mElementFamily == "RT"
-        and mElementDegree == 1 and mElementCell == "tetrahedron")
-      {
-        dof_to_vtk_map = tetrahedron_map;
-        dofs_per_component = 3;
-      } else {
-        XdmfError(XdmfError::FATAL, "Unsupported FiniteElementFunction type.");
-      }
-
-      ncomp = number_dofs_in_cell / dofs_per_component;
-
-      unsigned int padded_comps = 0;
-      if (mType == XdmfAttributeType::Vector())
-      {
-        padded_comps = 3 - ncomp;
-      }
-
-      // For each degree of freedom per component in this cell
-      for (unsigned int dof_per_component_in_cell = 0;
-           dof_per_component_in_cell < dofs_per_component;
-           ++dof_per_component_in_cell)
-      {
-        for (unsigned int comp = 0; comp < ncomp; ++comp)
-        {
-          // Get global reordered index for degree of freedom
-          unsigned long dof_index =
-          indices_array->getValue<unsigned long>(index +
-            dof_to_vtk_map[dof_per_component_in_cell] +
-            comp * dofs_per_component);
-
-          // Insert the value of degree of freedom
-          parsed_array->insert(padded_index + padded_dof_in_cell++,
-            values_array->getValue<double>(dof_index));
-        }
-
-        for (unsigned int padded_comp = 0; padded_comp < padded_comps;
-          ++padded_comp)
-        {
-          parsed_array->insert(padded_index + padded_dof_in_cell++,
-            0.0);
-        }
-      }
-      index = index + number_dofs_in_cell;
-      padded_index = padded_index + padded_dof_in_cell;
-    }
-
-    // And set the data to parent
-    this->swap(parsed_array);
-    if (parsed_array->getReference()) {
-      this->setReference(parsed_array->getReference());
-      this->setReadMode(XdmfArray::Reference);
-    }
-
-  } else
-  {
-    for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
-                                                             childItems.begin();
-      iter != childItems.end();
-    ++iter) {
-      if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
+        first = false;
         this->swap(array);
-        if (array->getReference()) {
+        if (array->getReference())
+        {
           this->setReference(array->getReference());
           this->setReadMode(XdmfArray::Reference);
         }
-        break;
+      }
+      else
+      {
+        this->insert(array);
       }
     }
   }
 
+}
+//-----------------------------------------------------------------------------
+void
+XdmfAttribute::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
+{
+  XdmfArray::traverse(visitor);
+  for (unsigned int i = 0; i < mAuxiliaryArrays.size(); ++i)
+  {
+    mAuxiliaryArrays[i]->accept(visitor);
+  }
 }
 //-----------------------------------------------------------------------------
 void

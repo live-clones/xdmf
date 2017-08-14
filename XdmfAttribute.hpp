@@ -70,7 +70,14 @@ public:
   virtual ~XdmfAttribute();
 
   LOKI_DEFINE_VISITABLE(XdmfAttribute, XdmfArray)
+  XDMF_CHILDREN(XdmfAttribute, XdmfArray, AuxiliaryArray, Name)
   static const std::string ItemTag;
+
+  using XdmfArray::insert;
+
+#if defined(SWIG)
+  using XdmfItem::insert;
+#endif
 
   /**
    * Get the XdmfAttributeCenter associated with this attribute.
@@ -285,6 +292,8 @@ public:
   void setElementCell(std::string cell);
 
   XdmfAttribute(XdmfAttribute &);
+
+  void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
