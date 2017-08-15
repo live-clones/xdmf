@@ -177,20 +177,25 @@ public:
    */
   std::string getItemType() const;
 
-    /**
+  /**
    * Get the ElementFamily associated with this attribute.
    *
    * @return    ElementFamily of the attribute.
    */
   std::string getElementFamily() const;
 
-    /**
+  /**
    * Get the ElementDegree associated with this attribute.
    *
    * @return    ElementDegree of the attribute.
    */
   unsigned int getElementDegree() const;
 
+  /**
+   * Get the ElementCell associated with this attribute.
+   *
+   * @return    ElementCell of the attribute.
+   */
   std::string getElementCell() const;
 
   /**
@@ -289,6 +294,11 @@ public:
    */
   void setElementDegree(unsigned int degree);
 
+   /**
+   * Set the ElementCell associated with this attribute.
+   *
+   * @param     type    ElementCell to set.
+   */
   void setElementCell(std::string cell);
 
   XdmfAttribute(XdmfAttribute &);
