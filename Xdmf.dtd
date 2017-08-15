@@ -63,6 +63,7 @@
 	ItemType (FiniteElementFunction) #IMPLIED
 	ElementFamily (CG | DG | RT | BDM | CR | N1curl | N2curl) #IMPLIED
 	ElementDegree CDATA #IMPLIED
+	ElementCell CDATA #IMPLIED
 >
 <!--Describes subsections of a grid-->
 <!ELEMENT Set (Information*, DataItem*, Attribute)>
