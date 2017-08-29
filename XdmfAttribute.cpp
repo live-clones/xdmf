@@ -81,8 +81,13 @@ XdmfAttribute::getItemProperties() const
   mType->getProperties(attributeProperties);
   mCenter->getProperties(attributeProperties);
   attributeProperties.insert(std::make_pair("ItemType", mItemType));
+  
+  std::stringstream elemDeg;
+  elemDeg << mElementDegree;
+
   attributeProperties.insert(std::make_pair("ElementDegree",
-    std::to_string(mElementDegree)));
+    elemDeg.str()));
+
   attributeProperties.insert(std::make_pair("ElementFamily", mElementFamily));
   attributeProperties.insert(std::make_pair("ElementCell", mElementCell));
   return attributeProperties;
@@ -151,7 +156,7 @@ XdmfAttribute::populateItem(
   std::map<std::string, std::string>::const_iterator element_degree =
     itemProperties.find("ElementDegree");
   if(element_degree != itemProperties.end()) {
-    mElementDegree = std::stoi(element_degree->second);
+    mElementDegree = atoi(element_degree->second.c_str());
   }
 
   std::map<std::string, std::string>::const_iterator element_family =
@@ -173,7 +178,7 @@ XdmfAttribute::populateItem(
   }
 
   bool first = true;
-  for (std::vector<shared_ptr<XdmfItem>>::const_iterator iter =
+  for (std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
          childItems.begin(); iter != childItems.end();  ++iter) {
     if (shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter))
     {
