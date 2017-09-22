@@ -1,4 +1,3 @@
-/*****************************************************************************/
 /*                                    Xdmf                                   */
 /*                       Extensible Data Model and Format                    */
 /*                                                                           */
@@ -732,7 +731,6 @@ template <typename T>
 shared_ptr<std::vector<T> >
 XdmfArray::getValuesInternal()
 {
-  std::cout << "HERE" << std::endl;
   return mapbox::util::apply_visitor(GetValuesInternal<T>(this),
 				     mArray);
 

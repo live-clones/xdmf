@@ -1,4 +1,3 @@
-project(XdmfCore)
 cmake_minimum_required(VERSION 3.1)
 if (POLICY CMP0015)
   cmake_policy(SET CMP0015 NEW)
@@ -20,7 +19,6 @@ if(VERSION_CONTROL_AUTOUPDATE OR
     )
 endif()
 
-option(BUILD_SHARED_LIBS "Build the shared library" ON)
 if(BUILD_SHARED_LIBS)
   set(LIBTYPE SHARED)
   set(BUILD_SHARED 1)
