@@ -11,7 +11,7 @@ int main()
 {
   int status = 0;
 
-  void * array = XdmfArrayNew();
+  XDMFARRAY * array = XdmfArrayNew();
 
   XdmfArraySetName(array, "Test Array", &status);
 
@@ -52,6 +52,8 @@ int main()
 
   char * returnInfoValue = XdmfInformationGetValue(returnInformation);
 
+  XdmfInformationFree(returnInformation);
+
   printf("%s ?= %s\n", returnInfoName, "Test Information");
   printf("%s ?= %s\n", returnInfoValue, "Testing");
 
@@ -59,7 +61,12 @@ int main()
 
   assert(strcmp(returnInfoValue, "Testing") == 0);
 
-  XdmfArrayInsertInformation(array, XdmfInformationNew("Secondary Information", "Also Testing"), 0);
+  XDMFINFORMATION * newInformation = 
+    XdmfInformationNew("Secondary Information", "Also Testing");
+
+  XdmfArrayInsertInformation(array, newInformation, 0);
+
+  XdmfInformationFree(newInformation);
 
   numInfo = XdmfArrayGetNumberInformations(array);
 
@@ -95,10 +102,10 @@ int main()
 
   assert(numInfo == 0);
 
-  free(testInformation);
+  XdmfInformationFree(testInformation);
   free(returnInfoName);
   free(returnInfoValue);
-  free(secondReturnInformation);
+  XdmfInformationFree(secondReturnInformation);
   free(secondReturnInfoName);
   free(secondReturnInfoValue);
 
@@ -215,7 +222,7 @@ int main()
 
   XdmfArrayRelease(secondaryArray);
 
-  free(secondaryArray);
+  XdmfArrayFree(secondaryArray);
   free(valueString);
 
   valueString = XdmfArrayGetValuesString(array);
@@ -300,6 +307,7 @@ int main()
 
   free(valueString);
 
+  /*
   int * swapArray = valArray;
 
   XdmfArraySwapWithArray(secondaryArray, ((void **)&(swapArray)), 3, XDMF_ARRAY_TYPE_INT32, &status);
@@ -338,6 +346,12 @@ int main()
   assert(returnArray[0] == 5);
   assert(returnArray[1] == 6);
   assert(returnArray[2] == 7);
+
+  free(returnArray);
+  */
+
+  XdmfArrayFree(array);
+  XdmfArrayFree(secondaryArray);
 
   return 0;
 }

@@ -24,11 +24,11 @@
 #ifndef XDMFEXODUSWRITER_HPP_
 #define XDMFEXODUSWRITER_HPP_
 
-#ifdef __cplusplus
-
 // Forward Declarations
-class XdmfGridCollection;
-class XdmfUnstructuredGrid;
+#include "XdmfGridCollection.hpp"
+#include "XdmfUnstructuredGrid.hpp"
+
+#ifdef __cplusplus
 
 // Includes
 #include <string>

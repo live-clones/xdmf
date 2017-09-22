@@ -24,9 +24,4 @@
 #ifndef XDMFCONFIG_HPP_
 #define XDMFCONFIG_HPP_
 
-#cmakedefine BUILD_SHARED
-#ifndef BUILD_SHARED
-#  define XDMFSTATIC
-#endif
-
 #endif

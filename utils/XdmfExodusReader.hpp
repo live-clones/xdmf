@@ -24,11 +24,11 @@
 #ifndef XDMFEXODUSREADER_HPP_
 #define XDMFEXODUSREADER_HPP_
 
-#ifdef __cplusplus
-
 // Forward Declarations
-class XdmfHeavyDataWriter;
-class XdmfUnstructuredGrid;
+#include "XdmfHeavyDataWriter.hpp"
+#include "XdmfUnstructuredGrid.hpp"
+
+#ifdef __cplusplus
 
 // Includes
 #include <string>

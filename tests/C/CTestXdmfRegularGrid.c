@@ -16,123 +16,90 @@
 int main()
 {
 
-  int i = 0;
-
   int status = 0;
 
   XDMFWRITER * writer = XdmfWriterNew("regfile.xmf");
 
   // Read from File
 
-  void * reader = XdmfReaderNew();
+  XDMFREADER * reader = XdmfReaderNew();
 
-  void * regGrid = XdmfRegularGridNew2D(5, 5, 5, 5, 0, 0);
+  XDMFREGULARGRID * regGrid = XdmfRegularGridNew2D(5, 5, 5, 5, 0, 0);
 
   XdmfRegularGridAccept(regGrid, (XDMFVISITOR *)writer, &status);
+  XdmfWriterFree(writer);
+  XdmfRegularGridFree(regGrid);
 
-  void * readGrid = XdmfReaderRead(reader, "regfile.xmf", &status);
+  XDMFITEM * readItem = XdmfReaderRead(reader, "regfile.xmf", &status);
+  XdmfReaderFree(reader);
+  XDMFREGULARGRID * readGrid = XdmfRegularGridCast(readItem);
+  XdmfItemFree(readItem);
 
-  void * readBrick = XdmfRegularGridGetBrickSize(readGrid, &status);
-
+  XDMFARRAY * readBrick = XdmfRegularGridGetBrickSize(readGrid, &status);
   char * valueString = XdmfArrayGetValuesString(readBrick);
-
   printf("brick contains %s\n", valueString);
-
   assert(strcmp(valueString, "5 5") == 0);
-
   free(valueString);
+  XdmfArrayFree(readBrick);
 
-  free(readBrick);
-
-  void * readDimensions = XdmfRegularGridGetDimensions(readGrid, &status);
-
+  XDMFARRAY * readDimensions = XdmfRegularGridGetDimensions(readGrid, &status);
   valueString = XdmfArrayGetValuesString(readDimensions);
-
   printf("dimensions contains %s\n", valueString);
-
   assert(strcmp(valueString, "5 5") == 0);
-
   free(valueString);
+  XdmfArrayFree(readDimensions);
 
-  free(readDimensions);
-
-  void * readOrigin = XdmfRegularGridGetOrigin(readGrid, &status);
-
+  XDMFARRAY * readOrigin = XdmfRegularGridGetOrigin(readGrid, &status);
   valueString = XdmfArrayGetValuesString(readOrigin);
-
   printf("origin contains %s\n", valueString);
-
   assert(strcmp(valueString, "0 0") == 0);
-
   free(valueString);
-
-  free(readOrigin);
+  XdmfArrayFree(readOrigin);
 
   int insertVal = 7;
 
-  void * newBrick = XdmfArrayNew();
-
+  XDMFARRAY * newBrick = XdmfArrayNew();
   XdmfArrayPushBack(newBrick, &insertVal, XDMF_ARRAY_TYPE_INT32, &status);
   XdmfArrayPushBack(newBrick, &insertVal, XDMF_ARRAY_TYPE_INT32, &status);
-
   XdmfRegularGridSetBrickSize(readGrid, newBrick, 0, &status);
+  XdmfArrayFree(newBrick);
 
   insertVal = 6;
-
-  void * newDimensions = XdmfArrayNew();
-
+  XDMFARRAY * newDimensions = XdmfArrayNew();
   XdmfArrayPushBack(newDimensions, &insertVal, XDMF_ARRAY_TYPE_INT32, &status);
   XdmfArrayPushBack(newDimensions, &insertVal, XDMF_ARRAY_TYPE_INT32, &status);
-
   XdmfRegularGridSetDimensions(readGrid, newDimensions, 0, &status);
+  XdmfArrayFree(newDimensions);
 
   insertVal = 1;
-
-  void * newOrigin = XdmfArrayNew();
-
+  XDMFARRAY * newOrigin = XdmfArrayNew();
   XdmfArrayPushBack(newOrigin, &insertVal, XDMF_ARRAY_TYPE_INT32, &status);
   XdmfArrayPushBack(newOrigin, &insertVal, XDMF_ARRAY_TYPE_INT32, &status);
-
   XdmfRegularGridSetOrigin(readGrid, newOrigin, 0, &status);
+  XdmfArrayFree(newOrigin);
 
   readBrick = XdmfRegularGridGetBrickSize(readGrid, &status);
-
   valueString = XdmfArrayGetValuesString(readBrick);
-
   printf("brick contains %s\n", valueString);
-
   assert(strcmp(valueString, "7 7") == 0);
-
   free(valueString);
+  XdmfArrayFree(readBrick);
 
   readDimensions = XdmfRegularGridGetDimensions(readGrid, &status);
-
   valueString = XdmfArrayGetValuesString(readDimensions);
-
   printf("dimensions contains %s\n", valueString);
-
   assert(strcmp(valueString, "6 6") == 0);
-
   free(valueString);
+  XdmfArrayFree(readDimensions);
 
   readOrigin = XdmfRegularGridGetOrigin(readGrid, &status);
-
   valueString = XdmfArrayGetValuesString(readOrigin);
-
   printf("origin contains %s\n", valueString);
-
   assert(strcmp(valueString, "1 1") == 0);
-
   free(valueString);
+  XdmfArrayFree(readOrigin);
 
-
-
-/*
-XDMF_EXPORT void * XdmfRegularGridNew(void * brickSize,
-                                      void * numPoints,
-                                      void * origin,
-                                      int passControl);
-*/
+  XdmfRegularGridFree(readGrid);
 
   return 0;
 }

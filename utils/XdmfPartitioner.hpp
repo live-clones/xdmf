@@ -27,11 +27,11 @@
 #ifdef __cplusplus
 
 // Forward Declarations
-class XdmfGraph;
-class XdmfGridCollection;
-class XdmfHeavyDataWriter;
-class XdmfSet;
-class XdmfUnstructuredGrid;
+#include "XdmfGraph.hpp"
+#include "XdmfGridCollection.hpp"
+#include "XdmfHeavyDataWriter.hpp"
+#include "XdmfSet.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 
 // Includes
 #include <set>
