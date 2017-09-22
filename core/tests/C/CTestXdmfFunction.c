@@ -288,7 +288,7 @@ int main()
 
   char ** functionsSupported = XdmfFunctionGetSupportedFunctions();
 
-  for (i = 0; i < numSupportedFunctions; ++i)
+  for (i = 0; i < (int)numSupportedFunctions; ++i)
   {
     printf("%s\n", functionsSupported[i]);
   }
@@ -309,7 +309,7 @@ int main()
   assert(strcmp(functionsSupported[13], "SUM") == 0);
   assert(strcmp(functionsSupported[14], "TAN") == 0);
 
-  for (i = 0; i < numSupportedFunctions; ++i) {
+  for (i = 0; i < (int)numSupportedFunctions; ++i) {
     free(functionsSupported[i]);
   }
   free(functionsSupported);
@@ -401,7 +401,7 @@ XDMFARRAY * maximum(XDMFARRAY ** values, unsigned int numValues)
     double * currentValPtr;
     int i;
     int j;
-    for (i = 0; i < numValues; ++i) {
+    for (i = 0; i < (int)numValues; ++i) {
       limit = XdmfArrayGetSize(values[i]);
       for (j = 0; j < limit; ++j) {
         currentValPtr = (double *)XdmfArrayGetValue(values[i], j, XDMF_ARRAY_TYPE_FLOAT64, &status);

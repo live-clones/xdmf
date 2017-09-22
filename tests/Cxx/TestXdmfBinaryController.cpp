@@ -45,7 +45,7 @@ int main(int, char **)
     XdmfBinaryController::New("binary.bin",
                               XdmfArrayType::Int32(),
                               XdmfBinaryController::NATIVE,
-                              sizeof(int) * dummyData.size(),
+                              static_cast<unsigned int>(sizeof(int) * dummyData.size()),
                               std::vector<unsigned int>(1, 4));
   
   shared_ptr<XdmfArray> testArray = XdmfArray::New();

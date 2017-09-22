@@ -241,7 +241,7 @@ public :
   unsigned int                                                                \
   ParentClass::getNumber##ChildName##s() const                                \
   {                                                                           \
-    return m##ChildName##s.size();                                            \
+    return static_cast<unsigned int>(m##ChildName##s.size());                 \
   }                                                                           \
                                                                               \
   void                                                                        \
