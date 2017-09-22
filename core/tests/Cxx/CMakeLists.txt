@@ -30,6 +30,7 @@ ADD_TEST_CXX(TestXdmfHDF5Writer)
 ADD_TEST_CXX(TestXdmfHDF5WriterTree)
 ADD_TEST_CXX(TestXdmfInformation)
 ADD_TEST_CXX(TestXdmfSparseMatrix)
+ADD_TEST_CXX(TestXdmfStringUtils)
 ADD_TEST_CXX(TestXdmfVersion)
 
 # Add any cxx cleanup here:
@@ -56,4 +57,5 @@ CLEAN_TEST_CXX(TestXdmfHDF5WriterTree
 CLEAN_TEST_CXX(TestXdmfInformation)
 CLEAN_TEST_CXX(TestXdmfSparseMatrix
   TestXdmfSparseMatrix.xmf)
+CLEAN_TEST_CXX(TestXdmfStringUtils)
 CLEAN_TEST_CXX(TestXdmfVersion)

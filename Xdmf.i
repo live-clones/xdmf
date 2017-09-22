@@ -1120,49 +1120,49 @@ vXdmfSetRemoveAttribute(XDMFSET * set, unsigned int index);
     PyObject * XdmfItemCast(shared_ptr<XdmfItem> obj) {
         PyObject * result;
         if(shared_ptr<XdmfAttribute> attribute = shared_dynamic_cast<XdmfAttribute>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfAttribute>(attribute)), SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfAttribute>(attribute)), SWIGTYPE_p_std__shared_ptrT_XdmfAttribute_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfCurvilinearGrid> gridCurvilinear = shared_dynamic_cast<XdmfCurvilinearGrid>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfCurvilinearGrid>(gridCurvilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfCurvilinearGrid_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfCurvilinearGrid>(gridCurvilinear)), SWIGTYPE_p_std__shared_ptrT_XdmfCurvilinearGrid_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfGridCollection> gridCollection = shared_dynamic_cast<XdmfGridCollection>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGridCollection>(gridCollection)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCollection_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGridCollection>(gridCollection)), SWIGTYPE_p_std__shared_ptrT_XdmfGridCollection_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfDomain> domain = shared_dynamic_cast<XdmfDomain>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfDomain>(domain)), SWIGTYPE_p_boost__shared_ptrT_XdmfDomain_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfDomain>(domain)), SWIGTYPE_p_std__shared_ptrT_XdmfDomain_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfGeometry> geometry = shared_dynamic_cast<XdmfGeometry>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGeometry>(geometry)), SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGeometry>(geometry)), SWIGTYPE_p_std__shared_ptrT_XdmfGeometry_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfGraph> graph = shared_dynamic_cast<XdmfGraph>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGraph>(graph)), SWIGTYPE_p_boost__shared_ptrT_XdmfGraph_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGraph>(graph)), SWIGTYPE_p_std__shared_ptrT_XdmfGraph_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfInformation> information = shared_dynamic_cast<XdmfInformation>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfInformation>(information)), SWIGTYPE_p_boost__shared_ptrT_XdmfInformation_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfInformation>(information)), SWIGTYPE_p_std__shared_ptrT_XdmfInformation_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfMap> map = shared_dynamic_cast<XdmfMap>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfMap>(map)), SWIGTYPE_p_boost__shared_ptrT_XdmfMap_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfMap>(map)), SWIGTYPE_p_std__shared_ptrT_XdmfMap_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfRectilinearGrid> gridRectilinear = shared_dynamic_cast<XdmfRectilinearGrid>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfRectilinearGrid>(gridRectilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfRectilinearGrid_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfRectilinearGrid>(gridRectilinear)), SWIGTYPE_p_std__shared_ptrT_XdmfRectilinearGrid_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfRegularGrid> gridRegular = shared_dynamic_cast<XdmfRegularGrid>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfRegularGrid>(gridRegular)), SWIGTYPE_p_boost__shared_ptrT_XdmfRegularGrid_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfRegularGrid>(gridRegular)), SWIGTYPE_p_std__shared_ptrT_XdmfRegularGrid_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfSet> set = shared_dynamic_cast<XdmfSet>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfSet>(set)), SWIGTYPE_p_boost__shared_ptrT_XdmfSet_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfSet>(set)), SWIGTYPE_p_std__shared_ptrT_XdmfSet_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfTime> time = shared_dynamic_cast<XdmfTime>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfTime>(time)), SWIGTYPE_p_boost__shared_ptrT_XdmfTime_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfTime>(time)), SWIGTYPE_p_std__shared_ptrT_XdmfTime_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfTopology> topology = shared_dynamic_cast<XdmfTopology>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfTopology>(topology)), SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfTopology>(topology)), SWIGTYPE_p_std__shared_ptrT_XdmfTopology_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfUnstructuredGrid> gridUnstructured = shared_dynamic_cast<XdmfUnstructuredGrid>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfUnstructuredGrid>(gridUnstructured)), SWIGTYPE_p_boost__shared_ptrT_XdmfUnstructuredGrid_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfUnstructuredGrid>(gridUnstructured)), SWIGTYPE_p_std__shared_ptrT_XdmfUnstructuredGrid_t, SWIG_POINTER_OWN);
         }
         else {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfItem>(obj)), SWIGTYPE_p_boost__shared_ptrT_XdmfItem_t, SWIG_POINTER_OWN);
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfItem>(obj)), SWIGTYPE_p_std__shared_ptrT_XdmfItem_t, SWIG_POINTER_OWN);
         }
         return result;
     }

@@ -42,11 +42,15 @@ int main()
 
   // Read from File
 
-  void * reader = XdmfReaderNew();
+  XDMFREADER * reader = XdmfReaderNew();
 
-  void * readArray = XdmfReaderRead(reader, "curvfile.xmf", &status);
+  XDMFITEM * readItem = XdmfReaderRead(reader, "curvfile.xmf", &status);
+  
+  XDMFGEOMETRY * readGeometry = XdmfGeometryCast(readItem);
 
-  char * valueString = XdmfGeometryGetItemTag(readArray);
+  XdmfItemFree(readItem);
+
+  char * valueString = XdmfGeometryGetItemTag(readGeometry);
 
   printf("%s ?= %s\n", valueString, "Geometry");
 
@@ -54,15 +58,15 @@ int main()
 
   free(valueString);
 
-  XdmfGeometryRead(readArray, &status);
+  XdmfGeometryRead(readGeometry, &status);
 
-  unsigned int numPoints = XdmfGeometryGetNumberPoints(readArray);
+  unsigned int numPoints = XdmfGeometryGetNumberPoints(readGeometry);
 
   printf("%d ?= %d\n", numPoints, 5);
 
   assert(numPoints == 5);
 
-  int geotype = XdmfGeometryGetType(readArray);
+  int geotype = XdmfGeometryGetType(readGeometry);
 
   printf("Geometry type code = %d\n", geotype);
 
@@ -78,19 +82,21 @@ int main()
 
   free(valueString);
 
-  valueString = XdmfGeometryGetValuesString(readArray);
+  valueString = XdmfGeometryGetValuesString(readGeometry);
 
   printf("array contains: %s\n", valueString);
 
   assert(strcmp("0 1 2 3 4 5 6 7 8 9", valueString) == 0);
 
-  XdmfItemFree(readArray);
+  XdmfGeometryFree(readGeometry);
 
   free(valueString);
 
-  void * curvGrid = XdmfCurvilinearGridNew2D(2, 5);
+  XDMFCURVILINEARGRID * curvGrid = XdmfCurvilinearGridNew2D(2, 5);
 
   XdmfCurvilinearGridSetGeometry(curvGrid, geometry, 1);
+
+  XdmfGeometryFree(geometry);
 
   void * dimensions = XdmfArrayNew();
 
@@ -103,13 +109,23 @@ int main()
 
   XdmfCurvilinearGridSetDimensions(curvGrid, dimensions, 1, &status);
 
+  XdmfArrayFree(dimensions);
+
   printf("writing to file\n");
 
   XdmfCurvilinearGridAccept(curvGrid, (XDMFVISITOR *)writer, &status);
 
-//  XdmfItemFree(curvGrid);
+  XdmfWriterFree(writer);
 
-  void * readGrid = XdmfReaderRead(reader, "curvfile.xmf", &status);
+  XdmfCurvilinearGridFree(curvGrid);
+
+  readItem = XdmfReaderRead(reader, "curvfile.xmf", &status);
+
+  XdmfReaderFree(reader);
+
+  XDMFCURVILINEARGRID * readGrid = XdmfCurvilinearGridCast(readItem);
+
+  XdmfItemFree(readItem);
 
   XDMFGEOMETRY * childGeometry = XdmfCurvilinearGridGetGeometry(readGrid);
 
@@ -121,13 +137,22 @@ int main()
 
   free(valueString);
 
-  void * childDimensions = XdmfCurvilinearGridGetDimensions(readGrid, &status);
+  XdmfGeometryFree(childGeometry);
+
+  XDMFARRAY * childDimensions = 
+    XdmfCurvilinearGridGetDimensions(readGrid, &status);
 
   valueString = XdmfArrayGetValuesString(childDimensions);
 
   printf("%s ?= %s\n", valueString, "5 2");
 
   assert(strcmp(valueString, "5 2") == 0);
+
+  free(valueString);
+
+  XdmfArrayFree(childDimensions);
+
+  XdmfCurvilinearGridFree(readGrid);
 
   return 0;
 }

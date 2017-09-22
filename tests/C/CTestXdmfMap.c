@@ -7,14 +7,13 @@
 
 #include "stdio.h"
 #include "stdlib.h"
-
 #include "string.h"
 #include "assert.h"
 
 int main()
 {
 
-  void * map = XdmfMapNew();
+  XDMFMAP * map = XdmfMapNew();
 
   int i = 0;
   int j = 0;
@@ -33,87 +32,75 @@ int main()
   XdmfMapInsert(map, 3, 1, 1);
 
   int numRemoteTask = XdmfMapRetrieveNumberRemoteTaskIds(map);
-
   printf("%d ?= %d\n", numRemoteTask, 3);
-
   assert(numRemoteTask == 3);
 
   int numLocalNode = XdmfMapRetrieveNumberLocalNodeIds(map, 1);
-
   printf("%d ?= %d\n", numLocalNode, 3);
-
   assert(numLocalNode == 3);
-
   numLocalNode = XdmfMapRetrieveNumberLocalNodeIds(map, 2);
-
   printf("%d ?= %d\n", numLocalNode, 2);
-
   assert(numLocalNode == 2);
-
   numLocalNode = XdmfMapRetrieveNumberLocalNodeIds(map, 3);
-
   printf("%d ?= %d\n", numLocalNode, 4);
-
   assert(numLocalNode == 4);
 
   int numRemoteNode = XdmfMapRetrieveNumberRemoteNodeIds(map, 1, 0);
-
   printf("%d ?= %d\n", numRemoteNode, 1);
-
   assert(numRemoteNode == 1);
 
   char * mapName = "Test Name";
-
   XdmfMapSetName(map, mapName);
-
   char * outfile = "mapfile.xmf";
 
   XDMFWRITER * writer = XdmfWriterNew(outfile);
 
   // Write to File
 
-  XdmfMapAccept(map, (XDMFVISITOR *)XdmfWriterGetHeavyDataWriter(writer, &status), &status);
-
+  XDMFHEAVYDATAWRITER * heavyDataWriter = 
+    XdmfWriterGetHeavyDataWriter(writer, &status);
+  XdmfMapAccept(map, 
+		(XDMFVISITOR *)heavyDataWriter, 
+		&status);
   XdmfMapAccept(map, (XDMFVISITOR *)writer, &status);
+  XdmfWriterFree(writer);
+  XdmfHeavyDataWriterFree(heavyDataWriter);
 
   XdmfMapRelease(map);
 
-  if (XdmfMapIsInitialized(map))
-  {
+  if (XdmfMapIsInitialized(map)){
     printf("map is initialized before read\n");
   }
-  else
-  {
+  else{
     printf("map is not initialized before read\n");
   }
-
+  
   assert(!XdmfMapIsInitialized(map));
 
   XdmfMapRead(map, &status);
 
-  if (XdmfMapIsInitialized(map))
-  {
+  if (XdmfMapIsInitialized(map)) {
     printf("map is initialized after read\n");
   }
-  else
-  {
+  else {
     printf("map is not initialized after read\n");
   }
-
+  
   assert(XdmfMapIsInitialized(map));
 
   // Read from File
 
-  void * reader = XdmfReaderNew();
+  XDMFREADER * reader = XdmfReaderNew();
+  
+  XDMFITEM * readItem = XdmfReaderRead(reader, outfile, &status);
+  XDMFMAP * readMap = XdmfMapCast(readItem);
+  XdmfItemFree(readItem);
+  XdmfReaderFree(reader);
 
-  void * readMap = XdmfReaderRead(reader, outfile, &status);
-
-  if (XdmfMapIsInitialized(readMap))
-  {
+  if (XdmfMapIsInitialized(readMap)) {
     printf("map is initialized before read\n");
   }
-  else
-  {
+  else {
     printf("map is not initialized before read\n");
   }
 
@@ -121,22 +108,20 @@ int main()
 
   XdmfMapRead(readMap, &status);
 
-  if (XdmfMapIsInitialized(readMap))
-  {
+  if (XdmfMapIsInitialized(readMap)) {
     printf("map is initialized after read\n");
   }
-  else
-  {
+  else {
     printf("map is not initialized after read\n");
   }
 
   assert(XdmfMapIsInitialized(readMap));
 
   char * readName = XdmfMapGetName(readMap);
-
   printf("%s ?= %s\n", readName, "Test Name");
-
   assert(strcmp(readName, "Test Name") ==  0);
+  free(readName);
+  XdmfMapFree(readMap);
 
   int * globalNodeIds[3];
 
@@ -177,7 +162,8 @@ int main()
 
   int numIds = 3;
 
-  XDMFMAP ** mapArray = XdmfMapNewFromIdVector(globalNodeIds, numIdsOnNode, numIds);
+  XDMFMAP ** mapArray = 
+    XdmfMapNewFromIdVector(globalNodeIds, numIdsOnNode, numIds);
 
   int testMapID = 0;
 
@@ -290,7 +276,14 @@ int main()
       free(localNodeIds);
     }
     free(remoteTaskIds);
+    
+    XdmfArrayFree(testMap);
+
   }
+
+  free(mapArray);
+
+  XdmfMapFree(map);
 
 /*
 XDMF_EXPORT void XdmfMapSetHeavyDataControllers(void * map,

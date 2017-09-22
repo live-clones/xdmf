@@ -1,5 +1,7 @@
-#include "XdmfTime.hpp"
+#include <cassert>
 #include <iostream>
+
+#include "XdmfTime.hpp"
 
 int main(int, char **)
 {

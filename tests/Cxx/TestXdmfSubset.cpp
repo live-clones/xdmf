@@ -9,123 +9,105 @@
 
 int main(int, char **)
 {
-	shared_ptr<XdmfArray> referenceArray = XdmfArray::New();
+  shared_ptr<XdmfArray> referenceArray = XdmfArray::New();
 
-	for (unsigned int i = 0; i < 27; ++i)
-	{
-		referenceArray->pushBack(i);
-	}
+  for (unsigned int i = 0; i < 27; ++i){
+    referenceArray->pushBack(i);
+  }
 
-	std::vector<unsigned int> initDimensions;
-	initDimensions.push_back(3);
-	initDimensions.push_back(3);
-	initDimensions.push_back(3);
+  std::vector<unsigned int> initDimensions;
+  initDimensions.push_back(3);
+  initDimensions.push_back(3);
+  initDimensions.push_back(3);
 
-	referenceArray->resize(initDimensions, 0);
+  referenceArray->resize(initDimensions, 0);
 
-	std::vector<unsigned int> newStarts;
-	newStarts.push_back(0);
-	newStarts.push_back(0);
-	newStarts.push_back(0);
-	std::vector<unsigned int> newStrides;
-	newStrides.push_back(2);
-	newStrides.push_back(2);
-	newStrides.push_back(2);
-	std::vector<unsigned int> newDimensions;
-	newDimensions.push_back(2);
-	newDimensions.push_back(2);
-	newDimensions.push_back(2);
+  std::vector<unsigned int> newStarts;
+  newStarts.push_back(0);
+  newStarts.push_back(0);
+  newStarts.push_back(0);
+  std::vector<unsigned int> newStrides;
+  newStrides.push_back(2);
+  newStrides.push_back(2);
+  newStrides.push_back(2);
+  std::vector<unsigned int> newDimensions;
+  newDimensions.push_back(2);
+  newDimensions.push_back(2);
+  newDimensions.push_back(2);
 
-	shared_ptr<XdmfSubset> testSubset = XdmfSubset::New(referenceArray,
-                                                            newStarts,
-                                                            newStrides,
-                                                            newDimensions);
+  shared_ptr<XdmfSubset> testSubset = XdmfSubset::New(referenceArray,
+                                                      newStarts,
+                                                      newStrides,
+                                                      newDimensions);
 
-	shared_ptr<XdmfAttribute> subsetHolder = XdmfAttribute::New();
+  shared_ptr<XdmfAttribute> subsetHolder = XdmfAttribute::New();
+  subsetHolder->setReference(testSubset);
+  subsetHolder->setReadMode(XdmfArray::Reference);
 
-	subsetHolder->setReference(testSubset);
+  shared_ptr<XdmfWriter> subsetWriter = XdmfWriter::New("subset.xmf");
+  subsetHolder->accept(subsetWriter);
 
-	subsetHolder->setReadMode(XdmfArray::Reference);
+  subsetHolder->readReference();
+  std::cout << subsetHolder->getValuesString() << std::endl;
 
+  shared_ptr<XdmfReader> subsetReader = XdmfReader::New();
+  shared_ptr<XdmfItem> readItem = subsetReader->read("subset.xmf");
 
+  std::cout << readItem->getItemTag() << " ?= Attribute" << std::endl;
+  assert(readItem->getItemTag().compare("Attribute") == 0);
 
-	shared_ptr<XdmfWriter> subsetWriter = XdmfWriter::New("subset.xmf");
+  shared_ptr<XdmfAttribute> readSubsetHolder = 
+    shared_dynamic_cast<XdmfAttribute>(readItem);
 
-	subsetHolder->accept(subsetWriter);
+  readSubsetHolder->readReference();
 
+  std::cout << shared_dynamic_cast<XdmfSubset>(readSubsetHolder->getReference())->getReferenceArray()->getValuesString() << std::endl;
 
+  std::cout << readSubsetHolder->getValuesString() << std::endl;
 
+  assert(readSubsetHolder->getValuesString().compare(subsetHolder->getValuesString()) == 0);
 
-	subsetHolder->readReference();
+  shared_ptr<XdmfArray> referenceArray2 = XdmfArray::New();
 
-	std::cout << subsetHolder->getValuesString() << std::endl;
+  for (unsigned int i = 10; i < 37; ++i) {
+    referenceArray2->pushBack(i);
+  }
 
-	shared_ptr<XdmfReader> subsetReader = XdmfReader::New();
+  referenceArray2->resize(initDimensions, 0);
 
-	shared_ptr<XdmfItem> readItem = subsetReader->read("subset.xmf");
+  testSubset->setReferenceArray(referenceArray2);
 
-        std::cout << readItem->getItemTag() << " ?= Attribute" << std::endl;
+  std::string changedSubsetOutput = testSubset->read()->getValuesString();
 
-	assert(readItem->getItemTag().compare("Attribute") == 0);
+  std::cout << "after changing reference Array: " << changedSubsetOutput 
+	    << std::endl;
 
-	shared_ptr<XdmfAttribute> readSubsetHolder = shared_dynamic_cast<XdmfAttribute>(readItem);
+  assert(changedSubsetOutput.compare("10 12 16 18 28 30 34 36") == 0);
 
-	readSubsetHolder->readReference();
+  shared_ptr<XdmfArray> subsetHolder2 = XdmfArray::New();
+  subsetHolder2->setReference(testSubset);
+  subsetHolder2->setReadMode(XdmfArray::Reference);
+  subsetHolder2->accept(subsetWriter);
+  subsetHolder2->readReference();
 
-	std::cout << shared_dynamic_cast<XdmfSubset>(readSubsetHolder->getReference())->getReferenceArray()->getValuesString() << std::endl;
+  std::cout << subsetHolder2->getValuesString() << std::endl;
 
-	std::cout << readSubsetHolder->getValuesString() << std::endl;
+  readItem = subsetReader->read("subset.xmf");
 
-	assert(readSubsetHolder->getValuesString().compare(subsetHolder->getValuesString()) == 0);
+  std::cout << readItem->getItemTag() << " ?= DataItem" << std::endl;
 
-	shared_ptr<XdmfArray> referenceArray2 = XdmfArray::New();
+  assert(readItem->getItemTag().compare("DataItem") == 0);
 
-	for (unsigned int i = 10; i < 37; ++i)
-	{
-		referenceArray2->pushBack(i);
-	}
+  shared_ptr<XdmfArray> readSubsetHolder2 = 
+    shared_dynamic_cast<XdmfArray>(readItem);
+  readSubsetHolder2->readReference();
+  std::cout <<
+    shared_dynamic_cast<XdmfSubset>(readSubsetHolder2->getReference())->getReferenceArray()->getValuesString()
+            << std::endl;
 
-	referenceArray2->resize(initDimensions, 0);
+  std::cout << readSubsetHolder2->getValuesString() << std::endl;
 
-        testSubset->setReferenceArray(referenceArray2);
+  assert(readSubsetHolder2->getValuesString().compare(subsetHolder2->getValuesString()) == 0);
 
-	std::string changedSubsetOutput = testSubset->read()->getValuesString();
-
-	std::cout << "after changing reference Array: " << changedSubsetOutput << std::endl;
-
-	assert(changedSubsetOutput.compare("10 12 16 18 28 30 34 36") == 0);
-
-
-
-        shared_ptr<XdmfArray> subsetHolder2 = XdmfArray::New();
-
-        subsetHolder2->setReference(testSubset);
-
-        subsetHolder2->setReadMode(XdmfArray::Reference);
-
-        subsetHolder2->accept(subsetWriter);
-
-        subsetHolder2->readReference();
-
-        std::cout << subsetHolder2->getValuesString() << std::endl;
-
-        readItem = subsetReader->read("subset.xmf");
-
-        std::cout << readItem->getItemTag() << " ?= DataItem" << std::endl;
-
-        assert(readItem->getItemTag().compare("DataItem") == 0);
-
-        shared_ptr<XdmfArray> readSubsetHolder2 = shared_dynamic_cast<XdmfArray>(readItem);
-
-        readSubsetHolder2->readReference();
-
-        std::cout <<
-          shared_dynamic_cast<XdmfSubset>(readSubsetHolder2->getReference())->getReferenceArray()->getValuesString() 
-          << std::endl;
-
-        std::cout << readSubsetHolder2->getValuesString() << std::endl;
-
-        assert(readSubsetHolder2->getValuesString().compare(subsetHolder2->getValuesString()) == 0);
-
-	return 0;
+  return 0;
 }

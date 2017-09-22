@@ -4,8 +4,10 @@
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
-#include "stdio.h"
 #include "assert.h"
+#include "stdio.h"
+#include "stdlib.h"
+
 
 int main()
 {
@@ -57,19 +59,33 @@ int main()
   XdmfArrayInsertHeavyDataController(testArray, (XDMFHEAVYDATACONTROLLER *)binaryController, 1);
   XdmfArrayRead(testArray, &status);
 
+  XdmfBinaryControllerFree(binaryController);
+
+  int * testArrayVal0 = 
+    (int *)XdmfArrayGetValue(testArray, 0, XDMF_ARRAY_TYPE_INT32, &status);
+  int * testArrayVal1 = 
+    (int *)XdmfArrayGetValue(testArray, 1, XDMF_ARRAY_TYPE_INT32, &status);
+  int * testArrayVal2 = 
+    (int *)XdmfArrayGetValue(testArray, 2, XDMF_ARRAY_TYPE_INT32, &status);
+  int * testArrayVal3 = 
+    (int *)XdmfArrayGetValue(testArray, 3, XDMF_ARRAY_TYPE_INT32, &status);
+
   printf("%u ?= %u\n", XdmfArrayGetSize(testArray), 4);
-  printf("%d ?= %d\n", ((int *)XdmfArrayGetValue(testArray, 0, XDMF_ARRAY_TYPE_INT32, &status))[0], outputData[0]);
-  printf("%d ?= %d\n", ((int *)XdmfArrayGetValue(testArray, 1, XDMF_ARRAY_TYPE_INT32, &status))[0], outputData[1]);
-  printf("%d ?= %d\n", ((int *)XdmfArrayGetValue(testArray, 2, XDMF_ARRAY_TYPE_INT32, &status))[0], outputData[2]);
-  printf("%d ?= %d\n", ((int *)XdmfArrayGetValue(testArray, 3, XDMF_ARRAY_TYPE_INT32, &status))[0], outputData[3]);
+  printf("%d ?= %d\n", *testArrayVal0, outputData[0]);
+  printf("%d ?= %d\n", *testArrayVal1, outputData[1]);
+  printf("%d ?= %d\n", *testArrayVal2, outputData[2]);
+  printf("%d ?= %d\n", *testArrayVal3, outputData[3]);
 
   assert(XdmfArrayGetSize(testArray)== 4);
-  assert(((int *)XdmfArrayGetValue(testArray, 0, XDMF_ARRAY_TYPE_INT32, &status))[0] == outputData[0]);
-  assert(((int *)XdmfArrayGetValue(testArray, 1, XDMF_ARRAY_TYPE_INT32, &status))[0] == outputData[1]);
-  assert(((int *)XdmfArrayGetValue(testArray, 2, XDMF_ARRAY_TYPE_INT32, &status))[0] == outputData[2]);
-  assert(((int *)XdmfArrayGetValue(testArray, 3, XDMF_ARRAY_TYPE_INT32, &status))[0] == outputData[3]);
+  assert(*testArrayVal0 == outputData[0]);
+  assert(*testArrayVal1 == outputData[1]);
+  assert(*testArrayVal2 == outputData[2]);
+  assert(*testArrayVal3 == outputData[3]);
 
-  XdmfArrayRelease(testArray);
+  free(testArrayVal0);
+  free(testArrayVal1);
+  free(testArrayVal2);
+  free(testArrayVal3);
 
   //
   // output array to disk
@@ -77,16 +93,17 @@ int main()
   XDMFWRITER * writer = XdmfWriterNew("TestXdmfBinary.xmf");
   XdmfWriterSetMode(writer, XDMF_WRITER_MODE_DISTRIBUTED_HEAVY_DATA, &status);
   XdmfArrayAccept(testArray, (XDMFVISITOR *)writer, &status);
+  XdmfWriterFree(writer);
+
+  XdmfArrayFree(testArray);
 
   //
   // read array in
   //
   XDMFREADER * reader = XdmfReaderNew();
-  XDMFARRAY * array = (XDMFARRAY *)(XdmfReaderRead(reader, "TestXdmfBinary.xmf", &status));
-
-  printf("%p ?!= %p\n", array, NULL);
-  assert(array != NULL);
-
+  XDMFITEM * item = XdmfReaderRead(reader, "TestXdmfBinary.xmf", &status);
+  XdmfItemFree(item);
+  XdmfReaderFree(reader);
 
   return 0;
 }
