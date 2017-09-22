@@ -154,6 +154,11 @@
 # undef XDMFDSM_TEMPLATE
 # define XDMFDSM_TEMPLATE extern
 
+# undef XDMFUTILS_EXPORT
+# define XDMFUTILS_EXPORT __declspec(dllimport)
+# undef XDMFUTILS_TEMPLATE
+# define XDMFUTILS_TEMPLATE extern
+
 # ifdef XDMF_EXPORTS
 # define XDMF_EXPORT __declspec(dllexport)
 # define XDMF_TEMPLATE
@@ -162,10 +167,6 @@
 # define XDMF_TEMPLATE extern
 # endif /* XDMF_EXPORTS */
 
-# undef XDMFUTILS_EXPORT
-# define XDMFUTILS_EXPORT __declspec(dllimport)
-# undef XDMFUTILS_TEMPLATE
-# define XDMFUTILS_TEMPLATE extern
 
 #endif
 
