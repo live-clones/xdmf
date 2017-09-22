@@ -48,22 +48,7 @@ XdmfAttribute::XdmfAttribute() :
   mElementCell("")
 {
 }
-/*
 //-----------------------------------------------------------------------------
-XdmfAttribute::XdmfAttribute(XdmfAttribute & refAttribute) :
-  XdmfArray(refAttribute),
-  mCenter(refAttribute.mCenter),
-  mName(refAttribute.mName),
-  mType(refAttribute.mType),
-  mItemType(refAttribute.mItemType),
-  mElementDegree(refAttribute.mElementDegree),
-  mElementFamily(refAttribute.mElementFamily),
-  mElementCell(refAttribute.mElementCell)
-{
-}
-*/
-//-----------------------------------------------------------------------------
-
 XdmfAttribute::~XdmfAttribute()
 {
 }
