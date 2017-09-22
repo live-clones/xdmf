@@ -304,8 +304,6 @@ public:
 
   void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
-//  XdmfAttribute(XdmfAttribute &);
-
 protected:
 
   XdmfAttribute();
