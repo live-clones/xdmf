@@ -227,7 +227,22 @@ public:
                 }
               }
               if(!whitespace) {
-                itemProperties.insert(std::make_pair("Content", content));
+		std::string contentString(content);
+                // find first nonwhitespace
+                unsigned int start = 0;
+                int check = contentString.find_first_not_of(" \t\n\r\f\v");
+                if (check >= 0)
+                {
+                  start = check;
+                }
+                unsigned int end = contentString.size();
+                check = contentString.find_last_not_of(" \t\n\r\f\v");
+                if (check >= 0)
+                {
+                  end = check;
+                }
+                contentString = contentString.substr(start, end - start + 1);
+                itemProperties.insert(std::make_pair("Content", contentString));
                 itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
                 break;
               }
