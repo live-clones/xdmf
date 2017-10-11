@@ -434,14 +434,14 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 // Define equality operators
 %extend XdmfItem {
 
-    bool equals(std::shared_ptr<XdmfItem> item) {
+    bool equals(boost::shared_ptr<XdmfItem> item) {
         if (item == NULL) {
             return false;
         }
         return self == item.get();
     }
 
-    bool IsEqual(std::shared_ptr<XdmfItem> item) {
+    bool IsEqual(boost::shared_ptr<XdmfItem> item) {
         if (item == NULL) {
             return false;
         }
@@ -451,14 +451,14 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %extend XdmfItemProperty {
 
-    bool equals(std::shared_ptr<XdmfItemProperty> itemProperty) {
+    bool equals(boost::shared_ptr<XdmfItemProperty> itemProperty) {
         if (itemProperty == NULL) {
             return false;
         }
         return self == itemProperty.get();
     }
 
-    bool IsEqual(std::shared_ptr<XdmfItemProperty> itemProperty) {
+    bool IsEqual(boost::shared_ptr<XdmfItemProperty> itemProperty) {
         if (itemProperty == NULL) {
             return false;
         }
@@ -564,7 +564,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     static shared_ptr<XdmfHDF5Controller> XdmfHDF5ControllerCast(PyObject * obj)
     {
       void * resultPointer = 0;
-      swig_type_info * returnType = SWIG_TypeQuery("_p_std__shared_ptrT_XdmfHeavyDataController_t");
+      swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfHeavyDataController_t");
       SWIG_ConvertPtr(obj, &resultPointer, returnType, 0);
       shared_ptr<XdmfHeavyDataController> * returnControllerPointer =
         reinterpret_cast<shared_ptr<XdmfHeavyDataController> *>(resultPointer);
@@ -944,7 +944,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     static shared_ptr<XdmfArray> XdmfArrayPtr(PyObject * obj)
     {
       void * resultPointer = 0;
-      swig_type_info * returnType = SWIG_TypeQuery("_p_std__shared_ptrT_XdmfArray_t");
+      swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
       SWIG_ConvertPtr(obj, &resultPointer, returnType, 0);
       shared_ptr<XdmfArray> * returnArrayPointer = reinterpret_cast<shared_ptr<XdmfArray> *>(resultPointer);
       shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
@@ -1169,7 +1169,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
         virtual shared_ptr<XdmfArray> execute(std::vector<shared_ptr<XdmfArray> > valueVector)
         {
-          swig_type_info * paramType = SWIG_TypeQuery("_p_std__vectorT_std__shared_ptrT_XdmfArray_t_std__allocatorT_std__shared_ptrT_XdmfArray_t_t_t");
+          swig_type_info * paramType = SWIG_TypeQuery("_p_std__vectorT_boost__shared_ptrT_XdmfArray_t_std__allocatorT_boost__shared_ptrT_XdmfArray_t_t_t");
           PyObject * pyVector = SWIG_NewPointerObj(static_cast<void*>(& valueVector), paramType, SWIG_POINTER_NEW);
           PyObject * args = PyTuple_New(1);
           /* In this case you could also cast a pointer to the vector
@@ -1177,7 +1177,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           PyTuple_SetItem(args, 0, pyVector);
           PyObject * resultObject = PyObject_CallObject(mInternalFunction, args);
           void * resultPointer = 0;
-          swig_type_info * returnType = SWIG_TypeQuery("_p_std__shared_ptrT_XdmfArray_t");
+          swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
           SWIG_ConvertPtr(resultObject, &resultPointer, returnType, 0);
           shared_ptr<XdmfArray> * returnArrayPointer = reinterpret_cast<shared_ptr<XdmfArray> *>(resultPointer);
           shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
@@ -1216,7 +1216,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
         virtual shared_ptr<XdmfArray> execute(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
         {
-          swig_type_info * paramType = SWIG_TypeQuery("_p_std__shared_ptrT_XdmfArray_t");
+          swig_type_info * paramType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
           PyObject * pyVal1 = SWIG_NewPointerObj(static_cast<void*>(& val1), paramType, SWIG_POINTER_NEW);
           PyObject * pyVal2 = SWIG_NewPointerObj(static_cast<void*>(& val2), paramType, SWIG_POINTER_NEW);
           PyObject * args = PyTuple_New(2);
@@ -1224,7 +1224,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           PyTuple_SetItem(args, 1, pyVal2);
           PyObject * resultObject = PyObject_CallObject(mInternalOperation, args);
           void * resultPointer = 0;
-          swig_type_info * returnType = SWIG_TypeQuery("_p_std__shared_ptrT_XdmfArray_t");
+          swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
           SWIG_ConvertPtr(resultObject, &resultPointer, returnType, 0);
           shared_ptr<XdmfArray> * returnArrayPointer = reinterpret_cast<shared_ptr<XdmfArray> *>(resultPointer);
           shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
@@ -1261,12 +1261,12 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 #endif /* SWIGPYTHON */
 
-%include std_shared_ptr.i
+%include boost_shared_ptr.i
 
 %inline
 %{
-    #include <memory>
-    using namespace std;
+    #include <boost/shared_ptr.hpp>
+    using namespace boost;
 %}
 
 %include std_string.i
@@ -1306,8 +1306,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 // Abstract Base Classes
 %template(BaseVisitable) Loki::BaseVisitable<void>;
-%template(LokiArrayVisitor) Loki::Visitor<XdmfArray>;
-%template(LokiItemVisitor) Loki::Visitor<XdmfItem>;
+%template() Loki::Visitor<XdmfArray>;
+%template() Loki::Visitor<XdmfItem>;
 
 %include XdmfCore.hpp
 %include XdmfError.hpp
@@ -1411,9 +1411,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(Float32Vector) std::vector<float>;
 %template(Float64Vector) std::vector<double>;
 %template(StringVector) std::vector<std::string>;
-%template(ItemVector) std::vector<std::shared_ptr<XdmfItem> >;
-%template(HeavyControllerVector) std::vector<std::shared_ptr<XdmfHeavyDataController> >;
-%template(ArrayMap) std::map<std::string, std::shared_ptr<XdmfArray> >;
+%template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;
+%template(HeavyControllerVector) std::vector<boost::shared_ptr<XdmfHeavyDataController> >;
+%template(ArrayMap) std::map<std::string, boost::shared_ptr<XdmfArray> >;
 %template(StringMap) std::map<std::string, std::string>;
 %template(DSMStructreVector) std::vector<std::pair<std::string, unsigned int> >;
 %template(DSMApplicationPair) std::pair<std::string, unsigned int>;

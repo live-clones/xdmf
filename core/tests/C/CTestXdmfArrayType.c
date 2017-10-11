@@ -31,45 +31,25 @@ int main()
   assert(XDMF_ARRAY_TYPE_FLOAT32 == XdmfArrayTypeFloat32());
   assert(XDMF_ARRAY_TYPE_FLOAT64 == XdmfArrayTypeFloat64());
 
-  char * int8Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT8, &status);
-  char * int16Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT16, &status);
-  char * int32Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT32, &status);
-  char * int64Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT64, &status);
-  char * uint8Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT8, &status);
-  char * uint16Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT16, &status);
-  char * uint32Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT32, &status);
-  char * float32Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT32, &status);
-  char * float64Name = XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT64, &status);
+  printf("%s ?= %s\n", "Char", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT8, &status));
+  printf("%s ?= %s\n", "Short", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT16, &status));
+  printf("%s ?= %s\n", "Int", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT32, &status));
+  printf("%s ?= %s\n", "Int", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT64, &status));
+  printf("%s ?= %s\n", "UChar", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT8, &status));
+  printf("%s ?= %s\n", "UShort", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT16, &status));
+  printf("%s ?= %s\n", "UInt", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT32, &status));
+  printf("%s ?= %s\n", "Float", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT32, &status));
+  printf("%s ?= %s\n", "Float", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT64, &status));
 
-  printf("%s ?= %s\n", "Char", int8Name);
-  printf("%s ?= %s\n", "Short", int16Name);
-  printf("%s ?= %s\n", "Int", int32Name);
-  printf("%s ?= %s\n", "Int", int64Name);
-  printf("%s ?= %s\n", "UChar", uint8Name);
-  printf("%s ?= %s\n", "UShort", uint16Name);
-  printf("%s ?= %s\n", "UInt", uint32Name);
-  printf("%s ?= %s\n", "Float", float32Name);
-  printf("%s ?= %s\n", "Float", float64Name);
-
-  assert(strcmp("Char", int8Name) == 0);
-  assert(strcmp("Short", int16Name) == 0);
-  assert(strcmp("Int", int32Name) == 0);
-  assert(strcmp("Int", int64Name) == 0);
-  assert(strcmp("UChar", uint8Name) == 0);
-  assert(strcmp("UShort", uint16Name) == 0);
-  assert(strcmp("UInt", uint32Name) == 0);
-  assert(strcmp("Float", float32Name) == 0);
-  assert(strcmp("Float", float64Name) == 0);
-
-  free(int8Name);
-  free(int16Name);
-  free(int32Name);
-  free(int64Name);
-  free(uint8Name);
-  free(uint16Name);
-  free(uint32Name);
-  free(float32Name);
-  free(float64Name);
+  assert(strcmp("Char", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT8, &status)) == 0);
+  assert(strcmp("Short", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT16, &status)) == 0);
+  assert(strcmp("Int", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT32, &status)) == 0);
+  assert(strcmp("Int", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_INT64, &status)) == 0);
+  assert(strcmp("UChar", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT8, &status)) == 0);
+  assert(strcmp("UShort", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT16, &status)) == 0);
+  assert(strcmp("UInt", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT32, &status)) == 0);
+  assert(strcmp("Float", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT32, &status)) == 0);
+  assert(strcmp("Float", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT64, &status)) == 0);
 
   printf("%d ?= %d\n", 1, XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_INT8, &status));
   printf("%d ?= %d\n", 2, XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_INT16, &status));

@@ -65,7 +65,7 @@ int main(int, char **)
 
   temp->setBase(ungrid);
 
-  for (unsigned int iteration = 1; iteration <= numSteps; ++iteration)
+  for (int iteration = 1; iteration <= numSteps; ++iteration)
   {
     for (unsigned int i = 0; i < arraySize; ++i)
     {
@@ -81,7 +81,7 @@ int main(int, char **)
 
   assert(temp->getNumberSteps() == numSteps);
 
-  for (unsigned int iteration = 0; iteration < numSteps; ++iteration)
+  for (int iteration = 0; iteration < numSteps; ++iteration)
   {
     temp->setStep(iteration);
 
@@ -124,7 +124,7 @@ int main(int, char **)
 
   assert(readTemp->getNumberSteps() == numSteps);
 
-  for (unsigned int iteration = 0; iteration < numSteps; ++iteration)
+  for (int iteration = 0; iteration < numSteps; ++iteration)
   {
     readTemp->setStep(iteration);
 
@@ -192,7 +192,7 @@ int main(int, char **)
 
   temp2->setBase(ungrid2);
 
-  for (unsigned int iteration = 1; iteration <= numSteps; ++iteration)
+  for (int iteration = 1; iteration <= numSteps; ++iteration)
   {
     for (unsigned int i = 0; i < arraySize; ++i)
     {
@@ -208,7 +208,7 @@ int main(int, char **)
 
   assert(temp2->getNumberSteps() == numSteps);
 
-  for (unsigned int iteration = 0; iteration < numSteps; ++iteration)
+  for (int iteration = 0; iteration < numSteps; ++iteration)
   {
     temp2->setStep(iteration);
 
@@ -249,7 +249,7 @@ int main(int, char **)
 
   assert(readTemp2->getNumberSteps() == numSteps);
 
-  for (unsigned int iteration = 0; iteration < numSteps; ++iteration)
+  for (int iteration = 0; iteration < numSteps; ++iteration)
   {
     readTemp2->setStep(iteration);
 
@@ -278,7 +278,7 @@ int main(int, char **)
 
   unsigned int offset = 0;
 
-  for (unsigned int iteration = 0; iteration < numSteps-1; ++iteration)
+  for (int iteration = 0; iteration < numSteps-1; ++iteration)
   {
     if (iteration == 2)
     {
@@ -355,7 +355,7 @@ int main(int, char **)
 
   appendtemp->setBase(appendungrid);
 
-  for (unsigned int iteration = 1; iteration <= numSteps; ++iteration)
+  for (int iteration = 1; iteration <= numSteps; ++iteration)
   {
     for (unsigned int i = 0; i < arraySize; ++i)
     {
@@ -393,7 +393,7 @@ int main(int, char **)
 
   assert(appendreadTemp->getNumberSteps() == numSteps);
 
-  for (unsigned int iteration = 0; iteration < numSteps; ++iteration)
+  for (int iteration = 0; iteration < numSteps; ++iteration)
   {
     appendreadTemp->setStep(iteration);
 
@@ -472,7 +472,7 @@ int main(int, char **)
 
   overwritetemp->preallocateSteps(numSteps);
 
-  for (unsigned int iteration = 1; iteration <= numSteps; ++iteration)
+  for (int iteration = 1; iteration <= numSteps; ++iteration)
   {
     for (unsigned int i = 0; i < arraySize; ++i)
     {
@@ -510,7 +510,7 @@ int main(int, char **)
 
   assert(overwritereadTemp->getNumberSteps() == numSteps);
 
-  for (unsigned int iteration = 0; iteration < numSteps; ++iteration)
+  for (int iteration = 0; iteration < numSteps; ++iteration)
   {
     overwritereadTemp->setStep(iteration);
 
@@ -538,7 +538,7 @@ int main(int, char **)
 
   overwritereadTemp->removeStep(2);
 
-  for (unsigned int iteration = 0; iteration < numSteps - 1; ++iteration)
+  for (int iteration = 0; iteration < numSteps - 1; ++iteration)
   {
     if (iteration == 2)
     {

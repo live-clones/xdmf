@@ -307,76 +307,51 @@ XdmfGeometryConverter::zeroOriginOverwrite(shared_ptr<XdmfGeometry> & geometryTo
 XDMFGEOMETRYCONVERTER *
 XdmfGeometryConverterNew()
 {
-  shared_ptr<XdmfGeometryConverter> * p = 
-    new shared_ptr<XdmfGeometryConverter>(XdmfGeometryConverter::New());
-  return (XDMFGEOMETRYCONVERTER *) p;
+  shared_ptr<XdmfGeometryConverter> generatedConverter = XdmfGeometryConverter::New();
+  return (XDMFGEOMETRYCONVERTER *)((void *)(new XdmfGeometryConverter(*generatedConverter.get())));
 }
 
 XDMFGEOMETRY * XdmfGeometryConverterConvertToCartesian(XDMFGEOMETRYCONVERTER * converter, XDMFGEOMETRY * geometryToConvert)
 {
-  shared_ptr<XdmfGeometryConverter> & refConverter = 
-    *(shared_ptr<XdmfGeometryConverter> *)(converter);
-  shared_ptr<XdmfGeometry> & refGeometry = 
-    *(shared_ptr<XdmfGeometry> *)(geometryToConvert);
-  shared_ptr<XdmfGeometry> * p = 
-    new shared_ptr<XdmfGeometry>(refConverter->convertToCartesian(refGeometry));
-  return (XDMFGEOMETRY *) p;
+  shared_ptr<XdmfGeometry> tempGeo = shared_ptr<XdmfGeometry>((XdmfGeometry *) geometryToConvert, XdmfNullDeleter());
+  return (XDMFGEOMETRY *)((void *)(new XdmfGeometry(*((((XdmfGeometryConverter *)converter)->convertToCartesian(tempGeo)).get()))));
 }
 
 XDMFGEOMETRY * XdmfGeometryConverterConvertToSpherical(XDMFGEOMETRYCONVERTER * converter, XDMFGEOMETRY * geometryToConvert)
 {
-  shared_ptr<XdmfGeometryConverter> & refConverter = 
-    *(shared_ptr<XdmfGeometryConverter> *)(converter);
-  shared_ptr<XdmfGeometry> & refGeometry = 
-    *(shared_ptr<XdmfGeometry> *)(geometryToConvert);
-  shared_ptr<XdmfGeometry> * p = 
-    new shared_ptr<XdmfGeometry>(refConverter->convertToSpherical(refGeometry));
-  return (XDMFGEOMETRY *) p;
+  shared_ptr<XdmfGeometry> tempGeo = shared_ptr<XdmfGeometry>((XdmfGeometry *) geometryToConvert, XdmfNullDeleter());
+  return (XDMFGEOMETRY *)((void *)(new XdmfGeometry(*((((XdmfGeometryConverter *)converter)->convertToSpherical(tempGeo)).get()))));
 }
 
 void XdmfGeometryConverterConvertToCartesianOverwrite(XDMFGEOMETRYCONVERTER * converter, XDMFGEOMETRY * geometryToConvert)
 {
-  shared_ptr<XdmfGeometryConverter> & refConverter = 
-    *(shared_ptr<XdmfGeometryConverter> *)(converter);
-  shared_ptr<XdmfGeometry> & refGeometry = 
-    *(shared_ptr<XdmfGeometry> *)(geometryToConvert);
-  refConverter->convertToCartesianOverwrite(refGeometry);
+  shared_ptr<XdmfGeometry> tempGeo = shared_ptr<XdmfGeometry>((XdmfGeometry *) geometryToConvert, XdmfNullDeleter());
+  ((XdmfGeometryConverter *)converter)->convertToCartesianOverwrite(tempGeo);
 }
 
 void XdmfGeometryConverterConvertToSphericalOverwrite(XDMFGEOMETRYCONVERTER * converter, XDMFGEOMETRY * geometryToConvert)
 {
-  shared_ptr<XdmfGeometryConverter> & refConverter = 
-    *(shared_ptr<XdmfGeometryConverter> *)(converter);
-  shared_ptr<XdmfGeometry> & refGeometry = 
-    *(shared_ptr<XdmfGeometry> *)(geometryToConvert);
-  refConverter->convertToSphericalOverwrite(refGeometry);
+  shared_ptr<XdmfGeometry> tempGeo = shared_ptr<XdmfGeometry>((XdmfGeometry *) geometryToConvert, XdmfNullDeleter());
+  ((XdmfGeometryConverter *)converter)->convertToSphericalOverwrite(tempGeo);
 }
 
 XDMFGEOMETRY * XdmfGeometryConverterZeroOrigin(XDMFGEOMETRYCONVERTER * converter, XDMFGEOMETRY * geometryToConvert)
 {
-  shared_ptr<XdmfGeometryConverter> & refConverter = 
-    *(shared_ptr<XdmfGeometryConverter> *)(converter);
-  shared_ptr<XdmfGeometry> & refGeometry = 
-    *(shared_ptr<XdmfGeometry> *)(geometryToConvert);
-  shared_ptr<XdmfGeometry> * p = 
-    new shared_ptr<XdmfGeometry>(refConverter->zeroOrigin(refGeometry));
-  return (XDMFGEOMETRY *) p;
+  shared_ptr<XdmfGeometry> tempGeo = shared_ptr<XdmfGeometry>((XdmfGeometry *) geometryToConvert, XdmfNullDeleter());
+  return (XDMFGEOMETRY *)((void *)(new XdmfGeometry(*((((XdmfGeometryConverter *)converter)->zeroOrigin(tempGeo)).get()))));
 }
 
 void XdmfGeometryConverterZeroOriginOverwrite(XDMFGEOMETRYCONVERTER * converter, XDMFGEOMETRY * geometryToConvert)
 {
-  shared_ptr<XdmfGeometryConverter> & refConverter = 
-    *(shared_ptr<XdmfGeometryConverter> *)(converter);
-  shared_ptr<XdmfGeometry> & refGeometry = 
-    *(shared_ptr<XdmfGeometry> *)(geometryToConvert);
-  refConverter->zeroOriginOverwrite(refGeometry);
+  shared_ptr<XdmfGeometry> tempGeo = shared_ptr<XdmfGeometry>((XdmfGeometry *) geometryToConvert, XdmfNullDeleter());
+  ((XdmfGeometryConverter *)converter)->zeroOriginOverwrite(tempGeo);
 }
 
 void
 XdmfGeometryConverterFree(XDMFGEOMETRYCONVERTER * converter)
 {
   if (converter != NULL) {
-    delete (shared_ptr<XdmfGeometryConverter> *)converter;
+    delete ((XdmfGeometryConverter *)converter);
     converter = NULL;
   }
 }

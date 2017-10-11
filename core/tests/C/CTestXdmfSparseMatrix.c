@@ -12,7 +12,7 @@ int main()
 {
   int status = 0;
 
-  XDMFSPARSEMATRIX * matrix = XdmfSparseMatrixNew(3, 3);
+  void * matrix = XdmfSparseMatrixNew(3, 3);
 
   XdmfSparseMatrixSetName(matrix, "testMatrix", &status);
 
@@ -29,14 +29,12 @@ int main()
   printf("%s ?= %s\n", valueString, "SparseMatrix");
 
   assert(strcmp(valueString, "SparseMatrix") == 0);
-  
-  free(valueString);
 
-  XDMFARRAY * rowPointer = XdmfSparseMatrixGetRowPointer(matrix, &status);
+  void * rowPointer = XdmfSparseMatrixGetRowPointer(matrix, &status);
 
-  XDMFARRAY * columnIndex = XdmfSparseMatrixGetColumnIndex(matrix, &status);
+  void * columnIndex = XdmfSparseMatrixGetColumnIndex(matrix, &status);
 
-  XDMFARRAY * values = XdmfSparseMatrixGetValues(matrix, &status);
+  void * values = XdmfSparseMatrixGetValues(matrix, &status);
 
   unsigned int insertedVal = 0;
 
@@ -86,12 +84,6 @@ int main()
 
   free(valueString);
 
-  XdmfArrayFree(rowPointer);
-
-  XdmfArrayFree(columnIndex);
-
-  XdmfArrayFree(values);
-  
   rowPointer = XdmfArrayNew();
 
   columnIndex = XdmfArrayNew();
@@ -144,17 +136,9 @@ int main()
 
   XdmfSparseMatrixSetValues(matrix, values, 0, &status);
 
-  XdmfArrayFree(rowPointer);
-  
-  XdmfArrayFree(columnIndex);
-  
-  XdmfArrayFree(values);
-
   XDMFWRITER * writer = XdmfWriterNew("matrixfile.xmf");
 
   XdmfSparseMatrixAccept(matrix, (XDMFVISITOR *)writer, &status);
-
-  XdmfWriterFree(writer);
 
   unsigned int numRows = XdmfSparseMatrixGetNumberRows(matrix);
 
@@ -181,8 +165,6 @@ int main()
   printf("%d ?= %d\n", numInfo, 0);
 
   assert(numInfo == 0);
-
-  XdmfSparseMatrixFree(matrix);
 
   return 0;
 }

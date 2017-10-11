@@ -926,9 +926,8 @@ XdmfExodusWriter::write(const std::string & filePath,
 XDMFEXODUSWRITER *
 XdmfExodusWriterNew()
 {
-  shared_ptr<XdmfExodusWriter> * p = 
-    new shared_ptr<XdmfExodusWriter>(XdmfExodusWriter::New());
-  return (XDMFEXODUSWRITER *) p;
+  shared_ptr<XdmfExodusWriter> generatedWriter = XdmfExodusWriter::New();
+  return (XDMFEXODUSWRITER *)((void *)(new XdmfExodusWriter(*generatedWriter.get())));
 }
 
 void
@@ -938,12 +937,8 @@ XdmfExodusWriterWriteGrid(XDMFEXODUSWRITER * writer,
                           int * status)
 {
   XDMF_ERROR_WRAP_START(status)
-  shared_ptr<XdmfExodusWriter> & refWriter = 
-    *(shared_ptr<XdmfExodusWriter> *)(writer);
-  shared_ptr<XdmfUnstructuredGrid> & refGrid = 
-    *(shared_ptr<XdmfUnstructuredGrid> *)(grid);
-  refWriter->write(filePath,
-		   refGrid);	   
+  shared_ptr<XdmfUnstructuredGrid> tempGrid = shared_ptr<XdmfUnstructuredGrid>((XdmfUnstructuredGrid *)grid, XdmfNullDeleter());
+  ((XdmfExodusWriter *)writer)->write(std::string(filePath), tempGrid);
   XDMF_ERROR_WRAP_END(status)
 }
 
@@ -953,19 +948,17 @@ XdmfExodusWriterWriteGridCollection(XDMFEXODUSWRITER * writer,
                                     XDMFGRIDCOLLECTION * grid,
                                     int * status)
 {
-  shared_ptr<XdmfExodusWriter> & refWriter = 
-    *(shared_ptr<XdmfExodusWriter> *)(writer);
-  shared_ptr<XdmfGridCollection> & refGrid = 
-    *(shared_ptr<XdmfGridCollection> *)(grid);
-  refWriter->write(filePath,
-		   refGrid);	   
+  XDMF_ERROR_WRAP_START(status)
+  shared_ptr<XdmfGridCollection> tempGrid = shared_ptr<XdmfGridCollection>((XdmfGridCollection *)grid, XdmfNullDeleter());
+  ((XdmfExodusWriter *)writer)->write(std::string(filePath), tempGrid);
+  XDMF_ERROR_WRAP_END(status)
 }
 
 void
 XdmfExodusWriterFree(XDMFEXODUSWRITER * writer)
 {
   if (writer != NULL) {
-    delete (shared_ptr<XdmfExodusWriter> *)writer;
+    delete ((XdmfExodusWriter *)writer);
     writer = NULL;
   }
 }

@@ -6,7 +6,6 @@
 #include "XdmfWriter.hpp"
 #include "XdmfReader.hpp"
 #include "stdio.h"
-#include "stdlib.h"
 #include "assert.h"
 
 int main()
@@ -24,12 +23,10 @@ int main()
     w = 8 * pixelWidth;
     h = 1000;
     sampleSize = 1;
+    size_t npixels;
     unsigned int * scanline;
 
-    /*
-    size_t npixels;
     npixels = w * h;
-    */
 
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, w);  // set the width of the image
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, h);    // set the height of the image
@@ -70,25 +67,17 @@ int main()
 
   XDMFARRAY * checkarray = XdmfArrayNew();
 
-  XdmfArrayInsertHeavyDataController(checkarray, 
-				     (XDMFHEAVYDATACONTROLLER *)controller, 
-				     1);
+  XdmfArrayInsertHeavyDataController(checkarray, (XDMFHEAVYDATACONTROLLER *)controller, 1);
 
   XdmfArrayRead(checkarray, &status);
 
-  for (i = 0; i < 1000; ++i) {
-    for (j = 0; j < 1000; ++j) {
-      int * val = (int *)XdmfArrayGetValue(checkarray, 
-					   i * 1000 + j, 
-					   XDMF_ARRAY_TYPE_INT32, 
-					   &status);
-      assert(*val == i * j);
-      free(val);
+  for (i = 0; i < 1000; ++i)
+  {
+    for (j = 0; j < 1000; ++j)
+    {
+      assert(((int *)XdmfArrayGetValue(checkarray, i * 1000 + j, XDMF_ARRAY_TYPE_INT32, &status))[0] == i * j);
     }
   }
-  
-  XdmfArrayFree(checkarray);
-  XdmfTIFFControllerFree(controller);
-  
+
   return 0;
 }

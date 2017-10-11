@@ -120,8 +120,6 @@ int main()
 
   XdmfArrayAccept(array, (XDMFVISITOR *)heavyWriter, &status);
 
-  XdmfArrayFree(array);
-
   void * secondarray = XdmfArrayNew();
 
   for (i = 10; i < 15; i++) {
@@ -136,8 +134,6 @@ int main()
 
   free(valueString);
 
-  XdmfHDF5ControllerFree(controller);
-
   unsigned int secondstarts[1] = {1};
   unsigned int secondstrides[1] = {2};
   unsigned int seconddimensions[1] = {5};
@@ -147,13 +143,7 @@ int main()
 
   XdmfArrayInsertHeavyDataController(secondarray, (XDMFHEAVYDATACONTROLLER *)secondcontroller, 0);
 
-  XdmfHDF5ControllerFree(secondcontroller);
-
   XdmfArrayAccept(secondarray, (XDMFVISITOR *)heavyWriter, &status);
-    
-  XdmfArrayFree(secondarray);
-
-  XdmfHDF5WriterFree(heavyWriter);
 
   void * readarray = XdmfArrayNew();
 
@@ -190,8 +180,6 @@ int main()
 
   XdmfArrayInsertHeavyDataController(readarray, (XDMFHEAVYDATACONTROLLER *)readcontroller, 0);
 
-  XdmfHDF5ControllerFree(readcontroller);
-
   XdmfArrayRead(readarray, &status);
 
   valueString = XdmfArrayGetValuesString(readarray);
@@ -201,8 +189,6 @@ int main()
   assert(strcmp("0 0 0 0 0 0 10 1 11 2 12 3 13 4 14", valueString) == 0);
 
   free(valueString);
-
-  XdmfArrayFree(readarray);
 
   return 0;
 }
