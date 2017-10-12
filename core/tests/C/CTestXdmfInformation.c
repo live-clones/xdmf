@@ -14,13 +14,9 @@ int main()
 
   printf("The key equals: %s\n", infoKey);
 
-  free(infoKey);
-
   char * infoValue = XdmfInformationGetValue(information);
 
   printf("The value equals: %s\n", infoValue);
-
-  free(infoValue);
 
   XdmfInformationSetKey(information, "newKey", &status);
 
@@ -33,10 +29,6 @@ int main()
   printf("The key equals: %s\n", infoKey);
 
   printf("The value equals: %s\n", infoValue);
-
-  free(infoKey);
-  
-  free(infoValue);
 
   XDMFINFORMATION * childInfo = XdmfInformationNew("childKey", "childValue");
 
@@ -52,10 +44,6 @@ int main()
   char * childValue = XdmfInformationGetValue(internalInfo);
 
   printf("The Child's key equals: %s\nThe Child's Value equals: %s\n", childKey, childValue);
-
-  free(childKey);
-
-  free(childValue);
 
   unsigned int numArrays = XdmfInformationGetNumberArrays(information);
   unsigned int numInfo = XdmfInformationGetNumberInformations(information);
@@ -73,25 +61,11 @@ int main()
 
   printf("The Child's key equals: %s\nThe Child's Value equals: %s\n", childKey, childValue);
 
-  free(childKey);
-  
-  free(childValue);
-
   childKey = XdmfInformationGetKey(childInfo);
 
   childValue = XdmfInformationGetValue(childInfo);
 
   printf("The Child's key equals: %s\nThe Child's Value equals: %s\n", childKey, childValue);
-
-  free(childKey);
-
-  free(childValue);
-
-  XdmfInformationFree(information);
-
-  XdmfInformationFree(childInfo);
-
-  XdmfInformationFree(internalInfo);
 
   return 0;
 }

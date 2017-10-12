@@ -5,10 +5,9 @@
 #include "XdmfWriter.hpp"
 #include "XdmfReader.hpp"
 
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "assert.h"
+#include "stdio.h"
+#include "string.h"
 
 int main()
 {
@@ -29,9 +28,6 @@ int main()
       XdmfArrayPushBack(referenceArray, &pushedVal, XDMF_ARRAY_TYPE_INT32, &status);
     }
     XdmfAggregateInsertArray(testAggregate, referenceArray, 1);
-
-    XdmfArrayFree(referenceArray);
-
   }
 
   XDMFATTRIBUTE * aggregateHolder = XdmfAttributeNew();
@@ -40,47 +36,33 @@ int main()
 
   XdmfAttributeSetReadMode(aggregateHolder, XDMF_ARRAY_READ_MODE_REFERENCE, &status);
 
+
+
   XDMFWRITER * aggregateWriter = XdmfWriterNew("aggregate.xmf");
 
   XdmfAttributeAccept(aggregateHolder, (XDMFVISITOR *)aggregateWriter, &status);
 
   XdmfAttributeReadReference(aggregateHolder, &status);
 
-  char * aggregateHolderString = XdmfAttributeGetValuesString(aggregateHolder);
-  
-  printf("%s\n", aggregateHolderString);
-
-  free(aggregateHolderString);
+  printf("%s\n", XdmfAttributeGetValuesString(aggregateHolder));
 
   XDMFREADER * aggregateReader = XdmfReaderNew();
 
   XDMFITEM * readItem = XdmfReaderRead(aggregateReader,"aggregate.xmf", &status);
 
-  char * itemTag = XdmfItemGetItemTag(readItem);
+  printf("%s ?= Attribute\n", XdmfItemGetItemTag(readItem));
 
-  printf("%s ?= Attribute\n", itemTag);
-
-  assert(strcmp(itemTag, "Attribute") == 0);
-
-  free(itemTag);
+  assert(strcmp(XdmfItemGetItemTag(readItem), "Attribute") == 0);
 
   XDMFATTRIBUTE * readAggregateHolder = (XDMFATTRIBUTE *)readItem;
 
   XdmfAttributeReadReference(readAggregateHolder, &status);
 
-  char * readAggregateHolderString = XdmfAttributeGetValuesString(readAggregateHolder);
+  printf("%s\n?=\n%s\n", XdmfAttributeGetValuesString(readAggregateHolder), XdmfAttributeGetValuesString(aggregateHolder));
 
-  aggregateHolderString = XdmfAttributeGetValuesString(aggregateHolder);
+  assert(strcmp(XdmfAttributeGetValuesString(readAggregateHolder), XdmfAttributeGetValuesString(aggregateHolder)) == 0);
 
-  printf("%s\n?=\n%s\n", readAggregateHolderString, aggregateHolderString);
 
-  assert(strcmp(readAggregateHolderString, aggregateHolderString) == 0);
-
-  free(readAggregateHolderString);
-  
-  free(aggregateHolderString);
-
-  XdmfAttributeFree(aggregateHolder);
 
   XDMFARRAY * aggregateHolder2 = XdmfArrayNew();
 
@@ -92,11 +74,7 @@ int main()
 
   XdmfArrayReadReference(aggregateHolder2, &status);
 
-  char * aggregateHolder2String = XdmfArrayGetValuesString(aggregateHolder2);
-
-  printf("%s\n", aggregateHolder2String);
-
-  free(aggregateHolder2String);
+  printf("%s\n", XdmfArrayGetValuesString(aggregateHolder2));
 
   printf("reading");
 
@@ -104,41 +82,17 @@ int main()
 
   readItem = XdmfReaderRead(aggregateReader, "aggregate.xmf", &status);
 
-  XdmfReaderFree(aggregateReader);
+  printf("%s ?= DataItem\n", XdmfItemGetItemTag(readItem));
 
-  itemTag = XdmfItemGetItemTag(readItem);
+  assert(strcmp(XdmfItemGetItemTag(readItem), "DataItem") == 0);
 
-  printf("%s ?= DataItem\n", itemTag);
-
-  assert(strcmp(itemTag, "DataItem") == 0);
-
-  free(itemTag);
-
-  XDMFARRAY * readAggregateHolder2 = XdmfArrayCast(readItem);
-
-  XdmfItemFree(readItem);
+  XDMFARRAY * readAggregateHolder2 = (XDMFARRAY *)readItem;
 
   XdmfArrayReadReference(readAggregateHolder2, &status);
 
-  char * readAggregate2String = XdmfArrayGetValuesString(readAggregateHolder2);
+  printf("%s\n?=\n%s\n", XdmfArrayGetValuesString(readAggregateHolder2), XdmfArrayGetValuesString(aggregateHolder2));
 
-  char * aggregate2String = XdmfArrayGetValuesString(aggregateHolder2); 
-    
-  printf("%s\n?=\n%s\n", readAggregate2String, aggregate2String);
-
-  assert(strcmp(readAggregate2String, aggregate2String) == 0);
-
-  free(readAggregate2String);
-  
-  free(aggregate2String);
-
-  XdmfArrayFree(aggregateHolder2);
-
-  XdmfWriterFree(aggregateWriter);
-
-  XdmfAggregateFree(testAggregate);
-
-  XdmfArrayFree(readAggregateHolder2);
+  assert(strcmp(XdmfArrayGetValuesString(readAggregateHolder2), XdmfArrayGetValuesString(aggregateHolder2)) == 0);
 
   return 0;
 }

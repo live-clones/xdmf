@@ -152,4 +152,4 @@ XDMFUTILS_EXPORT void XdmfGeometryConverterFree(XDMFGEOMETRYCONVERTER * converte
 }
 #endif
 
-#endif /* XDMFGEOMETRYCONVERTER_HPP_ */
+#endif /* XDMFTOPOLOGYCONVERTER_HPP_ */

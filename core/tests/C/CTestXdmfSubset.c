@@ -36,13 +36,9 @@ int main()
 
   XDMFSUBSET * subset = XdmfSubsetNew(array, starts, strides, dimensions, numDims, 0, &status);
 
-  XdmfArrayFree(array);
-
-  XDMFARRAY * internalArray = XdmfSubsetGetReferenceArray(subset);
+  void * internalArray = XdmfSubsetGetReferenceArray(subset);
 
   valueString = XdmfArrayGetValuesString(internalArray);
-
-  XdmfArrayFree(internalArray);
 
   printf("%s ?= %s\n", "0 1 2 3 4 5 6 7 8 9", valueString);
 
@@ -80,7 +76,7 @@ int main()
 
   free(internalStrides);
 
-  XDMFARRAY * readArray = XdmfSubsetRead(subset, &status);
+  void * readArray = XdmfSubsetRead(subset, &status);
 
   valueString = XdmfArrayGetValuesString(readArray);
 
@@ -90,7 +86,7 @@ int main()
 
   free(valueString);
 
-  XdmfArrayFree(readArray);
+  free(readArray);
 
   unsigned int internalSize = XdmfSubsetGetSize(subset);
 
@@ -122,23 +118,17 @@ int main()
 
   assert(internalDims[0] == 4);
 
-  free(internalDims);
-
   internalStarts = XdmfSubsetGetStart(subset);
 
   printf("%d ?= %d\n", internalStarts[0], 3);
 
   assert(internalStarts[0] == 3);
 
-  free(internalStarts);
-
   internalStrides = XdmfSubsetGetStride(subset);
 
   printf("%d ?= %d\n", internalStrides[0], 1);
 
   assert(internalStrides[0] == 1);
-
-  free(internalStrides);
 
   readArray = XdmfSubsetRead(subset, &status);
 
@@ -179,12 +169,6 @@ int main()
   printf("%d ?= %d\n", numInfo, 0);
 
   assert(numInfo == 0);
-
-  XdmfWriterFree(writer);
-
-  XdmfSubsetFree(subset);
-
-  XdmfArrayFree(readArray);
 
   return 0;
 }

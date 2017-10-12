@@ -299,38 +299,35 @@ XdmfDiff::setAbsoluteTolerance(const double absoluteTolerance)
 XDMFDIFF *
 XdmfDiffNew()
 {
-  shared_ptr<XdmfDiff> * p = new shared_ptr<XdmfDiff>(XdmfDiff::New());
-  return (XDMFDIFF *) p;
+  shared_ptr<XdmfDiff> generatedDiff = XdmfDiff::New();
+  return (XDMFDIFF *)((void *)(new XdmfDiff(*generatedDiff.get())));
 }
 
 int
 XdmfDiffCompare(XDMFDIFF * diff, XDMFITEM * item1, XDMFITEM * item2)
 {
-  shared_ptr<XdmfDiff> & refDiff = *(shared_ptr<XdmfDiff> *)(diff);
-  shared_ptr<XdmfItem> & refItem1 = *(shared_ptr<XdmfItem> *)(item1);
-  shared_ptr<XdmfItem> & refItem2 = *(shared_ptr<XdmfItem> *)(item2);
-  return refDiff->compare(refItem1, refItem2);
+  shared_ptr<XdmfItem> tempItem1 = shared_ptr<XdmfItem>((XdmfItem *)item1, XdmfNullDeleter());
+  shared_ptr<XdmfItem> tempItem2 = shared_ptr<XdmfItem>((XdmfItem *)item2, XdmfNullDeleter());
+  return ((XdmfDiff *)diff)->compare(tempItem1, tempItem2);
 }
 
 double
 XdmfDiffGetAbsoluteTolerance(XDMFDIFF * diff)
 {
-  shared_ptr<XdmfDiff> & refDiff = *(shared_ptr<XdmfDiff> *)(diff);
-  return refDiff->getAbsoluteTolerance();
+  return ((XdmfDiff *)diff)->getAbsoluteTolerance();
 }
 
 void
 XdmfDiffSetAbsoluteTolerance(XDMFDIFF * diff, double tolerance)
 {
-  shared_ptr<XdmfDiff> & refDiff = *(shared_ptr<XdmfDiff> *)(diff);
-  refDiff->setAbsoluteTolerance(tolerance);
+  ((XdmfDiff *)diff)->setAbsoluteTolerance(tolerance);
 }
 
 void
 XdmfDiffFree(XDMFDIFF * diff)
 {
   if (diff != NULL) {
-    delete (shared_ptr<XdmfDiff> *)diff;
+    delete ((XdmfDiff *)diff);
     diff = NULL;
   }
 }

@@ -3,8 +3,9 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeType.hpp"
 #include "XdmfAttributeCenter.hpp"
-#include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
+#include "XdmfHDF5Writer.hpp"
+#include "XdmfReader.hpp"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -47,53 +48,41 @@ int main()
 
   XdmfAttributeAccept(attrib, (XDMFVISITOR *)writer, &status);
 
-  XdmfAttributeFree(attrib);
-
-  XdmfWriterFree(writer);
-
   // Read from File
 
-  XDMFREADER * reader = XdmfReaderNew();
+  void * reader = XdmfReaderNew();
 
-  XDMFITEM * readItem = XdmfReaderRead(reader, "attributefile.xmf", &status);
+  void * readArray = XdmfReaderRead(reader, "attributefile.xmf", &status);
 
-  XDMFATTRIBUTE * readAttribute = XdmfAttributeCast(readItem);
-
-  XdmfItemFree(readItem);
-
-  char * valueString = XdmfAttributeGetItemTag(readAttribute);
+  char * valueString = XdmfAttributeGetItemTag(readArray);
 
   printf("%s ?= %s\n", valueString, "Attribute");
 
   assert(strcmp(valueString, "Attribute") == 0);
 
-  free(valueString);
+  XdmfAttributeRead(readArray, &status);
 
-  XdmfAttributeRead(readAttribute, &status);
-
-  int attributetype = XdmfAttributeGetType(readAttribute);
+  int attributetype = XdmfAttributeGetType(readArray);
 
   printf("Attribute type code = %d\n", attributetype);
 
   assert(attributetype == XDMF_ATTRIBUTE_TYPE_SCALAR);
 
-  int attributecenter = XdmfAttributeGetCenter(readAttribute);
+  int attributecenter = XdmfAttributeGetCenter(readArray);
 
   printf("Attribute center code = %d\n", attributecenter);
 
   assert(attributecenter == XDMF_ATTRIBUTE_CENTER_NODE);
 
-  valueString = XdmfAttributeGetValuesString(readAttribute);
+  valueString = XdmfAttributeGetValuesString(readArray);
 
   printf("array contains: %s\n", valueString);
 
   assert(strcmp("0 1 2 3 4 5 6 7 8 9", valueString) == 0);
 
-  XdmfAttributeFree(readAttribute);
+  free(readArray);
 
   free(valueString);
-
-  XdmfReaderFree(reader);
 
   return 0;
 }

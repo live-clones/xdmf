@@ -1,14 +1,13 @@
-#include <cstring>
 #include <iostream>
 #include <stack>
 #include <map>
 #include <string>
-#include <vector>
 #include <stdlib.h>
 #include <math.h>
 #include <XdmfArray.hpp>
 #include <XdmfArrayType.hpp>
 #include <XdmfFunction.hpp>
+#include "boost/assign.hpp"
 
 double parse(std::string expression, std::map<std::string, double> variables);
 double calculation(double val1, double val2, char operation);
@@ -27,11 +26,12 @@ shared_ptr<XdmfArray> maximum(std::vector<shared_ptr<XdmfArray> > values);
 std::string validDigitChars = "-1234567890.";
 std::string validVariableChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_:.";
 
-std::map<std::string,  double (*)(std::vector<double>)> functions = 
-  { {"SUM", (double (*)(std::vector<double>))sum} };
+//std::map<std::string,  double (*)(std::vector<double>)> functions = boost::assign::map_list_of ("SUM", sum) ("AVE", ave);
+std::map<std::string,  double (*)(std::vector<double>)> functions = boost::assign::map_list_of ("SUM", (double (*)(std::vector<double>))sum);
 
 //note, it doesn't handle overloaded functions well. Will generate errors unless typecast
-std::map<std::string,  shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >)> arrayFunctions = { {"SUM", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))sum}, {"MAX", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))maximum} };
+//std::map<std::string,  double (*)(std::vector<double>)> functions = boost::assign::map_list_of ("SUM", sum) ("AVE", ave);
+std::map<std::string,  shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >)> arrayFunctions = boost::assign::map_list_of ("SUM", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))sum) ("MAX", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))maximum);
 
 
 
@@ -205,7 +205,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 	std::stack<char> operationStack;
 
 	std::string validOperationChars = "+-*/()^"; //will be global at some point, all supported operations
-	std::vector<int> operationPriority(validOperationChars.size());
+	int * operationPriority = new int[validOperationChars.size()]();
 	//list the priorities for the operations, based on the order of operations
 	//the index of the corresponding operation in validOperationChars is the same as the index of its priority in this array
 	operationPriority[0] = 1;//+
@@ -476,7 +476,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 	std::stack<char> operationStack;
 
 	std::string validOperationChars = "|#()@"; //will be global at some point, all supported operations
-	std::vector<int> operationPriority(validOperationChars.size());
+	int * operationPriority = new int[validOperationChars.size()]();
 	//list the priorities for the operations, based on the order of operations
 	//the index of the corresponding operation in validOperationChars is the same as the index of its priority in this array
 	operationPriority[0] = 2;//|
@@ -645,6 +645,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 		}
 		//if not a value or operation the character is ignored
 	}
+
 
 	//empty what's left in the stacks before finishing
 	while (valueStack.size() > 1 && operationStack.size() > 0)

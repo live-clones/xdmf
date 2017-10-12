@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
-#include <unistd.h>
 #include <exodusII.h>
 #include "XdmfDomain.hpp"
 #include "XdmfError.hpp"

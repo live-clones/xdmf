@@ -18,11 +18,11 @@ int main(int, char **)
     w = 8 * pixelWidth;
     h = 1000;
     sampleSize = 1;
+    size_t npixels;
     unsigned int * scanline;
 
-    //size_t npixels;
-    //npixels = w * h;
-    
+    npixels = w * h;
+
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, w);  // set the width of the image
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, h);    // set the height of the image
     TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, sampleSize);   // set number of channels per pixel
@@ -139,10 +139,10 @@ int main(int, char **)
     w = 8 * 1000;
     h = 1000;
     sampleSize = 1;
+    size_t npixels;
     unsigned int * scanline;
-    
-    //size_t npixels;
-    //npixels = w * h;
+
+    npixels = w * h;
 
     for (unsigned int dirID = 0; dirID < 10; ++dirID)
     {

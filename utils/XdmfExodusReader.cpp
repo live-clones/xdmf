@@ -22,13 +22,11 @@
 /*****************************************************************************/
 
 #include <exodusII.h>
-#include <algorithm>
 #include <cstring>
 #include "XdmfArrayType.hpp"
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
-#include "XdmfError.hpp"
 #include "XdmfExodusReader.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
@@ -38,6 +36,7 @@
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
+#include "XdmfError.hpp"
 
 //
 // local methods
@@ -678,37 +677,22 @@ XdmfExodusReader::read(const std::string & fileName,
 XDMFEXODUSREADER *
 XdmfExodusReaderNew()
 {
-  shared_ptr<XdmfExodusReader> * p = 
-    new shared_ptr<XdmfExodusReader>(XdmfExodusReader::New());
-  return (XDMFEXODUSREADER *) p;
+  shared_ptr<XdmfExodusReader> generatedReader = XdmfExodusReader::New();
+  return (XDMFEXODUSREADER *)((void *)(new XdmfExodusReader(*generatedReader.get())));
 }
 
 XDMFUNSTRUCTUREDGRID *
 XdmfExodusReaderRead(XDMFEXODUSREADER * reader, char * fileName, XDMFHEAVYDATAWRITER * heavyDataWriter)
 {
-  shared_ptr<XdmfExodusReader> & refReader = 
-    *(shared_ptr<XdmfExodusReader> *)(reader);
-
-  shared_ptr<XdmfUnstructuredGrid> * p; 
-  if(heavyDataWriter) {
-    shared_ptr<XdmfHeavyDataWriter> & refHeavyDataWriter = 
-      *(shared_ptr<XdmfHeavyDataWriter> *)(heavyDataWriter);
-    p = new shared_ptr<XdmfUnstructuredGrid>(refReader->read(fileName,
-							     refHeavyDataWriter));
-  }
-  else {
-    shared_ptr<XdmfHeavyDataWriter> refHeavyDataWriter;
-    p = new shared_ptr<XdmfUnstructuredGrid>(refReader->read(fileName,
-							     refHeavyDataWriter));
-  }
-  return (XDMFUNSTRUCTUREDGRID * ) p;
+  shared_ptr<XdmfHeavyDataWriter> tempWriter = shared_ptr<XdmfHeavyDataWriter>((XdmfHeavyDataWriter *)heavyDataWriter, XdmfNullDeleter());
+  return (XDMFUNSTRUCTUREDGRID)((void *)(new XdmfUnstructuredGrid(*((((XdmfExodusReader *)reader)->read(fileName, tempWriter)).get()))));
 }
 
 void
 XdmfExodusReaderFree(XDMFEXODUSREADER * reader)
 {
   if (reader != NULL) {
-    delete (shared_ptr<XdmfExodusReader> *)reader;
+    delete ((XdmfExodusReader *)reader);
     reader = NULL;
   }
 }
