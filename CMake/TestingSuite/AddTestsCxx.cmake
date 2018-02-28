@@ -73,12 +73,6 @@ MACRO(ADD_TEST_CXX executable)
  
     # Take care of windowisims
     IF(WIN32)
-        SET_TARGET_PROPERTIES(${executable}${dup} PROPERTIES 
-            PREFIX ../
-            RUNTIME_OUTPUT_DIRECTORY ${cxx_binary_dir}
-            LIBRARY_OUTPUT_DIRECTORY ${cxx_binary_dir}
-            ARCHIVE_OUTPUT_DIRECTORY ${cxx_binary_dir})
-
         IF("${cxx_path}" STREQUAL "")
             SET(cxx_path ${cxx_ldpath})
         ENDIF()
@@ -135,12 +129,6 @@ MACRO(ADD_MPI_TEST_CXX script files)
 
         # Take care of windowisims
         IF(WIN32)
-            SET_TARGET_PROPERTIES(${executable} PROPERTIES
-                PREFIX ../
-                RUNTIME_OUTPUT_DIRECTORY ${cxx_binary_dir}
-                LIBRARY_OUTPUT_DIRECTORY ${cxx_binary_dir}
-                ARCHIVE_OUTPUT_DIRECTORY ${cxx_binary_dir})
-
             IF("${cxx_path}" STREQUAL "")
                 SET(cxx_path ${cxx_ldpath})
             ENDIF()

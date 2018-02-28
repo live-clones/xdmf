@@ -77,12 +77,6 @@ MACRO(ADD_TEST_FORTRAN executable)
  
     # Take care of windowisims
     IF(WIN32)
-        SET_TARGET_PROPERTIES(${executable}${dup} PROPERTIES 
-            PREFIX ../
-            RUNTIME_OUTPUT_DIRECTORY ${fortran_binary_dir}
-            LIBRARY_OUTPUT_DIRECTORY ${fortran_binary_dir}
-            ARCHIVE_OUTPUT_DIRECTORY ${fortran_binary_dir})
-
         IF("${fortran_path}" STREQUAL "")
             SET(fortran_path ${fortran_ldpath})
         ENDIF()
@@ -143,12 +137,6 @@ MACRO(ADD_MPI_TEST_FORTRAN script files)
 
         # Take care of windowisims
         IF(WIN32)
-            SET_TARGET_PROPERTIES(${executable} PROPERTIES
-                PREFIX ../
-                RUNTIME_OUTPUT_DIRECTORY ${fortran_binary_dir}
-                LIBRARY_OUTPUT_DIRECTORY ${fortran_binary_dir}
-                ARCHIVE_OUTPUT_DIRECTORY ${fortran_binary_dir})
-
             IF("${fortran_path}" STREQUAL "")
                 SET(fortran_path ${fortran_ldpath})
             ENDIF()

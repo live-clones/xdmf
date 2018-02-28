@@ -3,7 +3,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 option(XDMF_BUILD_EXODUS_IO OFF)
 option(XDMF_BUILD_PARTITIONER OFF)
 option(XDMF_BUILD_FORTRAN OFF)
-option(XDMF_BUILD_DSM OFF)
 
 
 set(XdmfUtilsSources
@@ -92,26 +91,7 @@ if(XDMF_BUILD_PARTITIONER)
   set(XdmfUtilsLinkLibraries ${XdmfUtilsLinkLibraries} ${METIS_LIBRARIES})
 endif(XDMF_BUILD_PARTITIONER)
 
-if (XDMF_STATIC_AND_SHARED)
-  add_library(XdmfUtilsObjects OBJECT ${XdmfUtilsSources})
-  SET_TARGET_PROPERTIES(
-    XdmfUtilsObjects PROPERTIES
-    VERSION ${XDMF_VERSION}
-    SOVERSION ${XDMF_MAJOR_VERSION}
-    )
-  set_target_properties(XdmfUtilsObjects PROPERTIES
-    POSITION_INDEPENDENT_CODE True)
-  add_library(XdmfUtils $<TARGET_OBJECTS:XdmfUtilsObjects>)
-  if (BUILD_SHARED_LIBS)
-    add_library(XdmfUtils_Static STATIC $<TARGET_OBJECTS:XdmfUtilsObjects>)
-    if (UNIX)
-      set_target_properties(XdmfUtils_Static PROPERTIES
-        OUTPUT_NAME "XdmfUtils")
-    endif (UNIX)
-  endif (BUILD_SHARED_LIBS)
-else ()
-  add_library(XdmfUtils ${XdmfUtilsSources})
-endif ()
+add_library(XdmfUtils ${XdmfUtilsSources})
 SET_TARGET_PROPERTIES(
   XdmfUtils PROPERTIES
   VERSION ${XDMF_VERSION}
@@ -119,18 +99,10 @@ SET_TARGET_PROPERTIES(
   )
 
 target_link_libraries(XdmfUtils ${XdmfUtilsLinkLibraries})
-if (BUILD_SHARED_LIBS)
-  target_link_libraries(XdmfUtils_Static ${XdmfUtilsLinkLibraries})
-endif (BUILD_SHARED_LIBS)
 
 if(WIN32)
   set_target_properties(${executable} PROPERTIES
-      DEFINE_SYMBOL XdmfUtils_EXPORTS
-	  PREFIX ../
-	  IMPORT_PREFIX ../
-	  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-	  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-	  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+      DEFINE_SYMBOL XdmfUtils_EXPORTS)
 endif(WIN32)
 
 foreach(executable ${XdmfUtilsExecutables})
@@ -141,14 +113,6 @@ foreach(executable ${XdmfUtilsExecutables})
   if(WIN32)
 	  set_target_properties(${executable} PROPERTIES
 	      DEFINE_SYMBOL XdmfUtils_EXPORTS)
-      if(NOT MSVC10)
-    	  set_target_properties(${executable} PROPERTIES
-	    	  PREFIX ../
-		      IMPORT_PREFIX ../
-		      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-		      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-		      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-      endif(NOT MSVC10)
   endif(WIN32)
 
 endforeach(executable ${XdmfUtilsExecutables})
@@ -180,16 +144,10 @@ endif(XDMF_BUILD_FORTRAN)
 
 install(FILES ${XdmfUtilsHeaders} DESTINATION include)
 install(TARGETS XdmfUtils
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
-if (BUILD_SHARED_LIBS)
-install(TARGETS XdmfUtils_Static
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
-endif (BUILD_SHARED_LIBS)
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(TARGETS ${XdmfUtilsExecutables}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

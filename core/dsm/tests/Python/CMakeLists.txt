@@ -11,7 +11,6 @@ ADD_TEST_PYTHON_PYTHONPATH("${PYTHON_INCLUDE_MPI4PY_DIR}/../..")
 
 # Add any ldpath directories that the python tests may need
 ADD_TEST_PYTHON_LDPATH("${CMAKE_BINARY_DIR}")
-ADD_TEST_PYTHON_LDPATH("${XDMF_LIBRARY_DIRS}")
 
 # Add any path directories that the python tests may need
 ADD_TEST_PYTHON_PATH("${CMAKE_BINARY_DIR}")

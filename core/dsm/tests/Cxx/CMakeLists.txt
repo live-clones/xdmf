@@ -8,11 +8,9 @@ ADD_TEST_CXX_DEPENDENCIES("XdmfDSM")
 
 # Add any ldpath directories that the cxx tests may need
 ADD_TEST_CXX_LDPATH("${CMAKE_BINARY_DIR}")
-ADD_TEST_CXX_LDPATH("${XDMF_LIBRARY_DIRS}")
 
 # Add any path directoreis that the Cxx tests may need
 ADD_TEST_CXX_PATH("${CMAKE_BINARY_DIR}")
-ADD_TEST_CXX_PATH("${XDMF_BINARIES}")
 
 # Add any cxx tests here:
 # Note: We don't want to use a foreach loop to test the files incase we

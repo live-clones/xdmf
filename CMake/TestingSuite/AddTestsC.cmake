@@ -69,12 +69,6 @@ MACRO(ADD_TEST_C executable)
  
     # Take care of windowisims
     IF(WIN32)
-        SET_TARGET_PROPERTIES(${executable}${dup} PROPERTIES 
-            PREFIX ../
-            RUNTIME_OUTPUT_DIRECTORY ${c_binary_dir}
-            LIBRARY_OUTPUT_DIRECTORY ${c_binary_dir}
-            ARCHIVE_OUTPUT_DIRECTORY ${c_binary_dir})
-
         IF("${c_path}" STREQUAL "")
             SET(c_path ${c_ldpath})
         ENDIF()
@@ -127,12 +121,6 @@ MACRO(ADD_MPI_TEST_C script files)
 
         # Take care of windowisims
         IF(WIN32)
-            SET_TARGET_PROPERTIES(${executable} PROPERTIES
-                PREFIX ../
-                RUNTIME_OUTPUT_DIRECTORY ${c_binary_dir}
-                LIBRARY_OUTPUT_DIRECTORY ${c_binary_dir}
-                ARCHIVE_OUTPUT_DIRECTORY ${c_binary_dir})
-
             IF("${c_path}" STREQUAL "")
                 SET(c_path ${c_ldpath})
             ENDIF()

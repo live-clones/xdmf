@@ -37,7 +37,6 @@ class XdmfVisitor;
 
 // Includes
 #include <loki/Visitor.h>
-#define vtk_libxml2_reference reference // Reversing VTK name mangling
 #include <libxml/xmlexports.h>
 #include <libxml/tree.h>
 #include <libxml/uri.h>
