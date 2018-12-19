@@ -466,8 +466,11 @@ void XdmfTopologySetType(XDMFTOPOLOGY * topology, int type, int * status)
       newType = XdmfTopologyType::Mixed();
       break;
     default:
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Invalid Topology Type: Code " + type);
+      {
+        std::stringstream sstr;
+        sstr << "Error: Invalid Topology Type: Code " << type;
+        XdmfError::message(XdmfError::FATAL, sstr.str());
+      }
       break;
   }
 
@@ -593,8 +596,11 @@ void XdmfTopologySetPolyType(XDMFTOPOLOGY * topology, int type, int nodes, int *
       newType = XdmfTopologyType::Mixed();
       break;
     default:
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Invalid Topology Type: Code " + type);
+      {
+        std::stringstream sstr;
+        sstr << "Error: Invalid Topology Type: Code " << type;
+        XdmfError::message(XdmfError::FATAL, sstr.str());
+      }
       break;
   }
   ((XdmfTopology *)topology)->setType(newType);
