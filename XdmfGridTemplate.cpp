@@ -794,7 +794,7 @@ XdmfGridTemplate::populateItem(const std::map<std::string, std::string> & itemPr
         if (array->getName().compare("Data Description") == 0) {
           // Split description into substrings based on the " character
 
-          if (array->getNumberHeavyDataControllers() > 0 & !mHeavyWriter) {
+          if (array->getNumberHeavyDataControllers() > 0 && !mHeavyWriter) {
             mHeavyWriter = reader->generateHeavyDataWriter(array->getHeavyDataController(0)->getName(), array->getHeavyDataController(0)->getFilePath());
           }
 
