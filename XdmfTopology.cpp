@@ -170,8 +170,7 @@ XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProper
   std::map<std::string, std::string>::const_iterator type =
     itemProperties.find("Offset");
   if (type != itemProperties.end()) {
-    std::map<std::string, std::string>::const_iterator type =
-      itemProperties.find("BaseOffset");
+    type = itemProperties.find("BaseOffset");
   }
   if (type != itemProperties.end()) {
     // Convert to double
