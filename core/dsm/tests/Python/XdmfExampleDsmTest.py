@@ -418,10 +418,10 @@ if __name__ == "__main__":
 
 
 
-                print type(exampleDSMComm.GetDsmPortName())
+                print(type(exampleDSMComm.GetDsmPortName()))
                 testName = "test"
                 exampleDSMComm.SetDsmPortName(testName)
-                print exampleDSMComm.GetDsmPortName()
+                print(exampleDSMComm.GetDsmPortName())
 
                 '''
 
@@ -459,29 +459,29 @@ if __name__ == "__main__":
                 for i in range(0, size-numServersCores):
                         workerComm.Barrier()
                         if (i == id):
-                                print "Core # " + str(id)
-                                print "Controller stats" 
-                                print "datasetpath = " + XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getDataSetPath() 
-                                print "filepath = " + testArray.getHeavyDataController(0).getFilePath()
+                                print("Core # " + str(id))
+                                print("Controller stats" )
+                                print("datasetpath = " + XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getDataSetPath() )
+                                print("filepath = " + testArray.getHeavyDataController(0).getFilePath())
                                 outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getDataspaceDimensions()
-                                print "Data space dimensions" 
+                                print("Data space dimensions" )
                                 for j in range(0, outputVector.size()):
-                                        print "[" + str(j) + "] =" + str(outputVector[j])
-                                print "Controller Dimensions"
+                                        print("[" + str(j) + "] =" + str(outputVector[j]))
+                                print("Controller Dimensions")
                                 outputVector = testArray.getHeavyDataController(0).getDimensions()
                                 for j in range(0, outputVector.size()):
-                                        print "[" + str(j) + "] =" + str(outputVector[j])
-                                print "Controller size"  + str(testArray.getHeavyDataController(0).getSize())
-                                print "Controller starts"
+                                        print("[" + str(j) + "] =" + str(outputVector[j]))
+                                print("Controller size"  + str(testArray.getHeavyDataController(0).getSize()))
+                                print("Controller starts")
                                 outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getStart()
                                 for j in range(0, outputVector.size()):
-                                        print "[" + str(j) + "] =" + str(outputVector[j])
-                                print "Controller strides"
+                                        print("[" + str(j) + "] =" + str(outputVector[j]))
+                                print("Controller strides")
                                 outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getStride()
                                 for j in range(0, outputVector.size()):
-                                        print "[" + str(j) + "] =" + str(outputVector[j])
+                                        print("[" + str(j) + "] =" + str(outputVector[j]))
                                 for j in range(0, testArray.getSize()):
-                                        print "core #" + str(id) + " testArray[" + str(j) + "] = " + str(testArray.getValueAsInt32(j))
+                                        print("core #" + str(id) + " testArray[" + str(j) + "] = " + str(testArray.getValueAsInt32(j)))
                 testArray.accept(exampleWriter)
 
                 readStartVector = UInt32Vector()
@@ -511,38 +511,38 @@ if __name__ == "__main__":
                 readArray.insert(readController)
 
                 if (id == 0):
-                        print "\n\n\n"
+                        print("\n\n\n")
 
-                print "testing read"
+                print("testing read")
                 readArray.read()
 
 
                 for i in range (0, size):
                         workerComm.Barrier()
                         if (i == id):
-                                print "Core # " + str(id)
-                                print "Controller stats"
-                                print "datasetpath = " + XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getDataSetPath()
-                                print "filepath = " + readArray.getHeavyDataController(0).getFilePath()
+                                print("Core # " + str(id))
+                                print("Controller stats")
+                                print("datasetpath = " + XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getDataSetPath())
+                                print("filepath = " + readArray.getHeavyDataController(0).getFilePath())
                                 outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getDataspaceDimensions()
-                                print "Data space dimensions"
+                                print("Data space dimensions")
                                 for j in range(0, outputVector.size()):
-                                        print "[" + str(j) + "] =" + str(outputVector[j])
-                                print "Controller Dimensions"
+                                        print("[" + str(j) + "] =" + str(outputVector[j]))
+                                print("Controller Dimensions")
                                 outputVector = readArray.getHeavyDataController(0).getDimensions()
                                 for j in range(0, outputVector.size()):
-                                        print "[" + str(j) + "] =" + str(outputVector[j])
-                                print "Controller size" + str(readArray.getHeavyDataController(0).getSize())
-                                print "Controller starts"
+                                        print("[" + str(j) + "] =" + str(outputVector[j]))
+                                print("Controller size" + str(readArray.getHeavyDataController(0).getSize()))
+                                print("Controller starts")
                                 outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getStart()
                                 for j in range(0, outputVector.size()):
-                                        print "[" + str(j) + "] =" + str(outputVector[j])
-                                print "Controller strides"
+                                        print("[" + str(j) + "] =" + str(outputVector[j]))
+                                print("Controller strides")
                                 outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getStride()
                                 for j in range(0, outputVector.size()):
-                                        print "[" + str(j) + "] =" + str(outputVector[j])
+                                        print("[" + str(j) + "] =" + str(outputVector[j]))
                                 for j in range (0, readArray.getSize()):
-                                        print "core #" + str(id) + " readArray[" + str(j) + "] = " + str(readArray.getValueAsInt32(j))
+                                        print("core #" + str(id) + " readArray[" + str(j) + "] = " + str(readArray.getValueAsInt32(j)))
 
                 workerComm.Barrier()
 

@@ -1,11 +1,11 @@
-print "Accept"
+print("Accept")
 
 from mpi4py.MPI import *
 from Xdmf import *
 
 if __name__ == "__main__":
         if get_vendor()[0] == 'Open MPI':
-          print "Interprogram DSM does not work properly with OpenMPI"
+          print("Interprogram DSM does not work properly with OpenMPI")
         else:
           #//initMPI begin
 

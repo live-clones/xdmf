@@ -3,7 +3,11 @@ include(AddTestsCxx)
 
 # Add any dependencies that the cxx tests may need
 # Note: The tests already depend on their own file
-ADD_TEST_CXX_DEPENDENCIES("Xdmf")
+ADD_TEST_CXX_DEPENDENCIES("Xdmf ${TIFF_LIBRARIES}")
+
+if(APPLE)
+    link_directories("${CMAKE_BINARY_DIR}/lib")
+endif()
 
 # Add any cxx tests here:
 # Note: We don't want to use a foreach loop to test the files incase we

@@ -26,19 +26,19 @@ if __name__ == "__main__":
 #    testArray.initialize(XdmfArrayType.Float64(), 36)
 
     testVals = [float(piece) for piece in testArray.getValuesString().split()]
-    print testVals
-    print "These values are not exact because of the way that python handles floats"
+    print(testVals)
+    print("These values are not exact because of the way that python handles floats")
 
     testArray.insertAsFloat64(0, points)
 
     arrayDimensions = testArray.getDimensions()
 
     for val in arrayDimensions:
-      print val
+      print(val)
 
     testVals = [float(piece) for piece in testArray.getValuesString().split()]
-    print testVals
-    print "These values are not exact because of the way that python handles floats"
+    print(testVals)
+    print("These values are not exact because of the way that python handles floats")
 
     grid.getGeometry().setType(XdmfGeometryType.XYZ())
     grid.getGeometry().insert(0, testArray, 0, 36, 1, 1);
@@ -86,24 +86,24 @@ if __name__ == "__main__":
     taskIDMap = testMap[0].getMap()
     nodeIDMap = taskIDMap[1]
 
-    print type(taskIDMap)
+    print(type(taskIDMap))
 
     i = 0
     for val in taskIDMap:
-      print val
+      print(val)
       i = i + 1
       if i == taskIDMap.size():
         break
 
     i = 0
     for val in nodeIDMap:
-      print val
+      print(val)
       i = i + 1
       if i == nodeIDMap.size():
         break
 
     for val in nodeIDMap[3]:
-      print val
+      print(val)
 
     newTaskMap = XdmfMapMap()
 

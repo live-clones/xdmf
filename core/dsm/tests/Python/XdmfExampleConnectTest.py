@@ -1,4 +1,4 @@
-print "Connect 1"
+print("Connect 1")
 
 from mpi4py.MPI import *
 from Xdmf import *
@@ -82,10 +82,10 @@ if __name__ == "__main__":
                           exampleWriter.getServerBuffer().ReceiveInfo()
                   except RuntimeError as e:
                           # ReceiveInfo failed
-                          print e.args[0]
+                          print(e.args[0])
           except RuntimeError as e:
                   # Connection failed
-                  print e.args[0]
+                  print(e.args[0])
 
           #//manualConnect end
 
@@ -142,29 +142,29 @@ if __name__ == "__main__":
 
           # Done initializing
 
-          print "for i in range", 0, " ", size
+          print("for i in range", 0, " ", size)
 
           for i in range(0, size):
-                  print "core id checking array", i
+                  print("core id checking array", i)
                   exampleWriter.getServerBuffer().GetComm().GetIntraComm().Barrier()
-                  print i, "==", id
+                  print(i, "==", id)
                   if i == id:
                           outputstream = "Array on core " + str(exampleWriter.getServerBuffer().GetComm().GetInterId()) + " contains:\n"
                           for j in range(0, writeArray.getSize()):
                                   outputstream = outputstream + "[" + str(j) + "]" + str(writeArray.getValueAsInt32(j)) + "\n"
-                          print outputstream
+                          print(outputstream)
 
           loopamount = 4
 
           for numloops in range(0, loopamount):
-                  print "loop ", numloops
+                  print("loop ", numloops)
                   if writeArray.getNumberHeavyDataControllers() > 0:
                           writeArray.removeHeavyDataController(0);
                   writeArray.insert(writeController)
 
 
                   if id == size - 1:
-                          print "\n\n"
+                          print("\n\n")
 
                   writeArray.accept(exampleWriter)
 
@@ -189,7 +189,7 @@ if __name__ == "__main__":
                                           tempVal = tempVal * 2
                                           writeArray.insertAsInt32(j, [tempVal])
                                           outputstream = outputstream + "[" + str(j) + "]" + str(writeArray.getValueAsInt32(j)) + "\n"
-                                  print outputstream
+                                  print(outputstream)
 
           if id == size - 1:
                   sentData = 1

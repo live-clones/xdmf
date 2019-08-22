@@ -10,7 +10,7 @@ xmffile = os.getcwd() + "/timestamptest.xmf"
 if __name__ == "__main__":
 
 	#for later use in determining actual time
-	#    print timeit.Timer(timedWrite.write).timeit(1)
+	#    print(timeit.Timer(timedWrite.write).timeit(1))
 
         exampleHeavyWriter = XdmfHDF5Writer.New(h5file)
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 		else:
 			timestampGrid.accept(exampleHeavyWriter)
 		exampleHeavyWriter.closeFile()
-		print "iteration " + str(i) + " Time = " + str(time.clock() - writeclock)
+		print("iteration " + str(i) + " Time = " + str(time.clock() - writeclock))
 
 
 	exampleHeavyWriter.openFile()
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
 	exampleHeavyWriter.closeFile()
 
-	print (time.clock() - startclock)
+	print((time.clock() - startclock))
 
 	os.remove(xmffile)
 	os.remove(h5file)

@@ -598,7 +598,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         void *vp = $self->getValuesInternal();
         Py_ssize_t sz =
             $self->getSize() * $self->getArrayType()->getElementSize();
-        PyObject * c = PyBuffer_FromMemory(vp, sz);
+        PyObject * c = PyMemoryView_FromMemory(reinterpret_cast<char *>(vp), sz, PyBUF_READ);
         return(c);
     }
 

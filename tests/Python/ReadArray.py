@@ -30,37 +30,37 @@ if __name__ == "__main__":
 	XdmfFunction.addFunction("MAX", maximum)
 	functionVector = XdmfFunction.getSupportedFunctions()
 	for i in range (0, functionVector.size()):
-		print functionVector[i]
+		print(functionVector[i])
 	XdmfFunction.addOperation("@", prepend, 2)
-	print XdmfFunction.getSupportedOperations()
+	print(XdmfFunction.getSupportedOperations())
         testVector = ArrayVector()
 	testArray = XdmfArray.New()
 	testArray.pushBackAsInt32(10)
 	testArray.pushBackAsInt32(9)
 	testVector.push_back(testArray)
-	print "before evaluating function"
+	print("before evaluating function")
 	resultArray = XdmfFunction.evaluateFunction(testVector, "MAX")
-	print type(resultArray)
-	print "after function is evaulated"
-	print resultArray.getValuesString()
-	print "before evaluating function"
+	print(type(resultArray))
+	print("after function is evaulated")
+	print(resultArray.getValuesString())
+	print("before evaluating function")
 	resultArray = XdmfFunction.evaluateFunction(testVector, "AVE")
-	print type(resultArray)
-	print "after function is evaulated"
-	print resultArray.getValuesString()
+	print(type(resultArray))
+	print("after function is evaulated")
+	print(resultArray.getValuesString())
 	testArray2 = XdmfArray.New()
 	testArray2.pushBackAsInt32(1)
 	testArray2.pushBackAsInt32(2)
-	print "before evaluating Operation"
+	print("before evaluating Operation")
 	resultArray = XdmfFunction.evaluateOperation(testArray, testArray2, "|")
-	print type(resultArray)
-	print "after evaluationg Operation"
-	print resultArray.getValuesString()
+	print(type(resultArray))
+	print("after evaluationg Operation")
+	print(resultArray.getValuesString())
 	resultArray = XdmfFunction.evaluateOperation(testArray, testArray2, "@")
-	print type(resultArray)
-	print "after evaluationg Operation"
-	print resultArray.getValuesString()
-	print "before evaluating expression"
+	print(type(resultArray))
+	print("after evaluationg Operation")
+	print(resultArray.getValuesString())
+	print("before evaluating expression")
 	testMap = ArrayMap()
 	testMap["A"] = testArray
 	testMap["B"] = testArray2
@@ -71,6 +71,6 @@ if __name__ == "__main__":
 	testArray3.pushBackAsInt32(5)
 	testMap["C"] = testArray3
 	resultArray = XdmfFunction.evaluateExpression("A|B#C", testMap)
-	print type(resultArray)
-	print resultArray.getValuesString()
-	print "after evaluating expression"
+	print(type(resultArray))
+	print(resultArray.getValuesString())
+	print("after evaluating expression")

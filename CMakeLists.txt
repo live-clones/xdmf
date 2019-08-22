@@ -3,12 +3,17 @@ cmake_minimum_required(VERSION 2.8.5)
 project(Xdmf)
 
 
+
 if(WIN32)
   ADD_DEFINITIONS(-D_CRT_NONSTDC_NO_DEPRECATE)
   ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-set(XDMF_LIBNAME "Xdmf" CACHE STRING "Name for this xdmf library to avoid collision")
+if(APPLE)
+    cmake_policy(SET CMP0042 NEW)
+endif()
+
+set(XDMF_LIBNAME Xdmf CACHE STRING "Name for this xdmf library to avoid collision")
 
 set(XDMF_MAJOR_VERSION 3)
 set(XDMF_MINOR_VERSION 0)
@@ -84,8 +89,11 @@ endif()
 
 # If we are wrapping either, we need swig
 if(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
+  cmake_policy(SET CMP0078 NEW)
+  cmake_policy(SET CMP0086 NEW)
   find_package(SWIG 2.0.0 REQUIRED)
   include(${SWIG_USE_FILE})
+
 endif()
 
 # If we are wrapping python, let's include it in the top level
@@ -116,7 +124,7 @@ if(XDMF_WRAP_PYTHON)
     set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR})
     # optimize swig generation --- these are all flags corresponding to -O
     # except -fvirtual which breaks visitor operation
-    set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -modern -fastdispatch -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone)
+    set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -modern -fastdispatch -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone -py3)
     #Enables DSM
     if (XDMF_BUILD_DSM)
       set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DXDMF_BUILD_DSM)
@@ -129,7 +137,11 @@ if(XDMF_WRAP_PYTHON)
     endif ()
     set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
-    swig_add_module(${python_name}Python python ${python_name}.i)
+    swig_add_library(${python_name}Python 
+        LANGUAGE python 
+        SOURCES
+        ${python_name}.i
+    )
 
     if (NOT APPLE)
       swig_link_libraries(${python_name}Python ${python_name} ${PYTHON_LIBRARIES})
@@ -202,7 +214,11 @@ if(XDMF_WRAP_JAVA)
     set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -v -make_default -package mil.army.arl.xdmf)
     set_source_files_properties(${java_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
-    swig_add_module(${java_name}Java java ${java_name}.i)
+    swig_add_library(${java_name}Java 
+        LANGUAGE java 
+        SOURCES
+            ${java_name}.i
+    )
     swig_link_libraries(${java_name}Java ${java_name})
 
     if(WIN32)
