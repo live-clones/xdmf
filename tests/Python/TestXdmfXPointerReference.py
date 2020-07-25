@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
         readDomain = reader.read("duplicateXpointer.xmf")
 
-        print str(readDomain.getGridCollection(0).getUnstructuredGrid(0)) + "\n?=\n" + str(readDomain.getGridCollection(1).getUnstructuredGrid(0))
+        print(str(readDomain.getGridCollection(0).getUnstructuredGrid(0)) + "\n?=\n" + str(readDomain.getGridCollection(1).getUnstructuredGrid(0)))
 
         assert(readDomain.getGridCollection(0).getUnstructuredGrid(0) == readDomain.getGridCollection(1).getUnstructuredGrid(0))
 
@@ -38,9 +38,9 @@ if __name__ == "__main__":
 
         readDomain2 = reader.read("duplicateXpointer2.xmf")
 
-        print readDomain2.getGridCollection(1).getUnstructuredGrid(0).getName() + " ?= Test Grid"
+        print(readDomain2.getGridCollection(1).getUnstructuredGrid(0).getName() + " ?= Test Grid")
 
-        print str(readDomain2.getGridCollection(0).getUnstructuredGrid(0).getTime().getValue()) + " ?= " + str(5.5)
+        print(str(readDomain2.getGridCollection(0).getUnstructuredGrid(0).getTime().getValue()) + " ?= " + str(5.5))
 
         assert(readDomain2.getGridCollection(1).getUnstructuredGrid(0).getName() =="Test Grid")
 

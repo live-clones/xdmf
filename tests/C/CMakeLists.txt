@@ -1,9 +1,15 @@
 # Include our test macros
 include(AddTestsC)
 
+# This seems to be needed on Mojave
+# https://stackoverflow.com/questions/54068035/linking-not-working-in-homebrews-cmake-since-mojave
+if(APPLE)
+    link_directories("${CMAKE_BINARY_DIR}/lib")
+endif()
+
 # Add any dependencies that the cxx core tests may need
 # Note: The tests already depend on their own file
-ADD_TEST_C_DEPENDENCIES("Xdmf")
+ADD_TEST_C_DEPENDENCIES("Xdmf ${TIFF_LIBRARIES}")
 
 # Add any ldpath directories that the cxx tests may need
 ADD_TEST_C_LDPATH("${CMAKE_BINARY_DIR}")

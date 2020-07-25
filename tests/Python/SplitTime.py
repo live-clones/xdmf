@@ -35,7 +35,7 @@ class TimedWrite():
 if __name__ == "__main__":
     timedWrite = TimedWrite()
     startclock = time.clock()
-    print timeit.Timer(timedWrite.write).timeit(1)
-    print (time.clock() - startclock)
+    print(timeit.Timer(timedWrite.write).timeit(1))
+    print((time.clock() - startclock))
     os.remove(xmffile)
     os.remove(h5file)

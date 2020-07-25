@@ -1,4 +1,4 @@
-print "Connect 2"
+print("Connect 2")
 
 from mpi4py.MPI import *
 from Xdmf import *
@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
           loopamount = 4
 
-          print str(range(0, loopamount)) + "'s type = " + str(type(range(0, loopamount)))
+          print(str(range(0, loopamount)) + "'s type = " + str(type(range(0, loopamount))))
 
           for numloops in range(0, loopamount):
                   if id == 0:
@@ -128,11 +128,11 @@ if __name__ == "__main__":
                                           tempVal = tempVal * 3
                                           readArray.insertAsInt32(j, [tempVal])
                                           outputstream = outputstream + "[" + str(j) + "]" + str(readArray.getValueAsInt32(j))+ "\n"
-                                  print outputstream
+                                  print(outputstream)
 
                   readController.getServerBuffer().GetComm().GetIntraComm().Barrier()
                   if id == 0:
-                          print "\n\n"
+                          print("\n\n")
 
                   readArray.removeHeavyDataController(0)
                   readArray.insert(writeController)
