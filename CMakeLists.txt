@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 2.8.5)
+cmake_policy(SET CMP0074 NEW)
+cmake_policy(SET CMP0078 NEW)
 
 project(Xdmf)
 
@@ -129,7 +131,7 @@ if(XDMF_WRAP_PYTHON)
     endif ()
     set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
-    swig_add_module(${python_name}Python python ${python_name}.i)
+    swig_add_library(${python_name}Python LANGUAGE python SOURCES ${python_name}.i)
 
     if (NOT APPLE)
       swig_link_libraries(${python_name}Python ${python_name} ${PYTHON_LIBRARIES})
@@ -202,7 +204,7 @@ if(XDMF_WRAP_JAVA)
     set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -v -make_default -package mil.army.arl.xdmf)
     set_source_files_properties(${java_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
-    swig_add_module(${java_name}Java java ${java_name}.i)
+    swig_add_library(${java_name}Java LANGUAGE java SOURCES ${java_name}.i)
     swig_link_libraries(${java_name}Java ${java_name})
 
     if(WIN32)
