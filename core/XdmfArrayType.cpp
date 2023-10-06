@@ -277,7 +277,7 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
           type2Name.compare("Short") == 0) {
         // This will be called for any combination of
         // Char/UChar and Short
-        // In all of these cases the result shoule be a Short
+        // In all of these cases the result should be a Short
         return Int16();
       }
     case 4:
