@@ -767,6 +767,9 @@ XDMFHDF5CONTROLLERDSM * XdmfHDF5ControllerDSMNewFromServerBuffer(char * hdf5File
     case XDMF_ARRAY_TYPE_UINT32:
       buildType = XdmfArrayType::UInt32();
       break;
+    case XDMF_ARRAY_TYPE_UINT64:
+      buildType = XdmfArrayType::UInt64();
+      break;
     case XDMF_ARRAY_TYPE_INT8:
       buildType = XdmfArrayType::Int8();
       break;
@@ -838,6 +841,9 @@ XDMFHDF5CONTROLLERDSM * XdmfHDF5ControllerDSMNew(char * hdf5FilePath,
       break;
     case XDMF_ARRAY_TYPE_UINT32:
       buildType = XdmfArrayType::UInt32();
+      break;
+    case XDMF_ARRAY_TYPE_UINT64:
+      buildType = XdmfArrayType::UInt64();
       break;
     case XDMF_ARRAY_TYPE_INT8:
       buildType = XdmfArrayType::Int8();
@@ -916,6 +922,9 @@ XDMFHDF5CONTROLLERDSM * XdmfHDF5ControllerDSMNewPaged(char * hdf5FilePath,
       break;
     case XDMF_ARRAY_TYPE_UINT32:
       buildType = XdmfArrayType::UInt32();
+      break;
+    case XDMF_ARRAY_TYPE_UINT64:
+      buildType = XdmfArrayType::UInt64();
       break;
     case XDMF_ARRAY_TYPE_INT8:
       buildType = XdmfArrayType::Int8();
