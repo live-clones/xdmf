@@ -46,6 +46,9 @@ class XdmfHeavyDataController;
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #if !defined(BOOST_MPL_LIMIT_LIST_SIZE)
 #define BOOST_MPL_LIMIT_LIST_SIZE 30
+#elif BOOST_MPL_LIMIT_LIST_SIZE < 30
+#warning "BOOST_MPL_LIMIT_LIST_SIZE is already defined; increasing value to 30"
+#define BOOST_MPL_LIMIT_LIST_SIZE 30
 #endif
 #include <boost/variant.hpp>
 
