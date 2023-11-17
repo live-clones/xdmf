@@ -17,6 +17,7 @@ int main()
   printf("%d ?= %d\n", XDMF_ARRAY_TYPE_UINT8, XdmfArrayTypeUInt8());
   printf("%d ?= %d\n", XDMF_ARRAY_TYPE_UINT16, XdmfArrayTypeUInt16());
   printf("%d ?= %d\n", XDMF_ARRAY_TYPE_UINT32, XdmfArrayTypeUInt32());
+  printf("%d ?= %d\n", XDMF_ARRAY_TYPE_UINT64, XdmfArrayTypeUInt64());
   printf("%d ?= %d\n", XDMF_ARRAY_TYPE_FLOAT32, XdmfArrayTypeFloat32());
   printf("%d ?= %d\n", XDMF_ARRAY_TYPE_FLOAT64, XdmfArrayTypeFloat64());
 
@@ -28,6 +29,7 @@ int main()
   assert(XDMF_ARRAY_TYPE_UINT8 == XdmfArrayTypeUInt8());
   assert(XDMF_ARRAY_TYPE_UINT16 == XdmfArrayTypeUInt16());
   assert(XDMF_ARRAY_TYPE_UINT32 == XdmfArrayTypeUInt32());
+  assert(XDMF_ARRAY_TYPE_UINT64 == XdmfArrayTypeUInt64());
   assert(XDMF_ARRAY_TYPE_FLOAT32 == XdmfArrayTypeFloat32());
   assert(XDMF_ARRAY_TYPE_FLOAT64 == XdmfArrayTypeFloat64());
 
@@ -38,6 +40,7 @@ int main()
   printf("%s ?= %s\n", "UChar", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT8, &status));
   printf("%s ?= %s\n", "UShort", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT16, &status));
   printf("%s ?= %s\n", "UInt", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT32, &status));
+  printf("%s ?= %s\n", "UInt", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT64, &status));
   printf("%s ?= %s\n", "Float", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT32, &status));
   printf("%s ?= %s\n", "Float", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT64, &status));
 
@@ -48,6 +51,7 @@ int main()
   assert(strcmp("UChar", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT8, &status)) == 0);
   assert(strcmp("UShort", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT16, &status)) == 0);
   assert(strcmp("UInt", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT32, &status)) == 0);
+  assert(strcmp("UInt", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_UINT64, &status)) == 0);
   assert(strcmp("Float", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT32, &status)) == 0);
   assert(strcmp("Float", XdmfArrayTypeGetName(XDMF_ARRAY_TYPE_FLOAT64, &status)) == 0);
 
@@ -58,6 +62,7 @@ int main()
   printf("%d ?= %d\n", 1, XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_UINT8, &status));
   printf("%d ?= %d\n", 2, XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_UINT16, &status));
   printf("%d ?= %d\n", 4, XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_UINT32, &status));
+  printf("%d ?= %d\n", 8, XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_UINT64, &status));
   printf("%d ?= %d\n", 4, XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_FLOAT32, &status));
   printf("%d ?= %d\n", 8, XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_FLOAT64, &status));
 
@@ -68,10 +73,11 @@ int main()
   assert(1 == XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_UINT8, &status));
   assert(2 == XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_UINT16, &status));
   assert(4 == XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_UINT32, &status));
+  assert(8 == XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_UINT64, &status));
   assert(4 == XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_FLOAT32, &status));
   assert(8 == XdmfArrayTypeGetElementSize(XDMF_ARRAY_TYPE_FLOAT64, &status));
 
-  int typeCollection[9];
+  int typeCollection[10];
 
   typeCollection[0] = XDMF_ARRAY_TYPE_INT8;
   typeCollection[1] = XDMF_ARRAY_TYPE_INT16;
@@ -82,6 +88,7 @@ int main()
   typeCollection[6] = XDMF_ARRAY_TYPE_UINT32;
   typeCollection[7] = XDMF_ARRAY_TYPE_FLOAT32;
   typeCollection[8] = XDMF_ARRAY_TYPE_FLOAT64;
+  typeCollection[9] = XDMF_ARRAY_TYPE_UINT64;
 
   int dims[1];
   dims[0] = 0;
@@ -113,8 +120,8 @@ int main()
   void * valTypeArray2;
   void * valIntersectArray;
 
-  for (i = 0; i < 9; ++i) {
-    for (j = 0; j < 9; ++j) {
+  for (i = 0; i < 10; ++i) {
+    for (j = 0; j < 10; ++j) {
       valTypeArray1 = XdmfArrayNew();
       valTypeArray2 = XdmfArrayNew();
 

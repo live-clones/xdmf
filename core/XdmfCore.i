@@ -159,6 +159,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %ignore XdmfArrayTypeUInt8();
 %ignore XdmfArrayTypeUInt16();
 %ignore XdmfArrayTypeUInt32();
+%ignore XdmfArrayTypeUInt64();
 %ignore XdmfArrayTypeComparePrecision(int type1, int type2, oint * status);
 %ignore XdmfArrayTypeGetElementSize(int type, int * status);
 %ignore XdmfArrayTypeGetIsSigned(int type, int * status);
@@ -630,6 +631,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
                     return(___frombuffer(buf, 'uint16'))
                 if aType == XdmfArrayType.UInt32() :
                     return(___frombuffer(buf, 'uint32'))
+                if aType == XdmfArrayType.UInt64() :
+                    return(___frombuffer(buf, 'uint64'))
                 return None
             else :
                 if  h5ctl.getName() == "HDF":
@@ -694,6 +697,10 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         {
           placeholderVal = PyLong_FromUnsignedLong((unsigned int)0);
         }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt64())
+        {
+          placeholderVal = PyLong_FromUnsignedLong((uint64_t)0);
+        }
         else if ($self->XdmfArray::getArrayType() == XdmfArrayType::String())
         {
           placeholderVal = PyString_FromString("");
@@ -739,6 +746,10 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt32())
         {
           insertedVal = PyLong_FromUnsignedLong($self->XdmfArray::getValue<unsigned int>(index));
+        }
+        else if ($self->XdmfArray::getArrayType() == XdmfArrayType::UInt64())
+        {
+          insertedVal = PyLong_FromUnsignedLong($self->XdmfArray::getValue<uint64_t>(index));
         }
         else if ($self->XdmfArray::getArrayType() == XdmfArrayType::String())
         {
@@ -923,6 +934,24 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         }
     }
 
+    void insertAsUInt64(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
+        Py_ssize_t size;
+        if (numValues <= 0) {
+          size = PyList_Size(list);
+        }
+        else {
+          size = numValues;
+        }
+        for(Py_ssize_t i = 0; i < size; ++i) {
+            if (listStartIndex + (i * listStride) >= PyList_Size(list)) {
+              $self->insert(i+startIndex, (uint64_t) 0);
+            }
+            else {
+              $self->insert((i * arrayStride) + startIndex, (uint64_t)(PyLong_AsUnsignedLong(PyList_GetItem(list, listStartIndex + (i * listStride)))));
+            }
+        }
+    }
+
     void insertAsString(int startIndex, PyObject * list, int listStartIndex = 0, int numValues = -1, int arrayStride = 1, int listStride = 1) {
         Py_ssize_t size;
         if (numValues <= 0) {
@@ -989,6 +1018,12 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     void
     pushBackAsUInt32(const unsigned int & value)
+    {
+      $self->XdmfArray::pushBack(value);
+    }
+
+    void
+    pushBackAsUInt64(const uint64_t & value)
     {
       $self->XdmfArray::pushBack(value);
     }
@@ -1091,6 +1126,18 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     void
     insertValueAsUInt32(const unsigned int startIndex, const unsigned int value)
+    {
+      $self->XdmfArray::insert(startIndex, value);
+    }
+
+    void
+    insertValueAsUInt64(const unsigned int startIndex, const uint64_t * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1)
+    {
+      $self->XdmfArray::insert(startIndex, (uint64_t *)(valuesPointer), numValues, arrayStride, valuesStride);
+    }
+
+    void
+    insertValueAsUInt64(const unsigned int startIndex, const uint64_t value)
     {
       $self->XdmfArray::insert(startIndex, value);
     }
@@ -1355,6 +1402,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(getValueAsUInt8) XdmfArray::getValue<unsigned char>;
 %template(getValueAsUInt16) XdmfArray::getValue<unsigned short>;
 %template(getValueAsUInt32) XdmfArray::getValue<unsigned int>;
+%template(getValueAsUInt64) XdmfArray::getValue<uint64_t>;
 %template(getValueAsString) XdmfArray::getValue<std::string>;
 
 %template(initializeAsInt8) XdmfArray::initialize<char>;
@@ -1366,6 +1414,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(initializeAsUInt8) XdmfArray::initialize<unsigned char>;
 %template(initializeAsUInt16) XdmfArray::initialize<unsigned short>;
 %template(initializeAsUInt32) XdmfArray::initialize<unsigned int>;
+%template(initializeAsUInt64) XdmfArray::initialize<uint64_t>;
 %template(initializeAsString) XdmfArray::initialize<std::string>;
 
 %template(insertValueAsInt8) XdmfArray::insert<char>;
@@ -1377,6 +1426,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(insertValueAsUInt8) XdmfArray::insert<unsigned char>;
 %template(insertValueAsUInt16) XdmfArray::insert<unsigned short>;
 %template(insertValueAsUInt32) XdmfArray::insert<unsigned int>;
+%template(insertValueAsUInt64) XdmfArray::insert<uint64_t>;
 %template(insertValueAsString) XdmfArray::insert<std::string>;
 
 %template(pushBackAsInt8) XdmfArray::pushBack<char>;
@@ -1388,6 +1438,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(pushBackAsUInt8) XdmfArray::pushBack<unsigned char>;
 %template(pushBackAsUInt16) XdmfArray::pushBack<unsigned short>;
 %template(pushBackAsUInt32) XdmfArray::pushBack<unsigned int>;
+%template(pushBackAsUInt64) XdmfArray::pushBack<uint64_t>;
 %template(pushBackAsString) XdmfArray::pushBack<std::string>;
 
 %template(resizeAsInt8) XdmfArray::resize<char>;
@@ -1399,11 +1450,13 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(resizeAsUInt8) XdmfArray::resize<unsigned char>;
 %template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
 %template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
+%template(resizeAsUInt64) XdmfArray::resize<uint64_t>;
 %template(resizeAsString) XdmfArray::resize<std::string>;
 
 %template(UInt8Vector) std::vector<unsigned char>;
 %template(UInt16Vector) std::vector<unsigned short>;
 %template(UInt32Vector) std::vector<unsigned int>;
+%template(UInt64Vector) std::vector<uint64_t>;
 %template(Int8Vector) std::vector<char>;
 %template(Int16Vector) std::vector<short>;
 %template(Int32Vector) std::vector<int>;
